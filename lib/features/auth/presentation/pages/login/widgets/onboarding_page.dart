@@ -30,10 +30,9 @@ class OnboardingPage extends StatelessWidget {
         // 제목
         Text(
           page.title,
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            color: Colors.white,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            height: 1.5,
+            color: Colors.white,
           ),
           textAlign: TextAlign.center,
         ),
@@ -42,8 +41,7 @@ class OnboardingPage extends StatelessWidget {
           Text(
             page.subtitle!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.8),
-              height: 1.5,
+              color: Colors.white,
             ),
             textAlign: TextAlign.center,
           ),
