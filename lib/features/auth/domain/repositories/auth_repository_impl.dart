@@ -42,18 +42,18 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-      
+
       // 로그인 성공 시 사용자 정보 로컬 저장
       await _localDataSource.saveUser(userModel);
       // TODO: 서버에서 받은 토큰 저장 구현 필요
       // await _localDataSource.saveToken(token);
-      
+
       return Right(userModel.toEntity());
     } on DioException catch (e) {
       return Left(
         ServerFailure(
-          message: e.response?.data?['message'] ?? 'Login failed',
-          code: e.response?.data?['code'],
+          message: (e.response?.data?['message'] as String?) ?? 'Login failed',
+          code: e.response?.data?['code'] as String?,
         ),
       );
     } catch (e) {
@@ -73,18 +73,19 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
         nickname: nickname,
       );
-      
+
       // 회원가입 성공 시 사용자 정보 로컬 저장
       await _localDataSource.saveUser(userModel);
       // TODO: 서버에서 받은 토큰 저장 구현 필요
       // await _localDataSource.saveToken(token);
-      
+
       return Right(userModel.toEntity());
     } on DioException catch (e) {
       return Left(
         ServerFailure(
-          message: e.response?.data?['message'] ?? 'Registration failed',
-          code: e.response?.data?['code'],
+          message: (e.response?.data?['message'] as String?) ??
+              'Registration failed',
+          code: e.response?.data?['code'] as String?,
         ),
       );
     } catch (e) {

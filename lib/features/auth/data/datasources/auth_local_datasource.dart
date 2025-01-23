@@ -52,9 +52,10 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString(_keyUser);
     if (userJson == null) return null;
-    
+
     try {
-      return UserModel.fromJson(jsonDecode(userJson));
+      // jsonDecode의 결과를 Map<String, dynamic>으로 캐스팅
+      return UserModel.fromJson(jsonDecode(userJson) as Map<String, dynamic>);
     } catch (e) {
       return null;
     }

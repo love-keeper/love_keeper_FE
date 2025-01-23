@@ -7,13 +7,14 @@ class AppTheme {
     scheme: FlexScheme.custom,
     useMaterial3: true,
     fontFamily: AppTypography.fontFamily,
-    // 색상
-    colors: FlexSchemeColor(
-      primary: const Color(0xFFFF6B95),
-      primaryContainer: const Color(0xFFFFDBE4),
-      secondary: const Color(0xFF00CC88),
-      secondaryContainer: const Color(0xFFE5F6EF),
-      error: const Color(0xFFFF4D4D),
+    colors: const FlexSchemeColor(
+      primary:  Color(0xFFFF6B95),
+      primaryContainer:  Color(0xFFFF859B),
+      secondary:  Color(0xFF00CC88),
+      secondaryContainer:  Color(0xFFE5F6EF),
+      error:  Color(0xFFFF4D4D),
+      tertiary:  Color(0xFF747784),
+
     ),
     // 서브 테마 설정
     subThemesData: const FlexSubThemesData(
@@ -53,6 +54,24 @@ class AppTheme {
         filled: false,
         hintStyle: TextStyle(
           color: Colors.grey[400],
+          fontSize: 14,
+          fontFamily: AppTypography.fontFamily,
+        ),
+        // 입력 텍스트 스타일
+        suffixStyle: TextStyle(
+          color: Colors.grey[900],
+          fontSize: 14,
+          fontFamily: AppTypography.fontFamily,
+        ),
+        // 기본 텍스트 스타일
+        labelStyle: TextStyle(
+          color: Colors.grey[900],
+          fontSize: 14,
+          fontFamily: AppTypography.fontFamily,
+        ),
+        // 입력 텍스트 색상
+        floatingLabelStyle: TextStyle(
+          color: Colors.grey[900],
           fontSize: 14,
           fontFamily: AppTypography.fontFamily,
         ),

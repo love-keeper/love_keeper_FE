@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:love_keeper_fe/core/theme/custom_colors.dart';
+import '../../viewmodels/login_view_model.dart';
 
 class EmailLoginPage extends ConsumerStatefulWidget {
   const EmailLoginPage({super.key});
@@ -13,6 +15,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _validEmail = false;
+  bool _showPassword = false;
 
   @override
   void dispose() {
@@ -26,157 +29,183 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
       if (value.isEmpty) {
         _validEmail = false;
       } else {
-        final emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+        final emailRegex =
+            RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
         _validEmail = emailRegex.hasMatch(value);
       }
     });
   }
 
+  void _handleNext() {
+    if (_validEmail && !_showPassword) {
+      setState(() {
+        _showPassword = true;
+      });
+    } else if (_validEmail &&
+        _showPassword &&
+        _passwordController.text.isNotEmpty) {
+      // TODO: 로그인 처리
+      print('로그인 시도: ${_emailController.text}, ${_passwordController.text}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: const Text(
-          '이메일로 시작',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: const Icon(Icons.arrow_back_ios, size: 18),
           onPressed: () => Navigator.pop(context),
         ),
+        title: Text(
+          '이메일로 시작',
+          style: textTheme.titleMedium,
+        ),
+        centerTitle: true,
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 이메일 입력 필드
-              const Text(
-                '이메일',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF666666),
+      body: SafeArea(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 32),
+                // 이메일 입력 영역
+                Text(
+                  '이메일',
+                  style: textTheme.labelLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _emailController,
-                onChanged: _validateEmail,
-                decoration: InputDecoration(
-                  hintText: '이메일을 입력해 주세요.',
-                  hintStyle: const TextStyle(
-                    color: Color(0xFFCCCCCC),
-                    fontSize: 14,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                  ),
-                  enabledBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xFFEEEEEE), // 기본 상태의 밑줄 색상
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: const UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xFFFF6B95), // 포커스 상태의 밑줄 색상 (핑크색)
-                      width: 1,
-                    ),
-                  ),
-                  filled: false,
-                  fillColor: const Color(0xFFF5F5F5),
-                  suffixIcon: _validEmail
-                      ? const Icon(Icons.check_circle, color: Color(0xFF00CC88))
-                      : null,
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              if (!_validEmail && _emailController.text.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                const Text(
-                  '올바른 이메일 형식이 아닙니다. 다시 입력해 주세요.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFFFF4D4D),
+                TextFormField(
+                  controller: _emailController,
+                  onChanged: _validateEmail,
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '이메일을 입력해 주세요.',
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 0,
+                      vertical: 10,
+                    ),
+                    suffixIcon: _emailController.text.isNotEmpty
+                        ? IconButton(
+                            icon: Image.asset(
+                              'assets/images/login_page/Ic_Close.png',
+                              height: 24,
+                              width: 24,
+                            ),
+                            onPressed: () {
+                              _emailController.clear();
+                              setState(() {
+                                _validEmail = false;
+                              });
+                            },
+                          )
+                        : null,
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
+                ),
+                if (!_validEmail && _emailController.text.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    '올바른 이메일 형식이 아닙니다. 다시 입력해 주세요.',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.error,
+                    ),
+                  ),
+                ],
+                if (_showPassword) ...[
+                  const SizedBox(height: 32),
+                  // 비밀번호 입력 영역
+                  Text(
+                    '비밀번호',
+                    style: textTheme.labelLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    style: textTheme.bodyLarge?.copyWith(
+                      color: colorScheme.onSurface,
+                    ),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 0,
+                        vertical: 10,
+                      ),
+                      hintText: '비밀번호를 입력해 주세요.',
+                      suffixIcon: _passwordController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Image.asset(
+                                'assets/images/login_page/Ic_Close.png',
+                                height: 24,
+                                width: 24,
+                              ),
+                              onPressed: () {
+                                _passwordController.clear();
+                                setState(() {}); // 버튼 상태 업데이트를 위해 필요
+                              },
+                            )
+                          : null,
+                    ),
+                    onChanged: (value) => setState(() {}),
+                  ),
+                  const Spacer(),
+                  Center(
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        '비밀번호를 잊으셨나요?',
+                        style: textTheme.labelMedium?.copyWith(
+                          color: colorScheme.tertiary,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+
+                FilledButton(
+                  onPressed: (!_showPassword && _validEmail) ||
+                          (_showPassword &&
+                              _validEmail &&
+                              _passwordController.text.isNotEmpty)
+                      ? _handleNext
+                      : null,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: colorScheme.primaryContainer,
+                    disabledBackgroundColor: CustomColors.unenabled,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size.fromHeight(52),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: Text(
+                    _showPassword ? '로그인' : '다음',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],
-              const SizedBox(height: 24),
-              // 비밀번호 입력 필드
-              const Text(
-                '비밀번호',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF666666),
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextFormField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: '비밀번호를 입력해 주세요.',
-                  hintStyle: const TextStyle(
-                    color: Color(0xFFCCCCCC),
-                    fontSize: 14,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide.none,
-                  ),
-                  filled: false,
-                  fillColor: const Color(0xFFF5F5F5),
-                ),
-              ),
-              // 비밀번호 찾기 링크
-              Center(
-                child: TextButton(
-                  onPressed: () {},
-                  child: const Text(
-                    '비밀번호를 잊으셨나요?',
-                    style: TextStyle(
-                      color: Color(0xFF666666),
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              // 다음 버튼
-              FilledButton(
-                onPressed: _validEmail ? () {} : null,
-                style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF6B95),
-                  disabledBackgroundColor: const Color(0xFFE5E5E5),
-                  minimumSize: const Size.fromHeight(52),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  '다음',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
         ),
       ),
