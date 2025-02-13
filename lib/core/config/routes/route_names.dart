@@ -4,6 +4,7 @@ class RouteNames {
   static const String emailLogin = '/email-login';
   static const String emailSignup = '/email-signup';
   static const String passwordReset = '/password-reset';
+  static const String emailVerification = '/email-verification';
 
   // Home Routes
   static const String home = '/home';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/features/auth/presentation/pages/login/login_verification_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../features/auth/presentation/pages/login/email_login_page.dart';
 import '../../../features/auth/presentation/pages/login/login_page.dart';
@@ -24,6 +25,15 @@ GoRouter appRouter(AppRouterRef ref) {
         name: 'emailLogin',
         builder: (context, state) => const EmailLoginPage(),
       ),
+      GoRoute(
+        path: RouteNames.emailVerification,
+        name: 'emailVerification',
+        builder: (context, state) {
+          final email = state.extra as String;
+          return EmailVerificationPage(email: email);
+        },
+      ),
+
       // TODO: 추가 라우트 설정
     ],
     errorBuilder: (context, state) => Scaffold(

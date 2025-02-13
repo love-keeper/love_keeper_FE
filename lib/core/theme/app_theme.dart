@@ -8,13 +8,12 @@ class AppTheme {
     useMaterial3: true,
     fontFamily: AppTypography.fontFamily,
     colors: const FlexSchemeColor(
-      primary:  Color(0xFFFF6B95),
-      primaryContainer:  Color(0xFFFF859B),
-      secondary:  Color(0xFF00CC88),
-      secondaryContainer:  Color(0xFFE5F6EF),
-      error:  Color(0xFFFF4D4D),
-      tertiary:  Color(0xFF747784),
-
+      primary: Color(0xFFFF6B95),
+      primaryContainer: Color(0xFFFF859B),
+      secondary: Color(0xFF00CC88),
+      secondaryContainer: Color(0xFFE5F6EF),
+      error: Color(0xFFFF4D4D),
+      tertiary: Color(0xFF747784),
     ),
     // 서브 테마 설정
     subThemesData: const FlexSubThemesData(
@@ -52,10 +51,15 @@ class AppTheme {
       textTheme: AppTypography.textTheme,
       inputDecorationTheme: InputDecorationTheme(
         filled: false,
-        hintStyle: TextStyle(
-          color: Colors.grey[400],
+        hintStyle: const TextStyle(
+          color: Color(0xFFC3C6CF),
           fontSize: 14,
           fontFamily: AppTypography.fontFamily,
+        ),
+        // contentPadding 전역 설정
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 16, // 상하 패딩
+          horizontal: 0, // 좌우 패딩
         ),
         // 입력 텍스트 스타일
         suffixStyle: TextStyle(
@@ -75,10 +79,7 @@ class AppTheme {
           fontSize: 14,
           fontFamily: AppTypography.fontFamily,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
+
         // 기본 밑줄 스타일
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(

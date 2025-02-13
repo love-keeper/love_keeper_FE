@@ -16,133 +16,86 @@ class AppTypography {
 
   static TextTheme get textTheme {
     return const TextTheme(
-      // Display Large - Pretendard Black (900)
-      displayLarge: TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: black,
-        fontSize: 57,
-        height: 1.12,
-        letterSpacing: -0.25,
-      ),
-
-      // Display Medium - Pretendard ExtraBold (800)
-      displayMedium: TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: extraBold,
-        fontSize: 45,
-        height: 1.15,
-      ),
-
-      // Display Small - Pretendard Bold (700)
-      displaySmall: TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: bold,
-        fontSize: 36,
-        height: 1.22,
-      ),
-
-      // Headline Large - Pretendard SemiBold (600)
-      headlineLarge: TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: semiBold,
-        fontSize: 32,
-        height: 1.25,
-      ),
-
-      // Headline Medium - Pretendard Medium (500)
-      headlineMedium: TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: medium,
-        fontSize: 28,
-        height: 1.28,
-      ),
-
-      // Headline Small - Pretendard Regular (400)
-      headlineSmall: TextStyle(
-        fontFamily: fontFamily,
-        fontWeight: regular,
-        fontSize: 24,
-        height: 1.33,
-      ),
-
-      // Title Large - Pretendard Medium (500)
+      // 실제로 자주 사용하는 스타일들만 남기고, 새로운 스타일 추가
       titleLarge: TextStyle(
         fontFamily: fontFamily,
         fontWeight: medium,
-        fontSize: 22,
+        fontSize: 18,
+        letterSpacing: -0.45,
         height: 1.27,
+        color: Colors.black87,
       ),
 
-      // Title Medium - Pretendard Medium (500)
       titleMedium: TextStyle(
         fontFamily: fontFamily,
         fontWeight: medium,
         fontSize: 16,
+        letterSpacing: -0.4,
         height: 1.5,
-        letterSpacing: 0.15,
+        color: Colors.black87,
       ),
 
-      // Title Small - Pretendard Medium (500)
       titleSmall: TextStyle(
         fontFamily: fontFamily,
         fontWeight: medium,
         fontSize: 14,
+        letterSpacing: -0.35,
         height: 1.43,
-        letterSpacing: 0.1,
+        color: Colors.black87,
       ),
 
-      // Body Large - Pretendard Regular (400)
       bodyLarge: TextStyle(
         fontFamily: fontFamily,
         fontWeight: regular,
         fontSize: 16,
+        letterSpacing: -0.4,
         height: 1.5,
-        letterSpacing: 0.15,
+        color: Colors.black87,
       ),
 
-      // Body Medium - Pretendard Regular (400)
       bodyMedium: TextStyle(
         fontFamily: fontFamily,
         fontWeight: regular,
         fontSize: 14,
+        letterSpacing: -0.35,
         height: 1.43,
-        letterSpacing: 0.25,
+        color: Colors.black87,
       ),
 
-      // Body Small - Pretendard Regular (400)
       bodySmall: TextStyle(
         fontFamily: fontFamily,
         fontWeight: regular,
         fontSize: 12,
+        letterSpacing: -0.3,
         height: 1.33,
-        letterSpacing: 0.4,
+        color: Colors.black87,
       ),
 
-      // Label Large - Pretendard Medium (500)
       labelLarge: TextStyle(
         fontFamily: fontFamily,
         fontWeight: medium,
         fontSize: 14,
+        letterSpacing: -0.35,
         height: 1.43,
-        letterSpacing: 0.1,
+        color: Colors.black87,
       ),
 
-      // Label Medium - Pretendard Medium (500)
       labelMedium: TextStyle(
         fontFamily: fontFamily,
         fontWeight: medium,
         fontSize: 12,
+        letterSpacing: -0.3,
         height: 1.33,
-        letterSpacing: 0.5,
+        color: Colors.black87,
       ),
 
-      // Label Small - Pretendard Medium (500)
       labelSmall: TextStyle(
         fontFamily: fontFamily,
         fontWeight: medium,
         fontSize: 11,
+        letterSpacing: -0.275,
         height: 1.45,
-        letterSpacing: 0.5,
+        color: Colors.black87,
       ),
     );
   }

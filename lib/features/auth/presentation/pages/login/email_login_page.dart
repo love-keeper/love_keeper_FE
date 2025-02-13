@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/core/theme/custom_colors.dart';
-import '../../viewmodels/login_view_model.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/login_view_model.dart';
 
 class EmailLoginPage extends ConsumerStatefulWidget {
   const EmailLoginPage({super.key});
@@ -36,16 +37,37 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
     });
   }
 
-  void _handleNext() {
+  void _handleNext() async {
     if (_validEmail && !_showPassword) {
+      // 이메일 존재 여부 체크
+      final isExistingUser = await ref
+          .read(loginViewModelProvider.notifier)
+          .checkEmailExists(_emailController.text);
+
       setState(() {
-        _showPassword = true;
+        if (isExistingUser) {
+          // 기존 회원인 경우 비밀번호 입력 화면으로
+          _showPassword = true;
+        } else {
+          // 새로운 회원인 경우 이메일 인증 페이지로
+          context.push('/email-verification', extra: _emailController.text);
+        }
       });
     } else if (_validEmail &&
         _showPassword &&
         _passwordController.text.isNotEmpty) {
-      // TODO: 로그인 처리
-      print('로그인 시도: ${_emailController.text}, ${_passwordController.text}');
+      // 로그인 수행
+      await ref.read(loginViewModelProvider.notifier).login(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
+
+      // 로그인 상태 확인
+      final state = ref.read(loginViewModelProvider);
+      if (state.user != null) {
+        // 로그인 성공 시 메인 페이지로 이동
+        if (mounted) context.go('/home');
+      }
     }
   }
 
@@ -53,6 +75,17 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+
+    final state = ref.watch(loginViewModelProvider);
+
+    // 에러 메시지 표시
+    ref.listen(loginViewModelProvider, (previous, next) {
+      if (next.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.errorMessage!)),
+        );
+      }
+    });
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -94,10 +127,6 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                   ),
                   decoration: InputDecoration(
                     hintText: '이메일을 입력해 주세요.',
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 0,
-                      vertical: 10,
-                    ),
                     suffixIcon: _emailController.text.isNotEmpty
                         ? IconButton(
                             icon: Image.asset(
@@ -117,6 +146,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                 ),
+                const SizedBox(height: 16),
                 if (!_validEmail && _emailController.text.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -143,10 +173,6 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                       color: colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 0,
-                        vertical: 10,
-                      ),
                       hintText: '비밀번호를 입력해 주세요.',
                       suffixIcon: _passwordController.text.isNotEmpty
                           ? IconButton(
