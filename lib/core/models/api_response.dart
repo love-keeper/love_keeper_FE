@@ -6,11 +6,10 @@ part 'api_response.g.dart';
 @Freezed(genericArgumentFactories: true)
 class ApiResponse<T> with _$ApiResponse<T> {
   const factory ApiResponse({
-    required bool isSuccess,
+    required String timestamp,
     required String code,
     required String message,
-    required String createdAt,
-    required T data,
+    T? result,
   }) = _ApiResponse;
 
   factory ApiResponse.fromJson(
@@ -18,4 +17,15 @@ class ApiResponse<T> with _$ApiResponse<T> {
     T Function(Object?) fromJsonT,
   ) =>
       _$ApiResponseFromJson(json, fromJsonT);
+}
+
+// void 타입을 위한 JsonConverter
+class VoidConverter implements JsonConverter<void, Object?> {
+  const VoidConverter();
+
+  @override
+  void fromJson(Object? _) {}
+
+  @override
+  Object? toJson(void _) => null;
 }
