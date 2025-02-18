@@ -3,64 +3,14 @@
 part of 'dio_client.dart';
 
 // **************************************************************************
-// RetrofitGenerator
-// **************************************************************************
-
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element
-
-class _RestClient implements RestClient {
-  _RestClient(
-    this._dio, {
-    this.baseUrl,
-    this.errorLogger,
-  });
-
-  final Dio _dio;
-
-  String? baseUrl;
-
-  final ParseErrorLogger? errorLogger;
-
-  RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
-    if (T != dynamic &&
-        !(requestOptions.responseType == ResponseType.bytes ||
-            requestOptions.responseType == ResponseType.stream)) {
-      if (T == String) {
-        requestOptions.responseType = ResponseType.plain;
-      } else {
-        requestOptions.responseType = ResponseType.json;
-      }
-    }
-    return requestOptions;
-  }
-
-  String _combineBaseUrls(
-    String dioBaseUrl,
-    String? baseUrl,
-  ) {
-    if (baseUrl == null || baseUrl.trim().isEmpty) {
-      return dioBaseUrl;
-    }
-
-    final url = Uri.parse(baseUrl);
-
-    if (url.isAbsolute) {
-      return url.toString();
-    }
-
-    return Uri.parse(dioBaseUrl).resolveUri(url).toString();
-  }
-}
-
-// **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dioClientHash() => r'597fd7ab32cf8108cb04dd566a2c4cbb981b4fa5';
+String _$dioClientHash() => r'34f31edbf2dc41a305aae6aa47f8298843d23375';
 
 /// See also [dioClient].
 @ProviderFor(dioClient)
-final dioClientProvider = AutoDisposeProvider<Dio>.internal(
+final dioClientProvider = Provider<Dio>.internal(
   dioClient,
   name: r'dioClientProvider',
   debugGetCreateSourceHash:
@@ -69,7 +19,7 @@ final dioClientProvider = AutoDisposeProvider<Dio>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef DioClientRef = AutoDisposeProviderRef<Dio>;
+typedef DioClientRef = ProviderRef<Dio>;
 String _$apiClientHash() => r'f4e4a303d318b5190641a818433efd968fd932e4';
 
 /// See also [apiClient].
