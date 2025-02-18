@@ -1,5 +1,5 @@
-//import 'package:love_keeper_fe/features/auth/presentation/pages/login/login_page.dart';
-//import 'package:love_keeper_fe/features/auth/presentation/pages/login/email_login_page.dart';
+// import 'package:love_keeper_fe/features/auth/presentation/pages/login/login_page.dart';
+// import 'package:love_keeper_fe/features/auth/presentation/pages/login/email_login_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/dday_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/main_page.dart';
@@ -19,34 +19,7 @@ GoRouter appRouter(AppRouterRef ref) {
     initialLocation: '/main',
     debugLogDiagnostics: true,
     redirect: (context, state) async {
-      final prefs = await SharedPreferences.getInstance();
-      final accessToken = prefs.getString('accessToken');
-      final isOnboarded = prefs.getBool('isOnboarded') ?? false;
-
-      // Path that doesn't require authentication
-      final isAuthPath = state.matchedLocation == Routes.login ||
-          state.matchedLocation == Routes.signup ||
-          state.matchedLocation == Routes.forgotPassword;
-
-      // First time user: redirect to onboarding
-      if (!isOnboarded &&
-          !isAuthPath &&
-          state.matchedLocation != Routes.onboarding) {
-        return Routes.onboarding;
-      }
-
-      // Logged out: redirect to login except for auth paths
-      if (accessToken == null &&
-          !isAuthPath &&
-          state.matchedLocation != Routes.onboarding) {
-        return Routes.login;
-      }
-
-      // Logged in: redirect away from auth paths
-      if (accessToken != null && isAuthPath) {
-        return Routes.home;
-      }
-
+      // 로그인, 온보딩 등 조건에 관계없이 항상 null을 반환하여 리다이렉트 없이 현재 경로를 유지합니다.
       return null;
     },
     routes: [
@@ -54,6 +27,7 @@ GoRouter appRouter(AppRouterRef ref) {
         path: '/',
         redirect: (_, __) => Routes.home,
       ),
+      // 아래 로그인, 온보딩 관련 라우트는 주석처리되어 있습니다.
       // GoRoute(
       //   path: Routes.login,
       //   name: RouteNames.login,
@@ -68,11 +42,6 @@ GoRouter appRouter(AppRouterRef ref) {
       //   path: Routes.forgotPassword,
       //   name: RouteNames.forgotPassword,
       //   builder: (context, state) => const ForgotPasswordPage(),
-      // ),
-      // GoRoute(
-      //   path: Routes.home,
-      //   name: RouteNames.home,
-      //   builder: (context, state) => const HomePage(),
       // ),
       // GoRoute(
       //   path: Routes.onboarding,

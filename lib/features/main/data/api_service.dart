@@ -1,7 +1,7 @@
 // lib/data/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:love_keeper_fe/constants/api_constants.dart';
+//import 'package:love_keeper_fe/constants/api_constants.dart';
 
 class ApiService {
   // 캘린더 이벤트 데이터를 받아오는 함수

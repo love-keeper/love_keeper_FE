@@ -90,7 +90,7 @@ class _StoragePageState extends State<StoragePage> {
     return Container(
       width: double.infinity,
       height: 112,
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -110,7 +110,7 @@ class _StoragePageState extends State<StoragePage> {
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          hintText: "내용을 입력해 주세요.",
+          hintText: '내용을 입력해 주세요.',
           hintStyle: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -133,9 +133,9 @@ class _StoragePageState extends State<StoragePage> {
     List<Map<String, String>> sortedPromises = List.from(promises);
     sortedPromises.sort((a, b) {
       DateTime dateA =
-          DateFormat("yyyy. MM. dd.").parse(a['date'] ?? "1900. 01. 01.");
+          DateFormat('yyyy. MM. dd.').parse(a['date'] ?? '1900. 01. 01.');
       DateTime dateB =
-          DateFormat("yyyy. MM. dd.").parse(b['date'] ?? "1900. 01. 01.");
+          DateFormat('yyyy. MM. dd.').parse(b['date'] ?? '1900. 01. 01.');
       return dateB.compareTo(dateA);
     });
 
@@ -170,8 +170,8 @@ class _StoragePageState extends State<StoragePage> {
               });
             },
             child: PromiseBoxWidget(
-              content: promise['content'] ?? "",
-              date: promise['date'] ?? "",
+              content: promise['content'] ?? '',
+              date: promise['date'] ?? '',
             ),
           );
         },
@@ -189,9 +189,9 @@ class _StoragePageState extends State<StoragePage> {
     sortedLetters.sort((a, b) {
       // 날짜 형식: "yyyy. MM. dd." (끝에 점이 있는 형식)
       DateTime dateA =
-          DateFormat("yyyy. MM. dd.").parse(a['date'] ?? "1900. 01. 01.");
+          DateFormat('yyyy. MM. dd.').parse(a['date'] ?? '1900. 01. 01.');
       DateTime dateB =
-          DateFormat("yyyy. MM. dd.").parse(b['date'] ?? "1900. 01. 01.");
+          DateFormat('yyyy. MM. dd.').parse(b['date'] ?? '1900. 01. 01.');
       return dateB.compareTo(dateA);
     });
 
@@ -210,8 +210,8 @@ class _StoragePageState extends State<StoragePage> {
           final letter = sortedLetters[index];
           return LetterBoxWidget(
             title: '${letter['user']}의 편지',
-            content: letter['content'] ?? "",
-            date: letter['date'] ?? "",
+            content: letter['content'] ?? '',
+            date: letter['date'] ?? '',
           );
         },
       ),
