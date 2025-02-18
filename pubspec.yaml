@@ -30,6 +30,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: any
+
+  http: ^1.2.2
+
+  table_calendar: ^3.0.8
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -93,6 +100,9 @@ flutter:
   assets:
     - assets/images/login_page/
     - assets/images/onboarding/
+    - assets/images/main_page/
+    - assets/images/storage_page/
+    - assets/images/tab_bar/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
