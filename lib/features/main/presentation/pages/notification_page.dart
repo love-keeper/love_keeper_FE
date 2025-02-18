@@ -11,9 +11,9 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   final List<Map<String, dynamic>> _defaultNotifications = [
-    {"message": "미미님으로부터 편지가 도착했어요.", "time": "방금 전", "isRead": false},
-    {"message": "미미님으로부터 편지가 도착했어요.", "time": "1분 전", "isRead": false},
-    {"message": "돌돌님으로부터 쪽지가 도착했어요.", "time": "59분 전", "isRead": true},
+    {'message': '미미님으로부터 편지가 도착했어요.', 'time': '방금 전', 'isRead': false},
+    {'message': '미미님으로부터 편지가 도착했어요.', 'time': '1분 전', 'isRead': false},
+    {'message': '돌돌님으로부터 쪽지가 도착했어요.', 'time': '59분 전', 'isRead': true},
   ];
 
   List<Map<String, dynamic>> notifications = [];
@@ -110,7 +110,7 @@ class _NotificationPageState extends State<NotificationPage> {
                 itemCount: notifications.length,
                 itemBuilder: (context, index) {
                   final notification = notifications[index];
-                  final isRead = notification["isRead"] as bool;
+                  final isRead = notification['isRead'] as bool;
 
                   return Column(
                     children: [
@@ -128,7 +128,7 @@ class _NotificationPageState extends State<NotificationPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              notification["message"],
+                              notification['message'] as String,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -140,7 +140,7 @@ class _NotificationPageState extends State<NotificationPage> {
                               ),
                             ),
                             Text(
-                              notification["time"],
+                              notification['time'] as String,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w400,
