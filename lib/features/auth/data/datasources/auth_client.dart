@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:love_keeper_fe/core/network/dio_client.dart';
 import 'package:love_keeper_fe/features/auth/data/models/request/login_request.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/reset_password.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/reset_password_request.dart';
 import 'package:love_keeper_fe/features/auth/data/models/request/send_code_request.dart';
 import 'package:love_keeper_fe/features/auth/data/models/request/signup_request.dart';
 import 'package:love_keeper_fe/features/auth/data/models/request/verify_code_request.dart';
@@ -45,6 +47,13 @@ abstract class AuthRestClient {
 
   @POST('/auth/verify-code')
   Future<ApiResponse<String>> verifyCode(@Body() VerifyCodeRequest request);
+
+  @POST('/password/reset-request')
+  Future<ApiResponse<String>> resetPasswordRequest(
+      @Body() ResetPasswordRequest request);
+
+  @POST('/password/reset')
+  Future<ApiResponse<String>> resetPassword(@Body() ResetPassword request);
 }
 
 @riverpod
