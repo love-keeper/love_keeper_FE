@@ -6,11 +6,11 @@ part of 'dio_client.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dioClientHash() => r'68fb68339e54524936ce7a3e5dbb4af25f101087';
+String _$dioClientHash() => r'34f31edbf2dc41a305aae6aa47f8298843d23375';
 
 /// See also [dioClient].
 @ProviderFor(dioClient)
-final dioClientProvider = AutoDisposeProvider<Dio>.internal(
+final dioClientProvider = Provider<Dio>.internal(
   dioClient,
   name: r'dioClientProvider',
   debugGetCreateSourceHash:
@@ -19,8 +19,20 @@ final dioClientProvider = AutoDisposeProvider<Dio>.internal(
   allTransitiveDependencies: null,
 );
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DioClientRef = AutoDisposeProviderRef<Dio>;
+typedef DioClientRef = ProviderRef<Dio>;
+String _$apiClientHash() => r'f4e4a303d318b5190641a818433efd968fd932e4';
+
+/// See also [apiClient].
+@ProviderFor(apiClient)
+final apiClientProvider = AutoDisposeProvider<RestClient>.internal(
+  apiClient,
+  name: r'apiClientProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$apiClientHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef ApiClientRef = AutoDisposeProviderRef<RestClient>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

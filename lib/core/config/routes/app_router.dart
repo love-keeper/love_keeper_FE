@@ -1,16 +1,15 @@
-import 'package:flutter/material.dart';
+//import 'package:love_keeper_fe/features/auth/presentation/pages/login/login_page.dart';
+//import 'package:love_keeper_fe/features/auth/presentation/pages/login/email_login_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/dday_page.dart';
-import 'package:love_keeper_fe/features/main/presentation/pages/notification_page.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:love_keeper_fe/features/auth/presentation/pages/login/login_page.dart';
-import 'package:love_keeper_fe/features/auth/presentation/pages/login/email_login_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/main_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/calendar_page.dart';
+import 'package:love_keeper_fe/features/main/presentation/pages/notification_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/storage_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/detail_page.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'route_names.dart';
-
 part 'app_router.g.dart';
 
 @riverpod
@@ -19,18 +18,67 @@ GoRouter appRouter(AppRouterRef ref) {
     // 초기 경로를 메인 페이지로 설정
     initialLocation: '/main',
     debugLogDiagnostics: true,
+    redirect: (context, state) async {
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken');
+      final isOnboarded = prefs.getBool('isOnboarded') ?? false;
+
+      // Path that doesn't require authentication
+      final isAuthPath = state.matchedLocation == Routes.login ||
+          state.matchedLocation == Routes.signup ||
+          state.matchedLocation == Routes.forgotPassword;
+
+      // First time user: redirect to onboarding
+      if (!isOnboarded &&
+          !isAuthPath &&
+          state.matchedLocation != Routes.onboarding) {
+        return Routes.onboarding;
+      }
+
+      // Logged out: redirect to login except for auth paths
+      if (accessToken == null &&
+          !isAuthPath &&
+          state.matchedLocation != Routes.onboarding) {
+        return Routes.login;
+      }
+
+      // Logged in: redirect away from auth paths
+      if (accessToken != null && isAuthPath) {
+        return Routes.home;
+      }
+
+      return null;
+    },
     routes: [
-      // Auth Routes
       GoRoute(
-        path: RouteNames.onboarding,
-        name: 'onboarding',
-        builder: (context, state) => const LoginPage(),
+        path: '/',
+        redirect: (_, __) => Routes.home,
       ),
-      GoRoute(
-        path: RouteNames.emailLogin,
-        name: 'emailLogin',
-        builder: (context, state) => const EmailLoginPage(),
-      ),
+      // GoRoute(
+      //   path: Routes.login,
+      //   name: RouteNames.login,
+      //   builder: (context, state) => const LoginPage(),
+      // ),
+      // GoRoute(
+      //   path: Routes.signup,
+      //   name: RouteNames.signup,
+      //   builder: (context, state) => const SignupPage(),
+      // ),
+      // GoRoute(
+      //   path: Routes.forgotPassword,
+      //   name: RouteNames.forgotPassword,
+      //   builder: (context, state) => const ForgotPasswordPage(),
+      // ),
+      // GoRoute(
+      //   path: Routes.home,
+      //   name: RouteNames.home,
+      //   builder: (context, state) => const HomePage(),
+      // ),
+      // GoRoute(
+      //   path: Routes.onboarding,
+      //   name: RouteNames.onboarding,
+      //   builder: (context, state) => const OnboardingPage(),
+      // ),
       // Main Page Route
       GoRoute(
         path: '/main',
@@ -85,10 +133,9 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) => const DdayPage(),
       ),
     ],
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Text('페이지를 찾을 수 없습니다: ${state.error}'),
-      ),
-    ),
   );
+}
+
+class LoginPage {
+  const LoginPage();
 }

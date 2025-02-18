@@ -1,41 +1,172 @@
+// lib/features/auth/domain/repositories/auth_repository.dart
+import 'dart:io';
+
 import 'package:fpdart/fpdart.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/login_request.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/reset_password.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/reset_password_request.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/send_code_request.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/signup_request.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/verify_code_request.dart';
+import 'package:love_keeper_fe/features/auth/data/models/response/login_response.dart';
+import 'package:love_keeper_fe/features/auth/data/models/response/signup_response.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import '../../../../core/errors/failures.dart';
-import '../entities/user.dart';
+import '../../data/datasources/auth_client.dart';
 
-abstract class AuthRepository {
-  /// 로그인을 수행합니다.
-  /// 
-  /// [email]과 [password]를 받아서 로그인을 시도합니다.
-  /// 성공하면 [User] 정보를, 실패하면 [Failure]를 반환합니다.
-  Future<Either<Failure, User>> login({
-    required String email,
-    required String password,
+part 'auth_repository.g.dart';
+
+abstract class IAuthRepository {
+  Future<Either<Failure, SignupResponse>> signup(
+    SignupRequest request, {
+    File? profileImage,
   });
 
-  /// 회원가입을 수행합니다.
-  /// 
-  /// [email], [password], [nickname]을 받아서 회원가입을 시도합니다.
-  /// 성공하면 [User] 정보를, 실패하면 [Failure]를 반환합니다.
-  Future<Either<Failure, User>> register({
-    required String email,
-    required String password,
-    required String nickname,
-  });
+  Future<Either<Failure, LoginResponse>> login(LoginRequest request);
 
-  /// 로그아웃을 수행합니다.
-  /// 
-  /// 로컬 저장소의 토큰과 사용자 정보를 삭제하고,
-  /// 필요한 경우 서버에 로그아웃 요청을 보냅니다.
-  Future<Either<Failure, void>> logout();
-  
-  /// 현재 로그인된 사용자 정보를 가져옵니다.
-  /// 
-  /// 로컬 저장소에서 사용자 정보를 가져오거나,
-  /// 필요한 경우 서버에 요청하여 최신 정보를 가져옵니다.
-  Future<Either<Failure, User?>> getCurrentUser();
+  Future<Either<Failure, String>> reissue();
 
-  /// 자동 로그인 여부를 확인합니다.
-  /// 
-  /// 로컬 저장소에 유효한 토큰이 있는지 확인합니다.
-  Future<bool> isSignedIn();
+  Future<Either<Failure, String>> logout();
+
+  Future<Either<Failure, String>> sendCode(String email);
+
+  Future<Either<Failure, String>> verifyCode(String email, int code);
+
+  Future<Either<Failure, String>> resetPasswordRequest(String email);
+
+  Future<Either<Failure, String>> resetPassword(
+      String email, String password, String passwordConfirm);
+}
+
+@riverpod
+AuthRepository authRepository(AuthRepositoryRef ref) {
+  return AuthRepository(ref.watch(authClientProvider));
+}
+
+class AuthRepository implements IAuthRepository {
+  final AuthRestClient _client;
+
+  AuthRepository(this._client);
+
+  @override
+  Future<Either<Failure, SignupResponse>> signup(
+    SignupRequest request, {
+    File? profileImage,
+  }) async {
+    try {
+      final response =
+          await request.submit(_client, profileImage: profileImage);
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, LoginResponse>> login(LoginRequest request) async {
+    try {
+      final response = await _client.login(request);
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> reissue() async {
+    try {
+      final response = await _client.reissue();
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> logout() async {
+    try {
+      final response = await _client.logout();
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> sendCode(String email) async {
+    try {
+      final request = SendCodeRequest(email: email);
+      final response = await _client.sendCode(request);
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> verifyCode(String email, int code) async {
+    try {
+      final request = VerifyCodeRequest(email: email, code: code);
+      final response = await _client.verifyCode(request);
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> resetPasswordRequest(String email) async {
+    try {
+      final request = ResetPasswordRequest(email: email);
+      final response = await _client.resetPasswordRequest(request);
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> resetPassword(
+      String email, String password, String passwordConfirm) async {
+    if (password != passwordConfirm) {
+      return left(const ValidationFailure('비밀번호가 일치하지 않습니다.'));
+    }
+
+    try {
+      final request = ResetPassword(
+        email: email,
+        password: password,
+        passwordConfirm: passwordConfirm,
+      );
+      final response = await _client.resetPassword(request);
+      if (response.result == null) {
+        return left(const ServerFailure('서버에서 응답을 받을 수 없습니다.'));
+      }
+      return right(response.result!);
+    } on Exception catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
 }
