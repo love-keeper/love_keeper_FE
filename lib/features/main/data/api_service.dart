@@ -13,7 +13,7 @@ class ApiService {
     if (response.statusCode == 200) {
       final jsonData = json.decode(response.body);
       // API의 응답 구조에 따라 수정 (예: jsonData['events'] 등)
-      return jsonData; // 리스트 형태로 반환한다고 가정
+      return jsonData as List<dynamic>; // 리스트 형태로 반환한다고 가정
     } else {
       throw Exception('캘린더 이벤트 로드 실패: ${response.statusCode}');
     }
