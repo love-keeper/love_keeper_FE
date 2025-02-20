@@ -1,3 +1,3 @@
-export 'page_indicators.dart';
-export 'social_login_button.dart';
-export 'social_login_buttons.dart';
+export '../../../../../onborading/widgets/page_indicators.dart';
+//export '../../../../../onborading/widgets/social_login_button.dart';
+export '../../../../../onborading/widgets/social_login_buttons.dart';

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../features/auth/presentation/pages/login/email_login_page.dart';
-import '../../../features/auth/presentation/pages/login/login_page.dart';
+import '../../../features/onborading/pages/login_page.dart';
+import 'package:love_keeper_fe/features/onborading/pages/splash_screen.dart';
 import 'route_names.dart';
 
 part 'app_router.g.dart';
@@ -10,12 +11,17 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.onboarding,
+    initialLocation: '/splash',
     debugLogDiagnostics: true,
     routes: [
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
       // Auth Routes
       GoRoute(
-        path: RouteNames.onboarding,
+        path: '/onboarding',
         name: 'onboarding',
         builder: (context, state) => const LoginPage(),
       ),

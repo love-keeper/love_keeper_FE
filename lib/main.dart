@@ -3,13 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:love_keeper_fe/core/config/routes/app_router.dart';
 import 'package:love_keeper_fe/core/theme/app_theme.dart';
 import 'package:love_keeper_fe/core/theme/app_typography.dart';
-import 'package:love_keeper_fe/features/auth/presentation/pages/login/login_page.dart';
-
+import 'package:love_keeper_fe/features/onborading/pages/login_page.dart';
 
 void main() {
   runApp(
-    ProviderScope(
-      child: const LoveKeeper(),
+    const ProviderScope(
+      child: LoveKeeper(),
     ),
   );
 }
