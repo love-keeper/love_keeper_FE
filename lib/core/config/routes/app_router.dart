@@ -8,21 +8,32 @@ import 'package:love_keeper_fe/features/main/presentation/pages/notification_pag
 import 'package:love_keeper_fe/features/main/presentation/pages/storage_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/detail_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+<<<<<<< HEAD
 import 'package:shared_preferences/shared_preferences.dart';
+=======
+import '../../../features/auth/presentation/pages/login/email_login_page.dart';
+import '../../../features/onborading/pages/login_page.dart';
+import 'package:love_keeper_fe/features/onborading/pages/splash_screen.dart';
+>>>>>>> feature/1-메인-화면-스크린-만들기
 import 'route_names.dart';
 part 'app_router.g.dart';
 
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
+<<<<<<< HEAD
     // 초기 경로를 메인 페이지로 설정
     initialLocation: '/main',
+=======
+    initialLocation: '/splash',
+>>>>>>> feature/1-메인-화면-스크린-만들기
     debugLogDiagnostics: true,
     redirect: (context, state) async {
       // 로그인, 온보딩 등 조건에 관계없이 항상 null을 반환하여 리다이렉트 없이 현재 경로를 유지합니다.
       return null;
     },
     routes: [
+<<<<<<< HEAD
       GoRoute(
         path: '/',
         redirect: (_, __) => Routes.home,
@@ -90,6 +101,18 @@ GoRouter appRouter(AppRouterRef ref) {
             type: type,
           );
         },
+=======
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) => const SplashScreen(),
+      ),
+      // Auth Routes
+      GoRoute(
+        path: '/onboarding',
+        name: 'onboarding',
+        builder: (context, state) => const LoginPage(),
+>>>>>>> feature/1-메인-화면-스크린-만들기
       ),
       GoRoute(
         path: '/notification',
@@ -104,7 +127,10 @@ GoRouter appRouter(AppRouterRef ref) {
     ],
   );
 }
+<<<<<<< HEAD
 
 class LoginPage {
   const LoginPage();
 }
+=======
+>>>>>>> feature/1-메인-화면-스크린-만들기
