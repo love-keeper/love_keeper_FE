@@ -1,3 +1,4 @@
+//편지 전체 뼈대
 /*import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // jsonEncode 사용을 위해 추가!

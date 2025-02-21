@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/line_painter.dart';
 import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/letter_preview.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_exit_dialog.dart';
+import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_bottom_sheet_dialog.dart';
 import 'package:love_keeper_fe/features/auth/letter/data/letter_texts.dart';
 
 class SendLetterPage extends StatefulWidget {
@@ -64,32 +64,6 @@ class _SendLetterPageState extends State<SendLetterPage> {
   void _closePreview() {
     setState(() {
       isPreview = false;
-    });
-  }
-
-  void _handleBackButton() {
-    if (currentStep == 0) {
-      _showExitDialog();
-    } else {
-      setState(() {
-        currentStep--;
-        _textController.text = stepTexts[currentStep];
-      });
-    }
-  }
-
-  void _showExitDialog() {
-    FocusScope.of(context).unfocus(); // 키보드를 내림
-    Future.delayed(const Duration(milliseconds: 200), () {
-      setState(() {
-        showExitDialog = true;
-      });
-    });
-  }
-
-  void _hideExitDialog() {
-    setState(() {
-      showExitDialog = false;
     });
   }
 
@@ -182,6 +156,73 @@ class _SendLetterPageState extends State<SendLetterPage> {
     final List<double> lineLengths = getLineLengths(currentStep);
     final String previewContent =
         stepTexts.where((text) => text.isNotEmpty).join(" "); //미리보기 모드
+    void _showExitDialog() {
+      // 키보드를 먼저 닫음
+      FocusScope.of(context).unfocus();
+
+      // 키보드가 완전히 닫힌 후 바텀 시트를 띄우도록 약간의 딜레이 추가
+      Future.delayed(const Duration(milliseconds: 200), () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent, // 배경을 투명하게 유지
+          isDismissible: true, // 배경 클릭 시 닫히도록 설정
+          enableDrag: true, // 드래그하여 닫을 수 있도록 설정
+          builder: (BuildContext context) {
+            // scaleFactor를 build 내에서 정의해야 함(예시: 이미 정의되어 있다고 가정)
+            // 여기서는 기존에 정의된 scaleFactor 변수가 있다고 가정합니다.
+            return GestureDetector(
+              onTap: () => Navigator.pop(context), // 배경 클릭 시 닫기
+              behavior: HitTestBehavior.opaque,
+              child: Stack(
+                children: [
+                  // 바텀시트를 하단에 붙이기
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 288 * scaleFactor, // 바텀시트 높이 조정
+                      child: CustomBottomSheetDialog(
+                        scaleFactor: scaleFactor,
+                        title: "작성을 중단하시겠어요?",
+                        content: "나가기 선택 시,\n작성된 편지는 저장되지 않습니다.",
+                        exitText: "나가기",
+                        saveText: "저장하기",
+                        showSaveButton: true,
+                        onExit: _exitToHome,
+                        onSave: () => Navigator.pop(context),
+                        onDismiss: () => Navigator.pop(context),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      });
+    }
+
+    void _hideExitDialog() {
+      setState(() {
+        showExitDialog = false;
+      });
+    }
+
+//뒤로가기 버튼
+    void _handleBackButton() {
+      if (currentStep == 0) {
+        _showExitDialog();
+      } else {
+        setState(() {
+          currentStep--;
+          _textController.text = stepTexts[currentStep];
+        });
+      }
+    }
+
 //미리보기 모드
     if (isPreview) {
       return Scaffold(
@@ -384,6 +425,7 @@ class _SendLetterPageState extends State<SendLetterPage> {
                                       ),
                                     ),
                                   ),
+                                  SizedBox(height: 12 * scaleFactor),
                                   Column(
                                     children: [
                                       SizedBox(
@@ -433,15 +475,8 @@ class _SendLetterPageState extends State<SendLetterPage> {
                 ),
               ),
             ),
-            if (showExitDialog)
-              // LetterPage build 메서드 내, if (showExitDialog) 부분을 아래와 같이 수정:
-              if (showExitDialog)
-                CustomExitDialog(
-                  scaleFactor: scaleFactor,
-                  onExit: _exitToHome,
-                  onSave: _hideExitDialog, // 예시로 '저장하기'를 누르면 다이얼로그를 닫도록 함
-                  onDismiss: _hideExitDialog,
-                ),
+
+            //여기에 넣기
           ],
         ),
       );

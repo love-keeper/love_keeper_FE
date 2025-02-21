@@ -60,7 +60,7 @@ dependencies:
 
   http: ^1.2.2
   
-  
+  image_picker: ^1.0.4 # 최신 버전 확인 후 변경 가능
 
 dev_dependencies:
   flutter_test:
@@ -96,6 +96,10 @@ flutter:
     - assets/images/login_page/
     - assets/images/onboarding/
     - assets/images/letter_page/
+    - assets/images/my_page/
+    - assets/images/Backup/
+    
+    
   
 
   # An image asset can refer to one or more resolution-specific "variants", see
