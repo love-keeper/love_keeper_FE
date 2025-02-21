@@ -1,18 +1,21 @@
+import 'package:love_keeper_fe/core/network/client/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
-import '../datasources/auth_remote_datasource.dart';
 import '../models/request/login_request.dart';
+import '../models/request/password_reset_request.dart';
+import '../models/request/send_code_request.dart';
 import '../models/request/signup_request.dart';
+import '../models/request/verify_code_request.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 part 'auth_repository_impl.g.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final AuthRemoteDataSource remoteDataSource;
+  final ApiClient apiClient;
 
-  AuthRepositoryImpl(this.remoteDataSource);
+  AuthRepositoryImpl(this.apiClient);
 
   @override
   Future<User> signup({
@@ -33,7 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
       providerId: providerId,
       profileImage: profileImage,
     );
-    final response = await remoteDataSource.signup(request);
+    final response = await apiClient.signup(request);
     _handleResponse(response);
     return User(
       memberId: response.result!.memberId,
@@ -56,7 +59,7 @@ class AuthRepositoryImpl implements AuthRepository {
       password: password,
       providerId: providerId,
     );
-    final response = await remoteDataSource.login(request);
+    final response = await apiClient.login(request);
     _handleResponse(response);
     return User(
       memberId: response.result!.memberId,
@@ -64,6 +67,50 @@ class AuthRepositoryImpl implements AuthRepository {
       role: response.result!.role,
       social: response.result!.social,
     );
+  }
+
+  @override
+  Future<String> sendCode(String email) async {
+    final request = SendCodeRequest(email: email);
+    final response = await apiClient.sendCode(request);
+    _handleResponse(response);
+    return response.result!;
+  }
+
+  @override
+  Future<String> verifyCode(String email, int code) async {
+    final request = VerifyCodeRequest(email: email, code: code);
+    final response = await apiClient.verifyCode(request);
+    _handleResponse(response);
+    return response.result!;
+  }
+
+  @override
+  Future<String> logout() async {
+    final response = await apiClient.logout();
+    _handleResponse(response);
+    return response.result!;
+  }
+
+  @override
+  Future<String> resetPasswordRequest(String email) async {
+    final request = SendCodeRequest(email: email);
+    final response = await apiClient.resetPasswordRequest(request);
+    _handleResponse(response);
+    return response.result!;
+  }
+
+  @override
+  Future<String> resetPassword(
+      String email, String password, String passwordConfirm) async {
+    final request = PasswordResetRequest(
+      email: email,
+      password: password,
+      passwordConfirm: passwordConfirm,
+    );
+    final response = await apiClient.resetPassword(request);
+    _handleResponse(response);
+    return response.result!;
   }
 
   void _handleResponse(ApiResponse response) {
@@ -75,6 +122,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
 @riverpod
 AuthRepository authRepository(AuthRepositoryRef ref) {
-  final dio = ref.watch(dioProvider);
-  return AuthRepositoryImpl(AuthRemoteDataSource(dio));
+  final apiClient = ref.watch(apiClientProvider);
+  return AuthRepositoryImpl(apiClient);
 }

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../network/client/api_client.dart'; // ApiClient 임포트 추가
+import '../../network/client/api_client.dart';
 
 part 'dio_module.g.dart';
 
@@ -9,9 +9,13 @@ part 'dio_module.g.dart';
 Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://lovekeeper.site/api',
+      baseUrl: 'https://lovekeeper.site',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
+      contentType: 'application/json', // 명시적으로 추가
+      headers: {
+        'Accept': 'application/json', // 서버 응답 타입도 명시
+      },
     ),
   );
 
@@ -23,6 +27,8 @@ Dio dio(DioRef ref) {
         if (accessToken != null) {
           options.headers['Authorization'] = 'Bearer $accessToken';
         }
+        // Content-Type 강제 설정 (필요 시)
+        options.headers['Content-Type'] = 'application/json';
         handler.next(options);
       },
       onResponse: (response, handler) async {
@@ -49,8 +55,7 @@ Dio dio(DioRef ref) {
               await prefs.setString('access_token', newAccessToken);
               final options = error.requestOptions;
               options.headers['Authorization'] = 'Bearer $newAccessToken';
-              final retryResponse =
-                  await dio.fetch<Response<dynamic>>(options); // 타입 명시
+              final retryResponse = await dio.fetch<Response<dynamic>>(options);
               handler.resolve(retryResponse);
             } catch (e) {
               handler.next(error);
@@ -71,5 +76,5 @@ Dio dio(DioRef ref) {
 @Riverpod(keepAlive: true)
 ApiClient apiClient(ApiClientRef ref) {
   final dio = ref.watch(dioProvider);
-  return ApiClient(dio); // ApiClient 생성자 호출
+  return ApiClient(dio);
 }

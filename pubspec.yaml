@@ -79,6 +79,8 @@ dev_dependencies:
   riverpod_generator: ^2.3.10
   dart_code_metrics: ^5.7.6
 
+  mockito: ^5.4.4
+
   flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the

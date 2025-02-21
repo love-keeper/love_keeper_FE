@@ -64,9 +64,59 @@ class AuthViewModel extends _$AuthViewModel {
     }
   }
 
+  Future<String> sendCode(String email) async {
+    try {
+      return await _repository.sendCode(email);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> verifyCode(String email, int code) async {
+    try {
+      return await _repository.verifyCode(email, code);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> logout() async {
+    try {
+      final result = await _repository.logout();
+      await _clearTokens();
+      state = const AsyncValue.data(null);
+      return result;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> resetPasswordRequest(String email) async {
+    try {
+      return await _repository.resetPasswordRequest(email);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<String> resetPassword(
+      String email, String password, String passwordConfirm) async {
+    try {
+      return await _repository.resetPassword(email, password, passwordConfirm);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<void> _saveTokens(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('memberId', user.memberId);
-    // Dio 인터셉터에서 이미 토큰을 저장하므로 여기서는 추가 작업 불필요
+  }
+
+  Future<void> _clearTokens() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token');
+    await prefs.remove('refresh_token');
+    await prefs.remove('memberId');
   }
 }
