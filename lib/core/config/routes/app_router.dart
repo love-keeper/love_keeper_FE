@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:love_keeper_fe/features/auth/login_page/presentation/pages/email_password_input_page.dart';
-import 'package:love_keeper_fe/features/auth/login_page/presentation/pages/profile_registration_page.dart';
-import 'package:love_keeper_fe/features/auth/login_page/presentation/pages/code_connect_page.dart';
+import 'package:love_keeper_fe/features/auth/start_login_page/presentation/pages/email_password_input_page.dart';
+import 'package:love_keeper_fe/features/auth/start_login_page/presentation/pages/profile_registration_page.dart';
+import 'package:love_keeper_fe/features/auth/start_login_page/presentation/pages/code_connect_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 // Login 관련 페이지
 
-import '../../../features/auth/login_page/presentation/pages/email_login_page.dart';
-import '../../../features/auth/login_page/presentation/pages/pw_finding_page.dart';
-import '../../../features/auth/login_page/presentation/pages/password_edit_page.dart';
-import '../../../features/auth/login_page/presentation/pages/signup_page.dart';
+import '../../../features/auth/start_login_page/presentation/pages/email_login_page.dart';
+import '../../../features/auth/start_login_page/presentation/pages/pw_finding_page.dart';
+import '../../../features/auth/start_login_page/presentation/pages/password_edit_page.dart';
+import '../../../features/auth/start_login_page/presentation/pages/signup_page.dart';
 // Letter 관련 페이지
 //import '../../../features//auth/letter/presentation/pages/letter_page.dart';
 import '../../../features/auth/letter/presentation/pages/send_letter_screen.dart';
