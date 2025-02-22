@@ -21,19 +21,14 @@ ApiResponse<T> _$ApiResponseFromJson<T>(
 
 /// @nodoc
 mixin _$ApiResponse<T> {
-  bool get isSuccess => throw _privateConstructorUsedError;
+  String get timestamp => throw _privateConstructorUsedError;
   String get code => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
-  String get createdAt => throw _privateConstructorUsedError;
-  T get data => throw _privateConstructorUsedError;
+  T? get result => throw _privateConstructorUsedError;
 
-  /// Serializes this ApiResponse to a JSON map.
   Map<String, dynamic> toJson(Object? Function(T) toJsonT) =>
       throw _privateConstructorUsedError;
-
-  /// Create a copy of ApiResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ApiResponseCopyWith<T, ApiResponse<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -44,8 +39,7 @@ abstract class $ApiResponseCopyWith<T, $Res> {
           ApiResponse<T> value, $Res Function(ApiResponse<T>) then) =
       _$ApiResponseCopyWithImpl<T, $Res, ApiResponse<T>>;
   @useResult
-  $Res call(
-      {bool isSuccess, String code, String message, String createdAt, T data});
+  $Res call({String timestamp, String code, String message, T? result});
 }
 
 /// @nodoc
@@ -58,22 +52,19 @@ class _$ApiResponseCopyWithImpl<T, $Res, $Val extends ApiResponse<T>>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of ApiResponse
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isSuccess = null,
+    Object? timestamp = null,
     Object? code = null,
     Object? message = null,
-    Object? createdAt = null,
-    Object? data = freezed,
+    Object? result = freezed,
   }) {
     return _then(_value.copyWith(
-      isSuccess: null == isSuccess
-          ? _value.isSuccess
-          : isSuccess // ignore: cast_nullable_to_non_nullable
-              as bool,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as String,
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -82,14 +73,10 @@ class _$ApiResponseCopyWithImpl<T, $Res, $Val extends ApiResponse<T>>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as T,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as T?,
     ) as $Val);
   }
 }
@@ -102,8 +89,7 @@ abstract class _$$ApiResponseImplCopyWith<T, $Res>
       __$$ApiResponseImplCopyWithImpl<T, $Res>;
   @override
   @useResult
-  $Res call(
-      {bool isSuccess, String code, String message, String createdAt, T data});
+  $Res call({String timestamp, String code, String message, T? result});
 }
 
 /// @nodoc
@@ -114,22 +100,19 @@ class __$$ApiResponseImplCopyWithImpl<T, $Res>
       _$ApiResponseImpl<T> _value, $Res Function(_$ApiResponseImpl<T>) _then)
       : super(_value, _then);
 
-  /// Create a copy of ApiResponse
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? isSuccess = null,
+    Object? timestamp = null,
     Object? code = null,
     Object? message = null,
-    Object? createdAt = null,
-    Object? data = freezed,
+    Object? result = freezed,
   }) {
     return _then(_$ApiResponseImpl<T>(
-      isSuccess: null == isSuccess
-          ? _value.isSuccess
-          : isSuccess // ignore: cast_nullable_to_non_nullable
-              as bool,
+      timestamp: null == timestamp
+          ? _value.timestamp
+          : timestamp // ignore: cast_nullable_to_non_nullable
+              as String,
       code: null == code
           ? _value.code
           : code // ignore: cast_nullable_to_non_nullable
@@ -138,46 +121,52 @@ class __$$ApiResponseImplCopyWithImpl<T, $Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as String,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
-              as T,
+      result: freezed == result
+          ? _value.result
+          : result // ignore: cast_nullable_to_non_nullable
+              as T?,
     ));
   }
 }
 
 /// @nodoc
 @JsonSerializable(genericArgumentFactories: true)
-class _$ApiResponseImpl<T> implements _ApiResponse<T> {
+class _$ApiResponseImpl<T>
+    with DiagnosticableTreeMixin
+    implements _ApiResponse<T> {
   const _$ApiResponseImpl(
-      {required this.isSuccess,
+      {required this.timestamp,
       required this.code,
       required this.message,
-      required this.createdAt,
-      required this.data});
+      this.result});
 
   factory _$ApiResponseImpl.fromJson(
           Map<String, dynamic> json, T Function(Object?) fromJsonT) =>
       _$$ApiResponseImplFromJson(json, fromJsonT);
 
   @override
-  final bool isSuccess;
+  final String timestamp;
   @override
   final String code;
   @override
   final String message;
   @override
-  final String createdAt;
-  @override
-  final T data;
+  final T? result;
 
   @override
-  String toString() {
-    return 'ApiResponse<$T>(isSuccess: $isSuccess, code: $code, message: $message, createdAt: $createdAt, data: $data)';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ApiResponse<$T>(timestamp: $timestamp, code: $code, message: $message, result: $result)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ApiResponse<$T>'))
+      ..add(DiagnosticsProperty('timestamp', timestamp))
+      ..add(DiagnosticsProperty('code', code))
+      ..add(DiagnosticsProperty('message', message))
+      ..add(DiagnosticsProperty('result', result));
   }
 
   @override
@@ -185,23 +174,19 @@ class _$ApiResponseImpl<T> implements _ApiResponse<T> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$ApiResponseImpl<T> &&
-            (identical(other.isSuccess, isSuccess) ||
-                other.isSuccess == isSuccess) &&
+            (identical(other.timestamp, timestamp) ||
+                other.timestamp == timestamp) &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.message, message) || other.message == message) &&
-            (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt) &&
-            const DeepCollectionEquality().equals(other.data, data));
+            const DeepCollectionEquality().equals(other.result, result));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, isSuccess, code, message,
-      createdAt, const DeepCollectionEquality().hash(data));
+  int get hashCode => Object.hash(runtimeType, timestamp, code, message,
+      const DeepCollectionEquality().hash(result));
 
-  /// Create a copy of ApiResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ApiResponseImplCopyWith<T, _$ApiResponseImpl<T>> get copyWith =>
@@ -216,31 +201,25 @@ class _$ApiResponseImpl<T> implements _ApiResponse<T> {
 
 abstract class _ApiResponse<T> implements ApiResponse<T> {
   const factory _ApiResponse(
-      {required final bool isSuccess,
+      {required final String timestamp,
       required final String code,
       required final String message,
-      required final String createdAt,
-      required final T data}) = _$ApiResponseImpl<T>;
+      final T? result}) = _$ApiResponseImpl<T>;
 
   factory _ApiResponse.fromJson(
           Map<String, dynamic> json, T Function(Object?) fromJsonT) =
       _$ApiResponseImpl<T>.fromJson;
 
   @override
-  bool get isSuccess;
+  String get timestamp;
   @override
   String get code;
   @override
   String get message;
   @override
-  String get createdAt;
+  T? get result;
   @override
-  T get data;
-
-  /// Create a copy of ApiResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ApiResponseImplCopyWith<T, _$ApiResponseImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -138,7 +138,7 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
         buttonText: "연결하기",
         onPressed: () {
           // 연결하기 버튼 누르면 메인 페이지로 이동
-          context.push('/main');
+          context.push('/mainPage');
         },
       ),
     );

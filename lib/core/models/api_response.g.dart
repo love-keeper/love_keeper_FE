@@ -11,11 +11,10 @@ _$ApiResponseImpl<T> _$$ApiResponseImplFromJson<T>(
   T Function(Object? json) fromJsonT,
 ) =>
     _$ApiResponseImpl<T>(
-      isSuccess: json['isSuccess'] as bool,
+      timestamp: json['timestamp'] as String,
       code: json['code'] as String,
       message: json['message'] as String,
-      createdAt: json['createdAt'] as String,
-      data: fromJsonT(json['data']),
+      result: _$nullableGenericFromJson(json['result'], fromJsonT),
     );
 
 Map<String, dynamic> _$$ApiResponseImplToJson<T>(
@@ -23,9 +22,20 @@ Map<String, dynamic> _$$ApiResponseImplToJson<T>(
   Object? Function(T value) toJsonT,
 ) =>
     <String, dynamic>{
-      'isSuccess': instance.isSuccess,
+      'timestamp': instance.timestamp,
       'code': instance.code,
       'message': instance.message,
-      'createdAt': instance.createdAt,
-      'data': toJsonT(instance.data),
+      'result': _$nullableGenericToJson(instance.result, toJsonT),
     };
+
+T? _$nullableGenericFromJson<T>(
+  Object? input,
+  T Function(Object? json) fromJson,
+) =>
+    input == null ? null : fromJson(input);
+
+Object? _$nullableGenericToJson<T>(
+  T? input,
+  Object? Function(T value) toJson,
+) =>
+    input == null ? null : toJson(input);

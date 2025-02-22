@@ -1,57 +1,23 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../core/network/dio_client.dart';
-import '../models/user_model.dart';
-import 'auth_api_client.dart';
+import 'package:retrofit/retrofit.dart';
+import 'package:dio/dio.dart';
+import '../../../../core/models/api_response.dart';
+import '../models/request/login_request.dart';
+import '../models/request/signup_request.dart';
+import '../models/response/auth_response.dart';
 
 part 'auth_remote_datasource.g.dart';
 
+@RestApi()
 abstract class AuthRemoteDataSource {
-  Future<UserModel> login({
-    required String email,
-    required String password,
-  });
+  factory AuthRemoteDataSource(Dio dio, {String baseUrl}) =
+      _AuthRemoteDataSource;
 
-  Future<UserModel> register({
-    required String email,
-    required String password,
-    required String nickname,
-  });
-}
+  @POST('/api/auth/signup')
+  Future<ApiResponse<AuthResponse>> signup(@Body() SignupRequest request);
 
-@riverpod
-AuthRemoteDataSource authRemoteDataSource(AuthRemoteDataSourceRef ref) {
-  final dio = ref.watch(dioClientProvider);
-  return AuthRemoteDataSourceImpl(AuthApiClient(dio));
-}
+  @POST('/api/auth/login')
+  Future<ApiResponse<AuthResponse>> login(@Body() LoginRequest request);
 
-class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final AuthApiClient _client;
-
-  AuthRemoteDataSourceImpl(this._client);
-
-  @override
-  Future<UserModel> login({
-    required String email,
-    required String password,
-  }) async {
-    final response = await _client.login({
-      'email': email,
-      'password': password,
-    });
-    return response.data;
-  }
-
-  @override
-  Future<UserModel> register({
-    required String email,
-    required String password,
-    required String nickname,
-  }) async {
-    final response = await _client.register({
-      'email': email,
-      'password': password,
-      'nickname': nickname,
-    });
-    return response.data;
-  }
+  @POST('/api/auth/reissue')
+  Future<String> reissue(@Body() String refreshToken);
 }

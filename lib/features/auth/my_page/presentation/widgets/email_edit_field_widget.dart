@@ -131,7 +131,15 @@ class _EmailEditFieldWidgetState extends State<EmailEditFieldWidget> {
                   setState(() {});
                 },
               ),
-
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0.5 * widget.scaleFactor,
+                child: Container(
+                  height: 1.5 * widget.scaleFactor,
+                  color: const Color(0xFFFF859B),
+                ),
+              ),
               // 타이머 텍스트는 사용자가 입력하지 않았을 때만 표시 (텍스트 필드 오른쪽 끝에 위치)
               if (!hasText)
                 Positioned(

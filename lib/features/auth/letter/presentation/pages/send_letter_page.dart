@@ -68,7 +68,7 @@ class _SendLetterPageState extends State<SendLetterPage> {
   }
 
   void _exitToHome() {
-    Navigator.of(context).pop();
+    context.pushReplacement('/mainPage');
   }
 
   // 버튼에 표시될 텍스트 결정
@@ -108,43 +108,9 @@ class _SendLetterPageState extends State<SendLetterPage> {
     };
     debugPrint(jsonEncode(letterData));
 
-    // onComplete 콜백에 HTTP 전송 로직을 그대로 넣습니다.
-    Future<void> onCompleteCallback() async {
-      try {
-        final response = await http.post(
-          Uri.parse("https://your-backend.com/api/send-letter"),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode(letterData),
-        );
-        if (response.statusCode == 200) {
-          debugPrint("✅ 편지 전송 성공!");
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("📬 편지 전송 성공!")),
-            );
-          }
-        } else {
-          debugPrint("❌ 편지 전송 실패: ${response.body}");
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("편지 전송 실패: ${response.body}")),
-            );
-          }
-        }
-      } catch (e) {
-        debugPrint("🚨 서버 오류 발생: $e");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("네트워크 오류로 인해 편지를 전송할 수 없습니다.")),
-          );
-        }
-      }
-    }
-
     // go_router를 이용하여 sendLetter 경로로 이동합니다.
     context.pushNamed('sendLetterScreen', extra: {
       'letterData': letterData,
-      'onComplete': onCompleteCallback,
     });
   }
 

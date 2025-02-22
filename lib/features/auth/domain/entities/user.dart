@@ -1,19 +1,13 @@
-class User {
-  final int id;
-  final String email;
-  final String nickname;
-  final String? profileImageUrl;
-  final String role;
-  final String provider;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const User({
-    required this.id,
-    required this.email,
-    required this.nickname,
-    this.profileImageUrl,
-    required this.role,
-    required this.provider,
-  });
+part 'user.freezed.dart';
 
-  bool get isAdmin => role == 'ROLE_ADMIN';
+@freezed
+class User with _$User {
+  const factory User({
+    required int memberId,
+    String? email,
+    String? role,
+    bool? social,
+  }) = _User;
 }

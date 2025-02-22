@@ -9,9 +9,14 @@ class RouteNames {
       '/profileRegistration'; //이메일 가입화면
   static const String codeConnectPage = '/codeConnect'; //이메일 가입화면
 
+//onboarding Route
+  static const String splashScreen = '/splashScreen';
+  static const String onboarding = '/onboarding';
+
   // Home Routes
   static const String home = '/home';
   static const String profile = '/profile';
+  static const String mainPage = '/mainPage';
 
   // Letter Routes (새로 추가)
   //static const String letter = '/letter'; // 화해요청 화면 (LetterPage)
