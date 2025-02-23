@@ -1,14 +1,14 @@
+import 'dart:io';
 import 'package:love_keeper_fe/core/network/client/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
-import '../models/request/login_request.dart';
-import '../models/request/password_reset_request.dart';
-import '../models/request/send_code_request.dart';
-import '../models/request/signup_request.dart';
-import '../models/request/verify_code_request.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../models/request/login_request.dart';
+import '../models/request/send_code_request.dart';
+import '../models/request/verify_code_request.dart';
+import '../models/request/password_reset_request.dart';
 
 part 'auth_repository_impl.g.dart';
 
@@ -25,9 +25,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String provider,
     String? password,
     String? providerId,
-    String? profileImage,
+    File? profileImage,
   }) async {
-    final request = SignupRequest(
+    final response = await apiClient.signup(
       email: email,
       nickname: nickname,
       birthDate: birthDate,
@@ -36,7 +36,6 @@ class AuthRepositoryImpl implements AuthRepository {
       providerId: providerId,
       profileImage: profileImage,
     );
-    final response = await apiClient.signup(request);
     _handleResponse(response);
     return User(
       memberId: response.result!.memberId,
@@ -113,7 +112,8 @@ class AuthRepositoryImpl implements AuthRepository {
     return response.result!;
   }
 
-  void _handleResponse(ApiResponse response) {
+  void _handleResponse(ApiResponse<dynamic> response) {
+    // 타입 명시
     if (!['COMMON200', 'COMMON201'].contains(response.code)) {
       throw Exception('${response.code}: ${response.message}');
     }

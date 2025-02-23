@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 part 'api_response.freezed.dart';
 part 'api_response.g.dart';
 
-@Freezed(genericArgumentFactories: true) // 제네릭 지원 활성화
+@Freezed(genericArgumentFactories: true)
 class ApiResponse<T> with _$ApiResponse<T> {
   const factory ApiResponse({
     required String timestamp,

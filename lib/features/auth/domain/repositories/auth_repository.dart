@@ -1,4 +1,4 @@
-import '../entities/user.dart';
+import 'dart:io';
 
 import '../entities/user.dart';
 
@@ -10,7 +10,7 @@ abstract class AuthRepository {
     required String provider,
     String? password,
     String? providerId,
-    String? profileImage,
+    File? profileImage, // File 타입으로 변경
   });
 
   Future<User> login({

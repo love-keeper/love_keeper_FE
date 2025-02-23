@@ -9,13 +9,11 @@ part 'dio_module.g.dart';
 Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://lovekeeper.site',
+      baseUrl: 'http://localhost:8080',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
-      contentType: 'application/json', // 명시적으로 추가
-      headers: {
-        'Accept': 'application/json', // 서버 응답 타입도 명시
-      },
+      // contentType은 기본값으로 두고, multipart 요청에서 덮어씌워짐
+      headers: {'Accept': 'application/json'},
     ),
   );
 
@@ -24,23 +22,38 @@ Dio dio(DioRef ref) {
       onRequest: (options, handler) async {
         final prefs = await SharedPreferences.getInstance();
         final accessToken = prefs.getString('access_token');
-        if (accessToken != null) {
+        print('Requesting with Access Token: $accessToken for ${options.path}');
+
+        // /api/auth로 시작하는 경로 중 /api/auth/logout만 토큰 추가
+        if (accessToken != null &&
+            (options.path == '/api/auth/logout' ||
+                !options.path.startsWith('/api/auth'))) {
           options.headers['Authorization'] = 'Bearer $accessToken';
         }
-        // Content-Type 강제 설정 (필요 시)
-        options.headers['Content-Type'] = 'application/json';
+
+        // /api/auth/signup은 multipart/form-data로 전송되므로 Content-Type 설정 제외
+        if (options.path != '/api/auth/signup') {
+          options.headers['Content-Type'] = 'application/json';
+        }
         handler.next(options);
       },
       onResponse: (response, handler) async {
-        final refreshToken = response.headers['set-cookie']
-            ?.firstWhere((cookie) => cookie.contains('refresh_token'),
-                orElse: () => '')
-            .split(';')
-            .first
-            .split('=')[1];
-        if (refreshToken != null) {
-          final prefs = await SharedPreferences.getInstance();
+        final prefs = await SharedPreferences.getInstance();
+        final accessToken = response.headers
+            .value('Authorization')
+            ?.replaceFirst('Bearer ', '');
+        if (accessToken != null) {
+          await prefs.setString('access_token', accessToken);
+          print('Stored access token from response: $accessToken');
+        }
+        final refreshTokenCookie = response.headers['set-cookie']?.firstWhere(
+            (cookie) => cookie.contains('refresh_token'),
+            orElse: () => '');
+        if (refreshTokenCookie != null) {
+          final refreshToken =
+              refreshTokenCookie.split(';').first.split('=')[1];
           await prefs.setString('refresh_token', refreshToken);
+          print('Stored refresh token from response: $refreshToken');
         }
         handler.next(response);
       },
@@ -54,7 +67,13 @@ Dio dio(DioRef ref) {
               final newAccessToken = await apiClient.reissue(refreshToken);
               await prefs.setString('access_token', newAccessToken);
               final options = error.requestOptions;
-              options.headers['Authorization'] = 'Bearer $newAccessToken';
+              if (options.path == '/api/auth/logout' ||
+                  !options.path.startsWith('/api/auth')) {
+                options.headers['Authorization'] = 'Bearer $newAccessToken';
+              }
+              if (options.path != '/api/auth/signup') {
+                options.headers['Content-Type'] = 'application/json';
+              }
               final retryResponse = await dio.fetch<Response<dynamic>>(options);
               handler.resolve(retryResponse);
             } catch (e) {
@@ -69,6 +88,15 @@ Dio dio(DioRef ref) {
       },
     ),
   );
+
+  dio.interceptors.add(LogInterceptor(
+    request: true,
+    requestHeader: true,
+    requestBody: true,
+    responseHeader: true,
+    responseBody: true,
+    logPrint: print,
+  ));
 
   return dio;
 }

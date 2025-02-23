@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:love_keeper_fe/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +15,14 @@ class AuthViewModel extends _$AuthViewModel {
   @override
   AsyncValue<User?> build() {
     _repository = ref.watch(authRepositoryProvider);
+    _checkLoginStatus();
     return const AsyncValue.data(null);
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('access_token');
+    print('Initial access token: $token');
   }
 
   Future<void> signup({
@@ -23,7 +32,7 @@ class AuthViewModel extends _$AuthViewModel {
     required String provider,
     String? password,
     String? providerId,
-    String? profileImage,
+    File? profileImage,
   }) async {
     state = const AsyncValue.loading();
     try {
@@ -59,8 +68,16 @@ class AuthViewModel extends _$AuthViewModel {
       );
       await _saveTokens(user);
       state = AsyncValue.data(user);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e) {
+      String errorMessage;
+      if (e is DioException && e.response?.statusCode == 401) {
+        errorMessage = '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.';
+      } else {
+        errorMessage = '로그인 중 오류 발생: $e';
+      }
+      print(errorMessage);
+      state = AsyncValue.error(errorMessage, StackTrace.current);
+      rethrow;
     }
   }
 
@@ -111,6 +128,9 @@ class AuthViewModel extends _$AuthViewModel {
   Future<void> _saveTokens(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('memberId', user.memberId);
+    final accessToken = prefs.getString('access_token');
+    print(
+        'Saved tokens - memberId: ${user.memberId}, accessToken: $accessToken');
   }
 
   Future<void> _clearTokens() async {
