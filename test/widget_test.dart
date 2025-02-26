@@ -7,13 +7,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:love_keeper_fe/main.dart';
+import 'package:love_keeper_fe/features/auth/my_page/presentation/pages/my_page.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const LoveKeeper());
+    await tester.pumpWidget(const MyPage());
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

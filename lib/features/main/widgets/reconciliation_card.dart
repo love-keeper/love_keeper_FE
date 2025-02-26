@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ReconciliationCard extends StatelessWidget {
   const ReconciliationCard({super.key});
@@ -6,25 +7,23 @@ class ReconciliationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 160, // 카드의 높이
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20), // 모서리 둥글게
-        image: const DecorationImage(
-          image: AssetImage('assets/images/main_page/img_main_Rectangle.png'),
-          fit: BoxFit.cover,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.05),
-            offset: Offset(0, 0), // 그림자 방향
-            blurRadius: 5, // 흐림 효과
-            spreadRadius: 0,
+        height: 160, // 카드의 높이
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20), // 모서리 둥글게
+          image: const DecorationImage(
+            image: AssetImage('assets/images/main_page/img_main_Rectangle.png'),
+            fit: BoxFit.cover,
           ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
+          boxShadow: const [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 0.05),
+              offset: Offset(0, 0), // 그림자 방향
+              blurRadius: 5, // 흐림 효과
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
           // 텍스트 영역
           const Expanded(
             child: Column(
@@ -61,22 +60,26 @@ class ReconciliationCard extends StatelessWidget {
             ),
           ),
           // 이미지 영역
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 20,
-            ),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: Image.asset(
-                'assets/images/main_page/letter.png', // 편지 이미지 경로
-                width: 110, // 적절한 너비
-                height: 130, // 적절한 높이
-                fit: BoxFit.contain, // 이미지 비율 유지
+          GestureDetector(
+            onTap: () {
+              context.pushNamed('sendLetter');
+              // 또는 context.pushNamed('targetPage'); 라우트 이름으로 이동할 수도 있습니다.
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 20,
+              ),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Image.asset(
+                  'assets/images/main_page/letter.png', // 편지 이미지 경로
+                  width: 110, // 적절한 너비
+                  height: 130, // 적절한 높이
+                  fit: BoxFit.contain, // 이미지 비율 유지
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          )
+        ]));
   }
 }
