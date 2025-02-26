@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../entities/user.dart';
 
 abstract class AuthRepository {
@@ -8,7 +10,7 @@ abstract class AuthRepository {
     required String provider,
     String? password,
     String? providerId,
-    String? profileImage,
+    File? profileImage, // File 타입으로 변경
   });
 
   Future<User> login({
@@ -17,4 +19,15 @@ abstract class AuthRepository {
     String? password,
     String? providerId,
   });
+
+  Future<String> sendCode(String email);
+
+  Future<String> verifyCode(String email, int code);
+
+  Future<String> logout();
+
+  Future<String> resetPasswordRequest(String email);
+
+  Future<String> resetPassword(
+      String email, String password, String passwordConfirm);
 }
