@@ -19,7 +19,6 @@ import '../../models/api_response.dart';
 import '../../../features/auth/data/models/request/login_request.dart';
 import '../../../features/auth/data/models/request/password_reset_request.dart';
 import '../../../features/auth/data/models/request/send_code_request.dart';
-import '../../../features/auth/data/models/request/signup_request.dart';
 import '../../../features/auth/data/models/request/verify_code_request.dart';
 import '../../../features/auth/data/models/response/auth_response.dart';
 import '../../../features/couples/data/models/request/connect_request.dart';
