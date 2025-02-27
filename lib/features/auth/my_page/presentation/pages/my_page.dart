@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-// TabBarWidget import 추가 (경로는 프로젝트 구조에 맞게 조정)
-import 'package:love_keeper_fe/features/main/widgets/tab_bar.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -273,20 +271,16 @@ class _MyPageState extends State<MyPage> {
       child: Container(
         width: 335 * scaleFactor,
         height: 38 * scaleFactor,
-        color: Colors.transparent,
         padding: EdgeInsets.symmetric(vertical: 7 * scaleFactor),
         alignment: Alignment.topLeft,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               title,
-              textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 16 * scaleFactor,
                 fontWeight: FontWeight.w500,
-                height: 24 / 16,
                 letterSpacing: -0.4 * scaleFactor,
                 color: Colors.black,
               ),
@@ -297,11 +291,9 @@ class _MyPageState extends State<MyPage> {
                 if (value.isNotEmpty)
                   Text(
                     value,
-                    textAlign: TextAlign.right,
                     style: TextStyle(
                       fontSize: 16 * scaleFactor,
                       fontWeight: FontWeight.w400,
-                      height: 20 / 16,
                       letterSpacing: -0.4 * scaleFactor,
                       color: const Color(0xFF4D4F58),
                     ),
@@ -327,7 +319,7 @@ class _MyPageState extends State<MyPage> {
     final double scaleFactor = deviceWidth / baseWidth;
 
     return Scaffold(
-      backgroundColor: Colors.white, // 원하는 배경색 지정
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -338,7 +330,6 @@ class _MyPageState extends State<MyPage> {
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
-            height: 26 / 18,
             letterSpacing: -0.45 * scaleFactor,
             color: const Color(0xFF27282C),
           ),
@@ -361,7 +352,6 @@ class _MyPageState extends State<MyPage> {
       ),
       body: Stack(
         children: [
-          // 메인 컨텐츠: 스크롤 가능한 정보 영역
           GestureDetector(
             onTap: () => FocusScope.of(context).unfocus(),
             child: SingleChildScrollView(
@@ -407,7 +397,6 @@ class _MyPageState extends State<MyPage> {
               ),
             ),
           ),
-          // 카메라(갤러리) 아이콘: 프로필 사진 설정을 위한 버튼
           Positioned(
             top: 68 * scaleFactor,
             left: 202 * scaleFactor,
@@ -430,19 +419,7 @@ class _MyPageState extends State<MyPage> {
           ),
         ],
       ),
-      // 하단에 TabBarWidget 추가 (현재 마이 페이지이므로 currentIndex를 2로 설정)
-      bottomNavigationBar: TabBarWidget(
-        currentIndex: 2,
-        onTabSelected: (index) {
-          if (index == 0) {
-            context.go('/mainPage');
-          } else if (index == 1) {
-            context.push('/storage');
-          } else if (index == 2) {
-            // 이미 마이 페이지이므로 아무 작업도 하지 않음.
-          }
-        },
-      ),
+      // 글로벌 탭바는 ShellRoute에서 관리하므로 여기의 bottomNavigationBar는 제거합니다.
     );
   }
 }
