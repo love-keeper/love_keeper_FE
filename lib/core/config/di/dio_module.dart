@@ -12,7 +12,6 @@ Dio dio(DioRef ref) {
       baseUrl: 'http://localhost:8080',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
-      // contentType은 기본값으로 두고, multipart 요청에서 덮어씌워짐
       headers: {'Accept': 'application/json'},
     ),
   );
@@ -31,8 +30,13 @@ Dio dio(DioRef ref) {
           options.headers['Authorization'] = 'Bearer $accessToken';
         }
 
-        // /api/auth/signup은 multipart/form-data로 전송되므로 Content-Type 설정 제외
-        if (options.path != '/api/auth/signup') {
+        // /api/auth/reissue 요청 시 refresh_token을 Cookie로 추가
+        if (options.path == '/api/auth/reissue') {
+          final refreshToken = prefs.getString('refresh_token');
+          if (refreshToken != null) {
+            options.headers['Cookie'] = 'refresh_token=$refreshToken';
+          }
+        } else if (options.path != '/api/auth/signup') {
           options.headers['Content-Type'] = 'application/json';
         }
         handler.next(options);
@@ -64,19 +68,26 @@ Dio dio(DioRef ref) {
           if (refreshToken != null) {
             try {
               final apiClient = ref.read(apiClientProvider);
-              final newAccessToken = await apiClient.reissue(refreshToken);
-              await prefs.setString('access_token', newAccessToken);
-              final options = error.requestOptions;
-              if (options.path == '/api/auth/logout' ||
-                  !options.path.startsWith('/api/auth')) {
-                options.headers['Authorization'] = 'Bearer $newAccessToken';
+              final response = await apiClient.reissue(refreshToken);
+              final newAccessToken =
+                  response.result; // '토큰 재발급 성공'이 아닌 헤더에서 가져옴
+              if (newAccessToken != null) {
+                await prefs.setString('access_token', newAccessToken);
+                final options = error.requestOptions;
+                if (options.path == '/api/auth/logout' ||
+                    !options.path.startsWith('/api/auth')) {
+                  options.headers['Authorization'] = 'Bearer $newAccessToken';
+                }
+                if (options.path != '/api/auth/signup') {
+                  options.headers['Content-Type'] = 'application/json';
+                }
+                final retryResponse = await dio.fetch(options);
+                handler.resolve(retryResponse);
+              } else {
+                handler.next(error);
               }
-              if (options.path != '/api/auth/signup') {
-                options.headers['Content-Type'] = 'application/json';
-              }
-              final retryResponse = await dio.fetch<Response<dynamic>>(options);
-              handler.resolve(retryResponse);
             } catch (e) {
+              print('Reissue failed: $e');
               handler.next(error);
             }
           } else {

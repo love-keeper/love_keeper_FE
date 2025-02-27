@@ -32,4 +32,6 @@ abstract class AuthRepository {
       String email, String password, String passwordConfirm);
 
   Future<bool> checkToken(String token); // 토큰 유효성 확인 추가
+
+  Future<String> emailDuplication(String email);
 }

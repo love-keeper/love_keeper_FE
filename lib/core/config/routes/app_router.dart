@@ -12,7 +12,7 @@ import '../../../features/auth/presentation/pages/password_edit_page.dart';
 import '../../../features/auth/presentation/pages/signup_page.dart';
 import '../../../features/auth/presentation/pages/email_password_input_page.dart';
 import '../../../features/auth/presentation/pages/profile_registration_page.dart';
-import '../../../features/auth/presentation/pages/code_connect_page.dart';
+import '../../../features/couples/presentation/pages/code_connect_page.dart';
 // main 관련 페이지
 import 'package:love_keeper_fe/features/main/presentation/pages/main_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/notification_page.dart';
@@ -34,7 +34,7 @@ import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/members/presentation/pages/email_edit_page.dart';
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
-import '../../../features/members/presentation/pages/new_email_ certification.dart';
+import '../../../features/auth/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
 
 import 'route_names.dart';
@@ -273,7 +273,11 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: RouteNames.newEmailcertification,
         name: 'newEmailcertification',
-        builder: (context, state) => const NewEmailcertification(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final String email = extra['email'] as String? ?? '';
+          return NewEmailcertification(email: email);
+        },
       ),
       GoRoute(
         path: RouteNames.myPasswordEditPage,

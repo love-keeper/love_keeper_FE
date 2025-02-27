@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
-class EmailLoginPage extends StatefulWidget {
+class EmailLoginPage extends ConsumerStatefulWidget {
   const EmailLoginPage({super.key});
 
   @override
   _EmailLoginPageState createState() => _EmailLoginPageState();
 }
 
-class _EmailLoginPageState extends State<EmailLoginPage> {
+class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  // 상태 변수: 비밀번호 입력필드 표시 여부
   bool showPasswordField = false;
-  // 비밀번호 가이드 메시지 표시 여부 (로그인 버튼 클릭 후 비밀번호가 틀릴 때 true)
   bool showPasswordGuide = false;
 
-  // 디버그용 백엔드 값 (실제 구현 시 백엔드 연동)
   static const String debugEmail = '000@gmail.com';
   static const String debugPassword = 'password123';
 
@@ -26,13 +26,11 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
   void initState() {
     super.initState();
     _emailController.addListener(() {
-      // 이메일 입력 변경 시 상태 업데이트 및 비밀번호 가이드 숨김
       setState(() {
         showPasswordGuide = false;
       });
     });
     _passwordController.addListener(() {
-      // 비밀번호 입력 변경 시 가이드 메시지 숨김
       setState(() {
         showPasswordGuide = false;
       });
@@ -48,7 +46,6 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // 화면 너비에 따른 scaleFactor 계산 (기준: 375)
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
@@ -56,7 +53,6 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
     final bool hasEmail = _emailController.text.isNotEmpty;
     final bool hasPassword = _passwordController.text.isNotEmpty;
 
-    // 이메일 형식 정규식
     final RegExp emailRegex = RegExp(
       r'^[^@]+@[^@]+\.(com|net|org|edu|co\.kr|ac\.kr)$',
       caseSensitive: false,
@@ -87,13 +83,13 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
             width: 24 * scaleFactor,
             height: 24 * scaleFactor,
           ),
-          onPressed: () => context.pop(), // 온보딩으로 가는 로직 넣기
+          onPressed: () => context.pop(),
         ),
       ),
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (showPasswordField) // 비밀번호 입력 필드가 보일 때만 표시
+          if (showPasswordField)
             Padding(
               padding: EdgeInsets.only(
                 left: 20 * scaleFactor,
@@ -110,7 +106,6 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
                   onPressed: () {
-                    // 비밀번호 찾기 화면으로 이동
                     context.push('/pwFinding');
                   },
                   child: Text(
@@ -132,16 +127,30 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
             scaleFactor: scaleFactor,
             enabled: showPasswordField ? (hasEmail && hasPassword) : hasEmail,
             buttonText: showPasswordField ? '로그인' : '다음',
-            onPressed: () {
+            onPressed: () async {
               if (!showPasswordField) {
-                if (_emailController.text == debugEmail &&
-                    emailRegex.hasMatch(_emailController.text)) {
+                if (!emailRegex.hasMatch(_emailController.text)) {
+                  return; // 이메일 형식이 맞지 않으면 동작 중지
+                }
+                try {
+                  final result = await ref
+                      .read(authViewModelProvider.notifier)
+                      .emailDuplication(_emailController.text);
+                  if (result == '사용 가능한 이메일입니다.') {
+                    // 중복이 아니면 인증 페이지로 이동
+                    context.push(RouteNames.newEmailcertification,
+                        extra: {'email': _emailController.text});
+                  } else {
+                    // 중복이면 비밀번호 입력 필드 표시
+                    setState(() {
+                      showPasswordField = true;
+                    });
+                  }
+                } catch (e) {
+                  // 중복된 경우 (예: COMMON409) 비밀번호 입력 필드 표시
                   setState(() {
                     showPasswordField = true;
                   });
-                } else {
-                  context
-                      .push('/signup', extra: {'email': _emailController.text});
                 }
               } else {
                 if (hasPassword && _passwordController.text == debugPassword) {
@@ -163,7 +172,6 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 16 * scaleFactor),
-              // 이메일 입력 위젯 (EditFieldWidget 재사용)
               EditFieldWidget(
                 label: '이메일',
                 hintText: '이메일 주소를 입력해 주세요.',
@@ -171,14 +179,10 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                 scaleFactor: scaleFactor,
                 autofocus: true,
                 guideMessage: emailGuideMessage,
-                // 이메일 필드는 비밀번호 입력 단계부터 수정 불가능하게 처리
-                readOnly:
-                    showPasswordField, // 만약 readOnly 속성이 EditFieldWidget에서 구현되어 있다면
+                readOnly: showPasswordField,
               ),
-              // 이메일 조건에 맞고 가입된 이메일이면 비밀번호 입력 필드 추가
               if (showPasswordField) ...[
                 SizedBox(height: 36 * scaleFactor),
-                // 비밀번호 입력 위젯 (EditFieldWidget 재사용, obscureText: true로 설정)
                 EditFieldWidget(
                   label: '비밀번호',
                   hintText: '비밀번호를 입력해 주세요.',
@@ -187,8 +191,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                   autofocus: false,
                   guideMessage:
                       showPasswordGuide ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.' : '',
-                  obscureText:
-                      true, // 여기서 비밀번호는 *로 표시 (EditFieldWidget에 해당 인자 구현되어 있다고 가정)
+                  obscureText: true,
                 ),
               ],
             ],
