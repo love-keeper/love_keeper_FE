@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/main/widgets/tab_bar.dart';
 import 'package:love_keeper_fe/features/main/widgets/letter_box_widget.dart';
 import 'package:love_keeper_fe/features/main/widgets/promise_box_widget.dart';
 import 'package:intl/intl.dart';
@@ -60,7 +59,7 @@ class _StoragePageState extends State<StoragePage> {
     {'user': '돌돌', 'content': '여덟 번째 편지 내용입니다.', 'date': '2025. 02. 08.'},
   ];
 
-  // 약속 작성 상태와 텍스트 컨트롤러
+  // 약속 작성 상태와 텍스트 컨트롤러 (내부 탭 전환은 유지)
   bool _isEditingPromise = false;
   final TextEditingController _promiseController = TextEditingController();
 
@@ -108,8 +107,6 @@ class _StoragePageState extends State<StoragePage> {
         ),
         decoration: const InputDecoration(
           border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
           hintText: '내용을 입력해 주세요.',
           hintStyle: TextStyle(
             fontSize: 16,
@@ -129,7 +126,6 @@ class _StoragePageState extends State<StoragePage> {
   }
 
   Widget _buildPromiseStorage() {
-    // promises 리스트를 복사 후, 날짜 기준 내림차순 정렬
     List<Map<String, String>> sortedPromises = List.from(promises);
     sortedPromises.sort((a, b) {
       DateTime dateA =
@@ -138,7 +134,6 @@ class _StoragePageState extends State<StoragePage> {
           DateFormat('yyyy. MM. dd.').parse(b['date'] ?? '1900. 01. 01.');
       return dateB.compareTo(dateA);
     });
-
     int itemCount = sortedPromises.length + (_isEditingPromise ? 1 : 0);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -183,18 +178,14 @@ class _StoragePageState extends State<StoragePage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final double boxWidth = (screenWidth - 55) / 2;
     final double boxHeight = boxWidth * (160 / 156);
-
-    // letters 리스트를 복사한 후, 날짜 기준 내림차순(최근 날짜가 위로) 정렬
     List<Map<String, String>> sortedLetters = List.from(letters);
     sortedLetters.sort((a, b) {
-      // 날짜 형식: "yyyy. MM. dd." (끝에 점이 있는 형식)
       DateTime dateA =
           DateFormat('yyyy. MM. dd.').parse(a['date'] ?? '1900. 01. 01.');
       DateTime dateB =
           DateFormat('yyyy. MM. dd.').parse(b['date'] ?? '1900. 01. 01.');
       return dateB.compareTo(dateA);
     });
-
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GridView.builder(
@@ -218,6 +209,7 @@ class _StoragePageState extends State<StoragePage> {
     );
   }
 
+  // 내부 탭바(편지/약속 전환) UI는 그대로 유지합니다.
   Widget _buildCustomTabBar() {
     double screenWidth = MediaQuery.of(context).size.width;
     double barWidth = (screenWidth - 40) / 2;
@@ -344,6 +336,7 @@ class _StoragePageState extends State<StoragePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // 개별 StoragePage에서는 글로벌 탭바는 제거하고 내부 탭 UI만 사용합니다.
       extendBodyBehindAppBar: true,
       extendBody: true,
       backgroundColor: Colors.white,
@@ -373,14 +366,7 @@ class _StoragePageState extends State<StoragePage> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
-          '',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF27282C),
-          ),
-        ),
+        title: const Text(''),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 10),
@@ -423,17 +409,7 @@ class _StoragePageState extends State<StoragePage> {
           ],
         ),
       ),
-      bottomNavigationBar: TabBarWidget(
-        currentIndex: 1,
-        onTabSelected: (index) {
-          if (index == 1) return;
-          if (index == 0) {
-            context.pop();
-          } else if (index == 2) {
-            context.pushReplacement('/main?initialIndex=2');
-          }
-        },
-      ),
+      // global 탭바는 ShellRoute에서 관리하므로, 여기 bottomNavigationBar는 제거합니다.
     );
   }
 }

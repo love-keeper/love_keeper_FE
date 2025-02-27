@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../features/onboarding/pages/splash_screen.dart';
-import '../../../features/onboarding/pages/login_page.dart'; //수정필요
+import '../../../features/onboarding/pages/login_page.dart';
 
 // Login 관련 페이지
 import '../../../features/auth/start_login_page/presentation/pages/email_login_page.dart';
@@ -13,18 +12,19 @@ import '../../../features/auth/start_login_page/presentation/pages/signup_page.d
 import '../../../features/auth/start_login_page/presentation/pages/email_password_input_page.dart';
 import '../../../features/auth/start_login_page/presentation/pages/profile_registration_page.dart';
 import '../../../features/auth/start_login_page/presentation/pages/code_connect_page.dart';
-//main 관련 페이지
+// main 관련 페이지
 import 'package:love_keeper_fe/features/main/presentation/pages/main_page.dart';
+import 'package:love_keeper_fe/features/main/presentation/pages/notification_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/calendar_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/storage_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/detail_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/dday_page.dart';
+import 'package:love_keeper_fe/features/main/widgets/tab_bar.dart';
 // Letter 관련 페이지
-//import '../../../features//auth/letter/presentation/pages/letter_page.dart';
 import '../../../features/auth/letter/presentation/pages/send_letter_screen.dart';
 import '../../../features/auth/letter/presentation/pages/send_letter_page.dart';
 import '../../../features/auth/letter/presentation/pages/reply_letter_page.dart';
-//My_page 관련 페이지
+// My_page 관련 페이지
 import '../../../features/auth/my_page/presentation/pages/my_page.dart';
 import '../../../features/auth/my_page/presentation/pages/settings_page.dart';
 import '../../../features/auth/my_page/presentation/pages/disconnect_page.dart';
@@ -47,18 +47,17 @@ GoRouter appRouter(AppRouterRef ref) {
     initialLocation: RouteNames.mainPage,
     debugLogDiagnostics: true,
     routes: [
-//onboarding Page Route
+      // Onboarding 및 Login 관련 라우트들
       GoRoute(
         path: RouteNames.onboarding,
         name: ' onboarding',
-        builder: (context, state) => const LoginPage(), //수정필요
+        builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: RouteNames.splashScreen,
         name: ' splashScreen',
         builder: (context, state) => const SplashScreen(),
       ),
-//loginPage Route
       GoRoute(
         path: RouteNames.emailLoginPage,
         name: ' emailLoginPage',
@@ -74,18 +73,15 @@ GoRouter appRouter(AppRouterRef ref) {
         name: ' passwordEditPage',
         builder: (context, state) => const PasswordEditPage(),
       ),
-
       GoRoute(
         path: RouteNames.signupPage,
         name: ' signupPage',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final String email = (extra['email'] as String?) ?? "";
-
           return SignupPage(email: email);
         },
       ),
-
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
         name: ' emailPasswordInputPage',
@@ -102,36 +98,70 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) => const CodeConnectPage(),
       ),
 
-      // Main Page Route
-      GoRoute(
-        path: RouteNames.mainPage,
-        name: ' mainPage',
-        builder: (context, state) {
-          final initialIndex =
-              int.tryParse(state.uri.queryParameters['initialIndex'] ?? '0') ??
-                  0;
-          return MainPage(initialIndex: initialIndex);
+      // ShellRoute: 메인, 보관함, 마이 페이지를 공통 탭바로 관리
+      ShellRoute(
+        pageBuilder: (context, state, child) {
+          int currentIndex = _calculateCurrentIndex(state.uri.toString());
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: Scaffold(
+              backgroundColor: Colors.transparent, // 기본 배경색을 투명하게
+              extendBody: true, // 하단 탭바 영역까지 확장
+              body: child,
+              bottomNavigationBar: TabBarWidget(
+                currentIndex: currentIndex,
+                onTabSelected: (index) {
+                  switch (index) {
+                    case 0:
+                      context.go(RouteNames.mainPage);
+                      break;
+                    case 1:
+                      context.go('/storage');
+                      break;
+                    case 2:
+                      context.go(RouteNames.myPage);
+                      break;
+                  }
+                },
+              ),
+            ),
+          );
         },
+        routes: [
+          GoRoute(
+            path: RouteNames.mainPage,
+            name: 'mainPage',
+            builder: (context, state) => const MainPage(),
+          ),
+          GoRoute(
+            path: '/storage',
+            name: 'storage',
+            builder: (context, state) => const StoragePage(),
+          ),
+          GoRoute(
+            path: RouteNames.myPage,
+            name: 'myPage',
+            builder: (context, state) => const MyPage(),
+          ),
+        ],
       ),
-      // Calendar Page Route
+
+      // 그 외 메인 관련 라우트들
+      GoRoute(
+        path: RouteNames.notificationPage,
+        name: ' notificationPage',
+        builder: (context, state) => const NotificationPage(),
+      ),
       GoRoute(
         path: '/calendar',
         name: 'calendar',
         builder: (context, state) => const CalendarPage(),
       ),
-      // Storage Page Route
-      GoRoute(
-        path: '/storage',
-        name: 'storage',
-        builder: (context, state) => const StoragePage(),
-      ),
-      // D-day Page Route
       GoRoute(
         path: '/dday',
         name: 'dday',
         builder: (context, state) => const DdayPage(),
       ),
-      // Detail Page Route
       GoRoute(
         path: '/detail/:type/:month/:day',
         name: 'detail',
@@ -139,7 +169,6 @@ GoRouter appRouter(AppRouterRef ref) {
           final type = state.pathParameters['type']!;
           final month = int.parse(state.pathParameters['month']!);
           final day = int.parse(state.pathParameters['day']!);
-          // 연도는 현재 연도로 가정합니다.
           final selectedDay = DateTime(DateTime.now().year, month, day);
           return DetailPage(
             selectedDay: selectedDay,
@@ -147,20 +176,18 @@ GoRouter appRouter(AppRouterRef ref) {
           );
         },
       ),
-//letterPage Route
 
+      // Letter 관련 라우트들
       GoRoute(
         path: RouteNames.sendLetter,
         name: 'sendLetter',
         builder: (context, state) => const SendLetterPage(),
       ),
-
       GoRoute(
         path: RouteNames.replyLetter,
         name: 'replyLetter',
         builder: (context, state) => const ReplyLetterPage(),
       ),
-
       GoRoute(
         path: RouteNames.sendLetterScreen,
         name: 'sendLetterScreen',
@@ -175,12 +202,8 @@ GoRouter appRouter(AppRouterRef ref) {
           );
         },
       ),
-      // MyPage Route
-      GoRoute(
-        path: RouteNames.myPage,
-        name: 'myPage',
-        builder: (context, state) => const MyPage(),
-      ),
+
+      // My_page 관련 추가 라우트들
       GoRoute(
         path: RouteNames.settingsPage,
         name: 'settingsPage',
@@ -219,42 +242,42 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.disconnectedScreen,
-        name: ' disconnectedScreen',
+        name: 'disconnectedScreen',
         builder: (context, state) => const DisconnectedScreen(),
       ),
       GoRoute(
         path: RouteNames.nicknameEditPage,
-        name: ' nicknameEditPage',
+        name: 'nicknameEditPage',
         builder: (context, state) => const NicknameEditPage(),
       ),
       GoRoute(
         path: RouteNames.birthdateEditPage,
-        name: ' birthdateEditPage',
+        name: 'birthdateEditPage',
         builder: (context, state) => const BirthdateEditPage(),
       ),
       GoRoute(
         path: RouteNames.relationshipStartEditPage,
-        name: ' relationshipStartEditPage',
+        name: 'relationshipStartEditPage',
         builder: (context, state) => const RelationshipStartEditPage(),
       ),
       GoRoute(
         path: RouteNames.emailEditPage,
-        name: ' emailEditPage',
+        name: 'emailEditPage',
         builder: (context, state) => const EmailEditPage(),
       ),
       GoRoute(
         path: RouteNames.newEmailInputPage,
-        name: ' newEmailInputPage',
+        name: 'newEmailInputPage',
         builder: (context, state) => const NewEmailInputPage(),
       ),
       GoRoute(
         path: RouteNames.newEmailcertification,
-        name: ' newEmailcertification',
+        name: 'newEmailcertification',
         builder: (context, state) => const NewEmailcertification(),
-      ), //
+      ),
       GoRoute(
         path: RouteNames.myPasswordEditPage,
-        name: ' myPasswordEditPage',
+        name: 'myPasswordEditPage',
         builder: (context, state) => const MyPasswordEditPage(),
       ),
     ],
@@ -267,4 +290,14 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
     ),
   );
+}
+
+int _calculateCurrentIndex(String location) {
+  if (location.startsWith(RouteNames.myPage)) {
+    return 2;
+  }
+  if (location.startsWith('/storage')) {
+    return 1;
+  }
+  return 0;
 }

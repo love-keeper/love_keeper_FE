@@ -185,6 +185,7 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
         : (hasPassword && passwordRegex.hasMatch(_passwordController.text));
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

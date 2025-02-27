@@ -184,6 +184,7 @@ class _SignupPageState extends State<SignupPage> {
         hasText && !codeMatches ? "인증코드가 일치하지 않습니다. 다시 입력해 주세요." : "";
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

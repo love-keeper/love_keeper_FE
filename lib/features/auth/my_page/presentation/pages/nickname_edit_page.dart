@@ -37,7 +37,7 @@ class _NicknameEditPageState extends State<NicknameEditPage> {
     final bool hasText = _nicknameController.text.isNotEmpty;
 
     return Scaffold(
-      // 항상 키보드 활성화를 위해 autofocus 옵션 설정 (EditFieldWidget에서 처리)
+      backgroundColor: Colors.white, // 배경색을 흰색으로 지정
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

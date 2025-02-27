@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class SendLetterScreen extends StatefulWidget {
   final String receiverName;
@@ -120,7 +121,8 @@ class _SendLetterScreenState extends State<SendLetterScreen>
                 height: 52 * scaleFactor,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    // 이전 스택을 모두 제거하고 메인 페이지로 이동합니다.
+                    context.go('/mainPage');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFF859B),
@@ -147,7 +149,8 @@ class _SendLetterScreenState extends State<SendLetterScreen>
                 height: 52 * scaleFactor,
                 child: TextButton(
                   onPressed: () {
-                    // 보관함으로 이동하는 로직 추가
+                    // 이전 스택을 모두 제거하고 메인 페이지로 이동합니다.
+                    context.go('/storage');
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.transparent,

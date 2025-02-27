@@ -68,7 +68,38 @@ class _SendLetterPageState extends State<SendLetterPage> {
   }
 
   void _exitToHome() {
-    context.pushReplacement('/mainPage');
+    context.go('/mainPage');
+  }
+
+  // 백엔드에 임시 저장 요청을 보내는 함수
+  Future<void> _saveTemporaryLetter() async {
+    Map<String, dynamic> tempLetterData = {
+      "sender": userName,
+      "receiver": partnerName,
+      "stepTexts": stepTexts, // 각 단계별 텍스트 리스트
+      "currentStep": currentStep,
+      "timestamp": DateTime.now().toIso8601String(),
+      "isTemporary": true, // 임시 저장 여부 플래그
+    };
+
+    final url = Uri.parse("https://your-backend-url.com/api/saveTempLetter");
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(tempLetterData),
+      );
+      if (response.statusCode == 200) {
+        // 임시 저장 성공 시 메인 페이지로 이동
+        _exitToHome();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("임시저장 실패: ${response.statusCode}")));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("임시저장 중 오류 발생: $e")));
+    }
   }
 
   // 버튼에 표시될 텍스트 결정
@@ -99,19 +130,36 @@ class _SendLetterPageState extends State<SendLetterPage> {
   }
 
   void _sendLetter() async {
-    String letterContent = stepTexts.join(" ");
+    // 미리보기에서 사용된 방식과 동일하게 비어있지 않은 텍스트만 합칩니다.
+    String letterContent = stepTexts.where((text) => text.isNotEmpty).join(" ");
     Map<String, dynamic> letterData = {
       "sender": userName,
       "receiver": partnerName,
       "content": letterContent,
       "timestamp": DateTime.now().toIso8601String(),
     };
-    debugPrint(jsonEncode(letterData));
 
-    // go_router를 이용하여 sendLetter 경로로 이동합니다.
-    context.pushNamed('sendLetterScreen', extra: {
-      'letterData': letterData,
-    });
+    final url = Uri.parse("https://your-backend-url.com/api/sendLetter");
+    try {
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(letterData),
+      );
+
+      if (response.statusCode == 200) {
+        // 백엔드 전송이 성공하면 sendLetterScreen 페이지로 이동합니다.
+        context.pushNamed('sendLetterScreen', extra: {
+          'letterData': letterData,
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("전송 실패: ${response.statusCode}")));
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("전송 중 오류 발생: $e")));
+    }
   }
 
   @override
@@ -158,7 +206,7 @@ class _SendLetterPageState extends State<SendLetterPage> {
                         saveText: "저장하기",
                         showSaveButton: true,
                         onExit: _exitToHome,
-                        onSave: () => Navigator.pop(context),
+                        onSave: _saveTemporaryLetter,
                         onDismiss: () => Navigator.pop(context),
                       ),
                     ),
@@ -180,7 +228,11 @@ class _SendLetterPageState extends State<SendLetterPage> {
 //뒤로가기 버튼
     void _handleBackButton() {
       if (currentStep == 0) {
-        _showExitDialog();
+        if (_textController.text.isEmpty) {
+          _exitToHome();
+        } else {
+          _showExitDialog();
+        }
       } else {
         setState(() {
           currentStep--;

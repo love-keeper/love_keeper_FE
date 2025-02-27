@@ -185,6 +185,7 @@ class _NewEmailcertification extends State<NewEmailcertification> {
         hasText && !codeMatches ? "인증코드가 일치하지 않습니다. 다시 입력해 주세요." : "";
 
     return Scaffold(
+      backgroundColor: Colors.white, // 배경을 흰색으로 지정
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -244,7 +245,6 @@ class _NewEmailcertification extends State<NewEmailcertification> {
               ),
             ),
           ),
-
           SaveButtonWidget(
             scaleFactor: scaleFactor,
             enabled: hasText,

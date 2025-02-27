@@ -199,6 +199,7 @@ class _DdayPageState extends State<DdayPage> {
                       color: Color(0xFFFC6383),
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
+                      decorationColor: Color(0xFFFC6383), // 텍스트 색상과 동일하게 설정
                     ),
                   ),
                 ),

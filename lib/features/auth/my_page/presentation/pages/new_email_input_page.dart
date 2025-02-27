@@ -43,10 +43,11 @@ class _NewEmailInputPageState extends State<NewEmailInputPage> {
     // 입력 도중에 형식이 올바르지 않으면 가이드 문구 설정
     final String guideMessage =
         hasText && !emailRegex.hasMatch(_newEmailController.text)
-            ? "옳바른 이메일 형식을 입력해 주세요."
+            ? "올바른 이메일 형식을 입력해 주세요."
             : "";
 
     return Scaffold(
+      backgroundColor: Colors.white, // 배경을 흰색으로 지정
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -91,7 +92,7 @@ class _NewEmailInputPageState extends State<NewEmailInputPage> {
               controller: _newEmailController,
               scaleFactor: scaleFactor,
               autofocus: true, // 페이지 진입 시 키보드 활성화
-              guideMessage: guideMessage, // 필요시 조건 안내 문구 입력
+              guideMessage: guideMessage, // 조건 안내 문구 표시
             ),
           ],
         ),
