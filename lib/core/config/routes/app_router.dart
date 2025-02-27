@@ -44,7 +44,7 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.myPasswordEditPage,
+    initialLocation: RouteNames.splashScreen,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding 및 Login 관련 라우트들
@@ -85,7 +85,7 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
         name: ' emailPasswordInputPage',
-        builder: (context, state) => const EmailPasswordInputPage(),
+        builder: (context, state) => EmailPasswordInputPage(email: ''),
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,
