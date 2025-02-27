@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:love_keeper_fe/features/auth/data/models/request/email_duplication_request.dart';
+import 'package:love_keeper_fe/features/auth/data/models/response/send_code_response.dart';
 import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_response.dart';
 import 'package:love_keeper_fe/features/couples/data/models/request/update_start_date_request.dart';
 import 'package:love_keeper_fe/features/drafts/data/models/request/create_draft_request.dart';
@@ -56,7 +57,8 @@ abstract class ApiClient {
   Future<ApiResponse<AuthResponse>> login(@Body() LoginRequest request);
 
   @POST('/api/auth/send-code')
-  Future<ApiResponse<String>> sendCode(@Body() SendCodeRequest request);
+  Future<ApiResponse<SendCodeResponse>> sendCode(
+      @Body() SendCodeRequest request);
 
   @POST('/api/auth/verify-code')
   Future<ApiResponse<String>> verifyCode(@Body() VerifyCodeRequest request);

@@ -214,12 +214,13 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<String>> sendCode(SendCodeRequest request) async {
+  Future<ApiResponse<SendCodeResponse>> sendCode(
+      SendCodeRequest request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = request;
-    final _options = _setStreamType<ApiResponse<String>>(Options(
+    final _options = _setStreamType<ApiResponse<SendCodeResponse>>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -236,11 +237,11 @@ class _ApiClient implements ApiClient {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<String> _value;
+    late ApiResponse<SendCodeResponse> _value;
     try {
-      _value = ApiResponse<String>.fromJson(
+      _value = ApiResponse<SendCodeResponse>.fromJson(
         _result.data!,
-        (json) => json as String,
+        (json) => SendCodeResponse.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);

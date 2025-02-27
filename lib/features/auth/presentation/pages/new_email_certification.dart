@@ -17,8 +17,8 @@ class NewEmailcertification extends ConsumerStatefulWidget {
 
 class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
   final TextEditingController _newEmailCerController = TextEditingController();
-  final String _verificationCode = '';
   bool _isCodeSent = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -37,14 +37,25 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
   }
 
   Future<void> _sendVerificationCode() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
-      await ref.read(authViewModelProvider.notifier).sendCode(widget.email);
+      final code =
+          await ref.read(authViewModelProvider.notifier).sendCode(widget.email);
       setState(() {
         _isCodeSent = true;
+        _isLoading = false;
       });
-      debugPrint('인증코드 전송됨: ${widget.email}');
+      debugPrint('인증코드 전송됨: $code');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('인증코드가 전송되었습니다.')),
+      );
     } catch (e) {
       debugPrint('Send code error: $e');
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('인증코드 전송 실패: $e')),
       );
@@ -52,6 +63,9 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
   }
 
   Future<void> _verifyCode() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       final result = await ref.read(authViewModelProvider.notifier).verifyCode(
             widget.email,
@@ -67,6 +81,7 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
       debugPrint('Verify code error: $e');
       setState(() {
         _newEmailCerController.clear();
+        _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('인증 실패: $e')),
@@ -80,7 +95,6 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
     final bool hasText = _newEmailCerController.text.isNotEmpty;
-    final bool codeMatches = _newEmailCerController.text == _verificationCode;
 
     void showResendBottomSheet(BuildContext context, double scaleFactor) {
       showModalBottomSheet(
@@ -164,7 +178,7 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
                           Center(
                             child: GestureDetector(
                               onTap: () {
-                                context.pop();
+                                Navigator.pop(dialogContext);
                               },
                               child: Container(
                                 width: 334 * scaleFactor,
@@ -205,7 +219,9 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
     }
 
     final String guideMessage =
-        hasText && !codeMatches ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.' : '';
+        hasText && _newEmailCerController.text.length == 6
+            ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -268,59 +284,67 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
           ),
           SaveButtonWidget(
             scaleFactor: scaleFactor,
-            enabled: hasText,
+            enabled: hasText && !_isLoading,
             buttonText: '다음',
-            onPressed: _verifyCode,
+            onPressed: _isLoading ? null : _verifyCode, // 직접 전달
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 16 * scaleFactor),
-            Padding(
-              padding: EdgeInsets.only(left: 0 * scaleFactor),
-              child: Text(
-                widget.email,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 18 * scaleFactor,
-                  fontWeight: FontWeight.w600,
-                  height: 26 / 18,
-                  letterSpacing: -0.025 * (18 * scaleFactor),
-                  color: const Color(0xFFFF859B),
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 16 * scaleFactor),
+                Padding(
+                  padding: EdgeInsets.only(left: 0 * scaleFactor),
+                  child: Text(
+                    widget.email,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 18 * scaleFactor,
+                      fontWeight: FontWeight.w600,
+                      height: 26 / 18,
+                      letterSpacing: -0.025 * (18 * scaleFactor),
+                      color: const Color(0xFFFF859B),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 3 * scaleFactor),
-            Padding(
-              padding: EdgeInsets.only(left: 0 * scaleFactor),
-              child: Text(
-                '본인 확인을 위해 위 이메일로 인증코드를 전송했습니다.\n인증 번호 6자를 입력해 주세요.',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 14 * scaleFactor,
-                  fontWeight: FontWeight.w400,
-                  height: 22 / 14,
-                  letterSpacing: -0.025 * (14 * scaleFactor),
-                  color: const Color(0xFF27282C),
+                SizedBox(height: 3 * scaleFactor),
+                Padding(
+                  padding: EdgeInsets.only(left: 0 * scaleFactor),
+                  child: Text(
+                    '본인 확인을 위해 위 이메일로 인증코드를 전송했습니다.\n인증 번호 6자를 입력해 주세요.',
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 14 * scaleFactor,
+                      fontWeight: FontWeight.w400,
+                      height: 22 / 14,
+                      letterSpacing: -0.025 * (14 * scaleFactor),
+                      color: const Color(0xFF27282C),
+                    ),
+                  ),
                 ),
-              ),
+                SizedBox(height: 36 * scaleFactor),
+                EmailEditFieldWidget(
+                  label: '인증코드',
+                  hintText: '6자리를 입력해 주세요.',
+                  controller: _newEmailCerController,
+                  scaleFactor: scaleFactor,
+                  autofocus: true,
+                  guideMessage: guideMessage,
+                  onResend: _sendVerificationCode,
+                ),
+              ],
             ),
-            SizedBox(height: 36 * scaleFactor),
-            EmailEditFieldWidget(
-              label: '인증코드',
-              hintText: '6자리를 입력해 주세요.',
-              controller: _newEmailCerController,
-              scaleFactor: scaleFactor,
-              autofocus: true,
-              guideMessage: guideMessage,
-              onResend: _sendVerificationCode,
+          ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

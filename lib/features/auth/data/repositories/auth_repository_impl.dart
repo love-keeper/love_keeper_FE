@@ -74,7 +74,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final request = SendCodeRequest(email: email);
     final response = await apiClient.sendCode(request);
     _handleResponse(response);
-    return response.result!;
+    return response.result!.code; // "775050" 같은 인증 코드 반환
   }
 
   @override

@@ -12,15 +12,15 @@ class EmailEditFieldWidget extends StatefulWidget {
   final VoidCallback? onResend; // 재전송 버튼 콜백
 
   const EmailEditFieldWidget({
-    Key? key,
+    super.key,
     required this.label,
     required this.hintText,
     required this.controller,
     required this.scaleFactor,
     this.autofocus = false,
-    this.guideMessage = "",
+    this.guideMessage = '',
     this.onResend,
-  }) : super(key: key);
+  });
 
   @override
   _EmailEditFieldWidgetState createState() => _EmailEditFieldWidgetState();
@@ -43,7 +43,7 @@ class _EmailEditFieldWidgetState extends State<EmailEditFieldWidget> {
 
   void startTimer() {
     _remainingSeconds = 300;
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) return; // 위젯이 트리에서 제거되었으면 아무 작업도 하지 않음
       if (_remainingSeconds > 0) {
         setState(() {
@@ -64,7 +64,7 @@ class _EmailEditFieldWidgetState extends State<EmailEditFieldWidget> {
   String get timerText {
     final minutes = (_remainingSeconds ~/ 60).toString().padLeft(2, '0');
     final seconds = (_remainingSeconds % 60).toString().padLeft(2, '0');
-    return "$minutes:$seconds";
+    return '$minutes:$seconds';
   }
 
   @override
@@ -209,7 +209,7 @@ class _EmailEditFieldWidgetState extends State<EmailEditFieldWidget> {
                     }
                   },
                   child: Text(
-                    "재전송",
+                    '재전송',
                     style: TextStyle(
                       fontSize: 14 * widget.scaleFactor,
                       fontWeight: FontWeight.w600,
