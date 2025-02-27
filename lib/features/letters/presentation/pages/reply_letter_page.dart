@@ -293,6 +293,8 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                             color: const Color(0xFFFF859B),
                             fontSize: 14 * scaleFactor,
                             fontWeight: FontWeight.w600,
+                            height: 22 / (14 * scaleFactor),
+                            letterSpacing: -0.025 * (14 * scaleFactor),
                           ),
                         ),
                       ),
@@ -359,6 +361,12 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           color: Colors.white,
+                                                          height: 12 /
+                                                              (12 *
+                                                                  scaleFactor),
+                                                          letterSpacing: -0.025 *
+                                                              (12 *
+                                                                  scaleFactor),
                                                         ),
                                                       )
                                                     : const SizedBox.shrink(),
@@ -390,6 +398,9 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                       fontSize: 18.0 * scaleFactor,
                                       fontWeight: FontWeight.w600,
                                       color: const Color(0xFF27282C),
+                                      height: 26 / (18 * scaleFactor),
+                                      letterSpacing:
+                                          -0.025 * (18 * scaleFactor),
                                     ),
                                   ),
                                   SizedBox(height: 10.0 * scaleFactor),
@@ -404,6 +415,9 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                           fontSize: 16.0 * scaleFactor,
                                           fontWeight: FontWeight.w400,
                                           color: const Color(0xFF27282C),
+                                          height: 24 / (16 * scaleFactor),
+                                          letterSpacing:
+                                              -0.025 * (16 * scaleFactor),
                                         ),
                                         decoration: InputDecoration(
                                           border: OutlineInputBorder(
@@ -433,6 +447,9 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                             fontSize: 16.0 * scaleFactor,
                                             fontWeight: FontWeight.w400,
                                             color: const Color(0xFFC3C6CF),
+                                            height: 24 / (16 * scaleFactor),
+                                            letterSpacing:
+                                                -0.025 * (16 * scaleFactor),
                                           ),
                                           alignLabelWithHint: true,
                                         ),
@@ -469,6 +486,10 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                                   fontSize: 16.0 * scaleFactor,
                                                   fontWeight: FontWeight.w600,
                                                   color: Colors.white,
+                                                  height:
+                                                      24 / (16 * scaleFactor),
+                                                  letterSpacing: -0.025 *
+                                                      (16 * scaleFactor),
                                                 ),
                                               ),
                                             ),

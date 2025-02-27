@@ -60,6 +60,8 @@ class BaseLetterPage extends StatelessWidget {
                 fontSize: 18 * scaleFactor,
                 fontWeight: FontWeight.w600,
                 color: const Color(0xFF27282C),
+                height: 26 / (18 * scaleFactor),
+                letterSpacing: -0.025 * (18 * scaleFactor),
               ),
             ),
             const SizedBox(height: 10),

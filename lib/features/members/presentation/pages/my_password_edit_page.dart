@@ -101,14 +101,55 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
           onPressed: () => context.pop(),
         ),
       ),
-      bottomNavigationBar: SaveButtonWidget(
-        scaleFactor: scaleFactor,
-        enabled: isSaveEnabled,
-        buttonText: '변경하기',
-        onPressed: () {
-          // 비밀번호 변경 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
-          context.pop();
-        },
+      bottomNavigationBar: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // "비밀번호를 잊으셨나요?" 버튼을 저장 버튼 위에 6만큼의 여백과 함께 추가
+          Padding(
+            padding: EdgeInsets.only(
+              left: 20 * scaleFactor,
+              right: 20 * scaleFactor,
+              bottom: 6 * scaleFactor,
+            ),
+            child: SizedBox(
+              width: 131 * scaleFactor,
+              height: 22 * scaleFactor,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                onPressed: () {
+                  // 비밀번호 찾기 화면으로 이동
+                  context.push('/pwFinding');
+                },
+                child: Text(
+                  '비밀번호를 잊으셨나요?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14 * scaleFactor,
+                    fontWeight: FontWeight.w400,
+                    height: 22 / (14 * scaleFactor), // line height가 22가 되도록
+                    letterSpacing: -0.025 * (14 * scaleFactor),
+                    color: const Color(0xFF747784),
+                    decoration: TextDecoration.underline,
+                    decorationColor: const Color(0xFF747784),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SaveButtonWidget(
+            scaleFactor: scaleFactor,
+            enabled: isSaveEnabled,
+            buttonText: '변경하기',
+            onPressed: () {
+              // 비밀번호 변경 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
+              context.pop();
+            },
+          ),
+        ],
       ),
       body: GestureDetector(
         // 텍스트 필드 이외의 영역 탭 시 키보드 내리기
@@ -143,7 +184,7 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
               SizedBox(height: 36 * scaleFactor),
               // 새 비밀번호 확인 입력 필드
               EditFieldWidget(
-                label: '비밀번호 확인',
+                label: '새 비밀번호 확인',
                 hintText: '비밀번호를 다시 입력해 주세요',
                 controller: _confirmNewPwController,
                 scaleFactor: scaleFactor,

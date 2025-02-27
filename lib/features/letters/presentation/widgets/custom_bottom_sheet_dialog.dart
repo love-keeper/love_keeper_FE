@@ -179,6 +179,8 @@ class _CustomBottomSheetDialogState extends State<CustomBottomSheetDialog>
                               fontSize: 16 * widget.scaleFactor,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xff27282C),
+                              height: 24 / (16 * widget.scaleFactor),
+                              letterSpacing: -0.025 * (16 * widget.scaleFactor),
                             ),
                           ),
                         ),
@@ -203,6 +205,9 @@ class _CustomBottomSheetDialogState extends State<CustomBottomSheetDialog>
                                 fontSize: 16 * widget.scaleFactor,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
+                                height: 24 / (16 * widget.scaleFactor),
+                                letterSpacing:
+                                    -0.025 * (16 * widget.scaleFactor),
                               ),
                             ),
                           ),

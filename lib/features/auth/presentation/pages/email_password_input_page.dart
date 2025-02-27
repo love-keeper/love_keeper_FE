@@ -5,10 +5,7 @@ import 'package:love_keeper_fe/features/members/presentation/widgets/save_button
 
 class EmailPasswordInputPage extends StatefulWidget {
   const EmailPasswordInputPage({super.key});
-<<<<<<< HEAD:lib/features/auth/start_login_page/presentation/pages/email_password_input_page.dart
-=======
 
->>>>>>> origin/main:lib/features/auth/presentation/pages/email_password_input_page.dart
   @override
   _EmailPasswordInputPageState createState() => _EmailPasswordInputPageState();
 }
@@ -108,6 +105,8 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
                               fontSize: 16 * scaleFactor,
                               fontWeight: FontWeight.w400,
                               color: const Color(0xFF27282C),
+                              height: 24 / (16 * scaleFactor),
+                              letterSpacing: -0.025 * (16 * scaleFactor),
                             ),
                           ),
                         ),
@@ -136,6 +135,8 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
                                   fontSize: 16 * scaleFactor,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white,
+                                  height: 24 / (16 * scaleFactor),
+                                  letterSpacing: -0.025 * (16 * scaleFactor),
                                 ),
                               ),
                             ),

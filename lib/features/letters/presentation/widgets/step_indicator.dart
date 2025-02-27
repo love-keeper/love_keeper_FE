@@ -50,6 +50,8 @@ class StepIndicator extends StatelessWidget {
                             fontSize: 12 * scaleFactor,
                             fontWeight: FontWeight.w600,
                             color: Colors.white,
+                            height: 12 / (12 * scaleFactor),
+                            letterSpacing: -0.025 * (12 * scaleFactor),
                           ),
                         ),
                       )

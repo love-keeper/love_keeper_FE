@@ -4,10 +4,6 @@ import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bott
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
-<<<<<<< HEAD:lib/features/auth/my_page/presentation/pages/settings_page.dart
-=======
-
->>>>>>> origin/main:lib/features/members/presentation/pages/settings_page.dart
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
   final String appVersion = '0.1.1'; // 기본 버전 초기값
 
