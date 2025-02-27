@@ -142,6 +142,15 @@ class AuthViewModel extends _$AuthViewModel {
     }
   }
 
+  Future<String> emailDuplication(String email) async {
+    try {
+      return await _repository.emailDuplication(email);
+    } catch (e) {
+      print('Email duplication check error: $e');
+      rethrow;
+    }
+  }
+
   Future<void> _saveTokens(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('memberId', user.memberId);

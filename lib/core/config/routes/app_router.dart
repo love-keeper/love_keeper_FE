@@ -34,7 +34,7 @@ import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/members/presentation/pages/email_edit_page.dart';
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
-import '../../../features/members/presentation/pages/new_email_ certification.dart';
+import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
 
 import 'route_names.dart';
@@ -273,7 +273,11 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: RouteNames.newEmailcertification,
         name: 'newEmailcertification',
-        builder: (context, state) => const NewEmailcertification(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final String email = extra['email'] as String? ?? '';
+          return NewEmailcertification(email: email);
+        },
       ),
       GoRoute(
         path: RouteNames.myPasswordEditPage,

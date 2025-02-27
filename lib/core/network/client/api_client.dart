@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/email_duplication_request.dart';
 import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_response.dart';
 import 'package:love_keeper_fe/features/couples/data/models/request/update_start_date_request.dart';
 import 'package:love_keeper_fe/features/drafts/data/models/request/create_draft_request.dart';
@@ -32,8 +33,12 @@ abstract class ApiClient {
 
   // AUTH
 
+  @POST('/api/auth/email-duplication')
+  Future<ApiResponse<String>> emailDuplication(
+      @Body() EmailDuplicationRequest request);
+
   @POST('/api/auth/reissue')
-  Future<String> reissue(@Body() String refreshToken);
+  Future<ApiResponse<String>> reissue(@Body() String refreshToken);
 
   @MultiPart()
   @POST('/api/auth/signup')

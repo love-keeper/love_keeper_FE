@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:love_keeper_fe/core/network/client/api_client.dart';
+import 'package:love_keeper_fe/features/auth/data/models/request/email_duplication_request.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -116,6 +117,14 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<bool> checkToken(String token) async {
     final response = await apiClient.checkToken('Bearer $token');
     return response.code == 'COMMON200';
+  }
+
+  @override
+  Future<String> emailDuplication(String email) async {
+    final request = EmailDuplicationRequest(email: email);
+    final response = await apiClient.emailDuplication(request);
+    _handleResponse(response);
+    return response.result!;
   }
 
   void _handleResponse(ApiResponse<dynamic> response) {

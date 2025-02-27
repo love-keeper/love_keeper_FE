@@ -1,27 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/email_edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
-class NewEmailcertification extends StatefulWidget {
-  const NewEmailcertification({super.key});
+class NewEmailcertification extends ConsumerStatefulWidget {
+  final String email;
+
+  const NewEmailcertification({super.key, required this.email});
 
   @override
-  _NewEmailcertification createState() => _NewEmailcertification();
+  _NewEmailcertificationState createState() => _NewEmailcertificationState();
 }
 
-class _NewEmailcertification extends State<NewEmailcertification> {
+class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
   final TextEditingController _newEmailCerController = TextEditingController();
-  String _verificationCode = '';
+  final String _verificationCode = '';
+  bool _isCodeSent = false;
 
   @override
   void initState() {
     super.initState();
-
-    // 페이지가 시작되면 인증 코드를 백엔드에서 받아온다고 가정하고 저장합니다.
     _sendVerificationCode();
 
-    // 텍스트 변경 시 상태 업데이트
     _newEmailCerController.addListener(() {
       setState(() {});
     });
@@ -33,18 +36,46 @@ class _NewEmailcertification extends State<NewEmailcertification> {
     super.dispose();
   }
 
-  // 백엔드에서 인증 코드를 받아오는 함수 (여기서는 임의의 "123456"으로 설정)
   Future<void> _sendVerificationCode() async {
-    // 실제 API 호출 대신, 임의의 코드를 할당
-    setState(() {
-      _verificationCode = '123456';
-    });
-    debugPrint('인증코드 전송됨: $_verificationCode');
+    try {
+      await ref.read(authViewModelProvider.notifier).sendCode(widget.email);
+      setState(() {
+        _isCodeSent = true;
+      });
+      debugPrint('인증코드 전송됨: ${widget.email}');
+    } catch (e) {
+      debugPrint('Send code error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('인증코드 전송 실패: $e')),
+      );
+    }
+  }
+
+  Future<void> _verifyCode() async {
+    try {
+      final result = await ref.read(authViewModelProvider.notifier).verifyCode(
+            widget.email,
+            int.tryParse(_newEmailCerController.text) ?? 0,
+          );
+      if (result == '인증 성공') {
+        context.pushNamed(
+          RouteNames.signupPage,
+          extra: {'email': widget.email},
+        );
+      }
+    } catch (e) {
+      debugPrint('Verify code error: $e');
+      setState(() {
+        _newEmailCerController.clear();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('인증 실패: $e')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // 화면 너비에 따른 scaleFactor 계산 (기준: 375)
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
@@ -55,7 +86,7 @@ class _NewEmailcertification extends State<NewEmailcertification> {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        backgroundColor: Colors.transparent, // 배경은 투명하게
+        backgroundColor: Colors.transparent,
         isDismissible: true,
         builder: (BuildContext dialogContext) {
           return GestureDetector(
@@ -63,17 +94,15 @@ class _NewEmailcertification extends State<NewEmailcertification> {
             behavior: HitTestBehavior.opaque,
             child: Stack(
               children: [
-                // 전체 화면 오버레이 (투명)
                 Container(
                   width: double.infinity,
                   height: double.infinity,
                   color: Colors.transparent,
                 ),
-                // 하단에 바텀시트 배치
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: GestureDetector(
-                    onTap: () {}, // 바텀시트 내부 터치 시 닫히지 않도록
+                    onTap: () {},
                     child: Container(
                       width: 375 * scaleFactor,
                       height: 288 * scaleFactor,
@@ -87,7 +116,6 @@ class _NewEmailcertification extends State<NewEmailcertification> {
                       child: Column(
                         children: [
                           SizedBox(height: 7 * scaleFactor),
-                          // 드래그 핸들
                           Container(
                             width: 50 * scaleFactor,
                             height: 5 * scaleFactor,
@@ -97,7 +125,6 @@ class _NewEmailcertification extends State<NewEmailcertification> {
                                   BorderRadius.circular(26 * scaleFactor),
                             ),
                           ),
-                          // (필요하다면 중간에 설명 텍스트나 여백 추가)
                           SizedBox(height: 44 * scaleFactor),
                           Container(
                             width: 169 * scaleFactor,
@@ -177,21 +204,17 @@ class _NewEmailcertification extends State<NewEmailcertification> {
       );
     }
 
-    // 실제 이메일은 백엔드에서 받아오되, 없으면 기본값으로 "000@gmail.com" 사용
-    const String actualEmail = '000@gmail.com'; // 추후 백엔드 연동 시 수정
-
-    // 입력된 텍스트가 있을 때, 입력값이 인증 코드와 일치하지 않으면 안내 문구 표시
     final String guideMessage =
         hasText && !codeMatches ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.' : '';
 
     return Scaffold(
-      backgroundColor: Colors.white, // 배경을 흰색으로 지정
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         title: Text(
-          '이메일 변경',
+          '이메일 인증',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -209,11 +232,9 @@ class _NewEmailcertification extends State<NewEmailcertification> {
           onPressed: () => context.pop(),
         ),
       ),
-      // bottomNavigationBar에 '메일을 받지 못하셨나요?' 버튼과 '다음' 버튼을 세로로 배치
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // '메일을 받지 못하셨나요?' 버튼 (다음 버튼 위에 6 단위 여백)
           Padding(
             padding: EdgeInsets.only(
               left: 20 * scaleFactor,
@@ -249,9 +270,7 @@ class _NewEmailcertification extends State<NewEmailcertification> {
             scaleFactor: scaleFactor,
             enabled: hasText,
             buttonText: '다음',
-            onPressed: () {
-              context.goNamed('myPage');
-            },
+            onPressed: _verifyCode,
           ),
         ],
       ),
@@ -261,11 +280,10 @@ class _NewEmailcertification extends State<NewEmailcertification> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16 * scaleFactor),
-            // 백엔드에서 받아온 이메일을 좌측 정렬 텍스트로 표시
             Padding(
               padding: EdgeInsets.only(left: 0 * scaleFactor),
               child: Text(
-                actualEmail,
+                widget.email,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 18 * scaleFactor,
@@ -277,7 +295,6 @@ class _NewEmailcertification extends State<NewEmailcertification> {
               ),
             ),
             SizedBox(height: 3 * scaleFactor),
-            // 안내 문구 (왼쪽 정렬)
             Padding(
               padding: EdgeInsets.only(left: 0 * scaleFactor),
               child: Text(
@@ -293,19 +310,14 @@ class _NewEmailcertification extends State<NewEmailcertification> {
               ),
             ),
             SizedBox(height: 36 * scaleFactor),
-            // 이메일 전용 입력 위젯 (타이머, 재전송 버튼 포함)
             EmailEditFieldWidget(
               label: '인증코드',
               hintText: '6자리를 입력해 주세요.',
               controller: _newEmailCerController,
               scaleFactor: scaleFactor,
               autofocus: true,
-              guideMessage: guideMessage, // 필요 시 안내 문구 입력
-              onResend: () {
-                // 재전송 로직 구현
-                debugPrint('재전송 버튼 클릭됨');
-                _sendVerificationCode(); // 백엔드한테 재전송 요청 보내는 API 구현하기
-              },
+              guideMessage: guideMessage,
+              onResend: _sendVerificationCode,
             ),
           ],
         ),
