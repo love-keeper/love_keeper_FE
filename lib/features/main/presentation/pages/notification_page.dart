@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/main/widgets/tab_bar.dart';
+import 'package:love_keeper_fe/features/main/presentation/widgets/tab_bar.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});

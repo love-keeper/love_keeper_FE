@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart'; // GoRouter 사용
 import 'package:intl/intl.dart';
-import 'package:love_keeper_fe/features/main/widgets/fallback_circle_avatar.dart';
+import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
 
 class DdayPage extends StatefulWidget {
   const DdayPage({super.key});

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,27 +36,22 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             .read(authViewModelProvider.notifier)
             .checkToken(accessToken);
         if (isValid && mounted) {
-          // 토큰이 유효하면 메인 페이지로 이동
           Timer(const Duration(milliseconds: 500), () {
-            context.pushReplacement('/main');
+            context.pushReplacement(RouteNames.mainPage);
           });
-        } else {
-          // 토큰이 유효하지 않으면 로그인 페이지로 이동
+        } else if (mounted) {
           _navigateToLogin();
         }
-      } else {
-        // 토큰이 없으면 로그인 페이지로 이동
+      } else if (mounted) {
         _navigateToLogin();
       }
     });
   }
 
   void _navigateToLogin() {
-    if (mounted) {
-      Timer(const Duration(milliseconds: 500), () {
-        context.pushReplacement('/login');
-      });
-    }
+    Timer(const Duration(milliseconds: 500), () {
+      context.pushReplacement(RouteNames.onboarding);
+    });
   }
 
   @override

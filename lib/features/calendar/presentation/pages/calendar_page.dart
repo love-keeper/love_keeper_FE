@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart'; // GoRouter 확장을 위해 추가
 import 'package:table_calendar/table_calendar.dart';
-import 'package:love_keeper_fe/features/main/widgets/event_popup.dart';
-import 'package:love_keeper_fe/features/main/widgets/fallback_circle_avatar.dart';
+import 'package:love_keeper_fe/features/main/presentation/widgets/event_popup.dart';
+import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -34,7 +34,7 @@ class _CalendarPageState extends State<CalendarPage> {
         children: [
           RichText(
             text: TextSpan(
-              text: "${_focusedDay.year}년 ",
+              text: '${_focusedDay.year}년 ',
               style: const TextStyle(
                 fontSize: 23,
                 fontWeight: FontWeight.w600,
@@ -44,7 +44,7 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               children: [
                 TextSpan(
-                  text: "${_focusedDay.month}월",
+                  text: '${_focusedDay.month}월',
                   style: const TextStyle(
                     fontSize: 23,
                     fontWeight: FontWeight.w600,
@@ -199,7 +199,7 @@ class _CalendarPageState extends State<CalendarPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Text(
-                                  "편지 10건",
+                                  '편지 10건',
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -207,7 +207,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                   ),
                                 ),
                                 Text(
-                                  "약속 4건",
+                                  '약속 4건',
                                   style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,

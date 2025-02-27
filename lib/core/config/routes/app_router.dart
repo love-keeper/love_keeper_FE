@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/features/members/presentation/pages/birthdate_edit_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../features/onboarding/pages/splash_screen.dart';
 import '../../../features/onboarding/pages/login_page.dart';
@@ -19,7 +20,7 @@ import 'package:love_keeper_fe/features/calendar/presentation/pages/calendar_pag
 import 'package:love_keeper_fe/features/couples/presentation/pages/storage_page.dart';
 import 'package:love_keeper_fe/features/calendar/presentation/pages/detail_page.dart';
 import 'package:love_keeper_fe/features/couples/presentation/pages/dday_page.dart';
-import 'package:love_keeper_fe/features/main/widgets/tab_bar.dart';
+import 'package:love_keeper_fe/features/main/presentation/widgets/tab_bar.dart';
 // Letter 관련 페이지
 import '../../../features/letters/presentation/pages/send_letter_screen.dart';
 import '../../../features/letters/presentation/pages/send_letter_page.dart';
@@ -30,7 +31,6 @@ import '../../../features/members/presentation/pages/settings_page.dart';
 import '../../../features/couples/presentation/pages/disconnect_page.dart';
 import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
-import '../../../features/auth/my_page/presentation/pages/Birthdate_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/members/presentation/pages/email_edit_page.dart';
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
@@ -44,7 +44,7 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.sendLetter,
+    initialLocation: RouteNames.splashScreen,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding 및 Login 관련 라우트들

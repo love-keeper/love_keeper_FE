@@ -127,9 +127,17 @@ class AuthViewModel extends _$AuthViewModel {
 
   Future<bool> checkToken(String token) async {
     try {
-      return await _repository.checkToken(token);
+      final response = await _repository.checkToken(token);
+      return response;
     } catch (e) {
       print('Check token error: $e');
+      // DioException은 인터셉터에서 처리하므로 여기서 재시도 결과 기다림
+      final prefs = await SharedPreferences.getInstance();
+      final newAccessToken = prefs.getString('access_token');
+      if (newAccessToken != null && newAccessToken != token) {
+        // reissue로 새 토큰 발급된 경우 재시도
+        return await _repository.checkToken(newAccessToken);
+      }
       return false;
     }
   }
