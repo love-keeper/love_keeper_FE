@@ -4,7 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_f
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
 
 class EmailLoginPage extends StatefulWidget {
-  const EmailLoginPage({Key? key}) : super(key: key);
+  const EmailLoginPage({super.key});
 
   @override
   _EmailLoginPageState createState() => _EmailLoginPageState();

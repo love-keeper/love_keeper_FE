@@ -4,7 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_f
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
 
 class NicknameEditPage extends StatefulWidget {
-  const NicknameEditPage({Key? key}) : super(key: key);
+  const NicknameEditPage({super.key});
 
   @override
   _NicknameEditPageState createState() => _NicknameEditPageState();

@@ -7,7 +7,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_f
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
 
 class ProfileRegistrationPage extends StatefulWidget {
-  const ProfileRegistrationPage({Key? key}) : super(key: key);
+  const ProfileRegistrationPage({super.key});
 
   @override
   _ProfileRegistrationPageState createState() =>

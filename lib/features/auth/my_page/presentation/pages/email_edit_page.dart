@@ -4,7 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_b
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/email_edit_field_widget.dart';
 
 class EmailEditPage extends StatefulWidget {
-  const EmailEditPage({Key? key}) : super(key: key);
+  const EmailEditPage({super.key});
 
   @override
   _EmailEditPageState createState() => _EmailEditPageState();

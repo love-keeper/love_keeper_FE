@@ -3,8 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
-
+  const SettingsPage({super.key});
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
   final String appVersion = "0.1.1"; // 기본 버전 초기값
 

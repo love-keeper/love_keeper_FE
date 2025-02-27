@@ -4,8 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_b
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/email_edit_field_widget.dart';
 
 class NewEmailcertification extends StatefulWidget {
-  const NewEmailcertification({Key? key}) : super(key: key);
-
+  const NewEmailcertification({super.key});
   @override
   _NewEmailcertification createState() => _NewEmailcertification();
 }

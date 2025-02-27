@@ -44,7 +44,7 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.mainPage,
+    initialLocation: RouteNames.splashScreen,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding 및 Login 관련 라우트들

@@ -4,8 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_f
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
 
 class PwFindingPage extends StatefulWidget {
-  const PwFindingPage({Key? key}) : super(key: key);
-
+  const PwFindingPage({super.key});
   @override
   _PwFindingPageState createState() => _PwFindingPageState();
 }

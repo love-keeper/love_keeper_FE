@@ -4,7 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_f
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
 
 class CodeConnectPage extends StatefulWidget {
-  const CodeConnectPage({Key? key}) : super(key: key);
+  const CodeConnectPage({super.key});
 
   @override
   _CodeConnectPageState createState() => _CodeConnectPageState();

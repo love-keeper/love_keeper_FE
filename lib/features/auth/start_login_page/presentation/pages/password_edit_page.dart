@@ -4,7 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_f
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
 
 class PasswordEditPage extends StatefulWidget {
-  const PasswordEditPage({Key? key}) : super(key: key);
+  const PasswordEditPage({super.key});
 
   @override
   _PasswordEditPageState createState() => _PasswordEditPageState();

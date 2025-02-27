@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class DisconnectedScreen extends StatelessWidget {
-  const DisconnectedScreen({Key? key}) : super(key: key);
+  const DisconnectedScreen({super.key});
 
   void _showBottomSheet(BuildContext context) {
     // 함수 내부에서 scaleFactor 계산

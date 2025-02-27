@@ -8,7 +8,7 @@ import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_
 import 'package:love_keeper_fe/features/auth/letter/data/letter_texts.dart';
 
 class ReplyLetterPage extends StatefulWidget {
-  const ReplyLetterPage({Key? key}) : super(key: key);
+  const ReplyLetterPage({super.key});
 
   @override
   _ReplyLetterPageState createState() => _ReplyLetterPageState();
@@ -64,12 +64,6 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
   void _closePreview() {
     setState(() {
       isPreview = false;
-    });
-  }
-
-  void _hideExitDialog() {
-    setState(() {
-      showExitDialog = false;
     });
   }
 
@@ -177,13 +171,13 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
     final List<double> lineLengths = getLineLengths(currentStep);
     final String previewContent =
         stepTexts.where((text) => text.isNotEmpty).join(" "); //미리보기 모드
-    void _showExitDialog() {
+    void displayExitDialog() {
       // 키보드를 먼저 닫음
       FocusScope.of(context).unfocus();
 
       // 키보드가 완전히 닫힌 후 바텀 시트를 띄우도록 약간의 딜레이 추가
       Future.delayed(const Duration(milliseconds: 200), () {
-        showModalBottomSheet(
+        showModalBottomSheet<void>(
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent, // 배경을 투명하게 유지
@@ -226,19 +220,13 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
       });
     }
 
-    void _hideExitDialog() {
-      setState(() {
-        showExitDialog = false;
-      });
-    }
-
 //뒤로가기 버튼
-    void _handleBackButton() {
+    void handleBackButton() {
       if (currentStep == 0) {
         if (_textController.text.isEmpty) {
           _exitToHome();
         } else {
-          _showExitDialog();
+          displayExitDialog();
         }
       } else {
         setState(() {
@@ -290,14 +278,14 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                       ),
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.zero,
-                      onPressed: _handleBackButton,
+                      onPressed: handleBackButton,
                     ),
                   ),
                   actions: [
                     Padding(
                       padding: EdgeInsets.only(right: 20.0 * scaleFactor),
                       child: TextButton(
-                        onPressed: _showExitDialog,
+                        onPressed: displayExitDialog,
                         child: Text(
                           '나가기',
                           style: TextStyle(

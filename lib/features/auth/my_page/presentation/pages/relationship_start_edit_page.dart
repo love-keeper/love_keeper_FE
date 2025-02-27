@@ -4,7 +4,7 @@ import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_f
 import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
 
 class RelationshipStartEditPage extends StatefulWidget {
-  const RelationshipStartEditPage({Key? key}) : super(key: key);
+  const RelationshipStartEditPage({super.key});
 
   @override
   _RelationshipStartEditPageState createState() =>
