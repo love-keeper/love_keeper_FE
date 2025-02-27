@@ -125,6 +125,15 @@ class AuthViewModel extends _$AuthViewModel {
     }
   }
 
+  Future<bool> checkToken(String token) async {
+    try {
+      return await _repository.checkToken(token);
+    } catch (e) {
+      print('Check token error: $e');
+      return false;
+    }
+  }
+
   Future<void> _saveTokens(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('memberId', user.memberId);
