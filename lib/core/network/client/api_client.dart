@@ -67,6 +67,9 @@ abstract class ApiClient {
   Future<ApiResponse<String>> resetPassword(
       @Body() PasswordResetRequest request);
 
+  @GET('/api/auth/check-token')
+  Future<ApiResponse<String>> checkToken(@Header('Authorization') String token);
+
   // COUPLES
 
   @POST('/api/couples/generate-code')

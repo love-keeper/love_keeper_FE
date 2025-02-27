@@ -112,6 +112,12 @@ class AuthRepositoryImpl implements AuthRepository {
     return response.result!;
   }
 
+  @override
+  Future<bool> checkToken(String token) async {
+    final response = await apiClient.checkToken('Bearer $token');
+    return response.code == 'COMMON200';
+  }
+
   void _handleResponse(ApiResponse<dynamic> response) {
     // 타입 명시
     if (!['COMMON200', 'COMMON201'].contains(response.code)) {
