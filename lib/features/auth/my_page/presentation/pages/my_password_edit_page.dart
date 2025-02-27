@@ -77,6 +77,7 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
         confirmPwGuideMessage.isEmpty;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

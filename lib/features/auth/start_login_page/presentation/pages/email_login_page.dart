@@ -64,10 +64,11 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
 
     final String emailGuideMessage =
         hasEmail && !emailRegex.hasMatch(_emailController.text)
-            ? "옳바른 이메일 형식을 입력해 주세요."
+            ? "올바른 이메일 형식을 입력해 주세요."
             : "";
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -144,7 +145,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                 }
               } else {
                 if (hasPassword && _passwordController.text == debugPassword) {
-                  context.pushReplacementNamed('main');
+                  context.go('/mainPage');
                 } else {
                   setState(() {
                     showPasswordGuide = true;

@@ -79,8 +79,7 @@ class DisconnectedScreen extends StatelessWidget {
                         SizedBox(height: 26.89 * scaleFactor),
                         Center(
                           child: GestureDetector(
-                            onTap: () => context
-                                .pushNamed('coupleConnect'), //커플 연결하는 화면 고라우터
+                            onTap: () => context.go('/codeConnect'),
                             child: Container(
                               width: 334 * scaleFactor,
                               height: 52 * scaleFactor,
@@ -124,6 +123,7 @@ class DisconnectedScreen extends StatelessWidget {
     final double scaleFactor = deviceWidth / baseWidth;
 
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
@@ -131,7 +131,7 @@ class DisconnectedScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.only(right: 20 * scaleFactor),
               child: GestureDetector(
-                onTap: () => context.pushNamed('coupleConnect'),
+                onTap: () => context.go('/codeConnect'),
                 child: Image.asset(
                   'assets/images/login_page/Ic_Close.png',
                   width: 24 * scaleFactor,

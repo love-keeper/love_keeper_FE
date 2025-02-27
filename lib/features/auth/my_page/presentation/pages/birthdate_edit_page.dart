@@ -44,6 +44,7 @@ class _BirthdateEditPageState extends State<BirthdateEditPage> {
             : "";
 
     return Scaffold(
+      backgroundColor: Colors.white,
       // 항상 키보드 활성화를 위해 autofocus 옵션 설정 (EditFieldWidget에서 처리)
       appBar: AppBar(
         backgroundColor: Colors.white,

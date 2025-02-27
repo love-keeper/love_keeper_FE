@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+// TabBarWidget import 추가 (경로는 프로젝트 구조에 맞게 조정)
+import 'package:love_keeper_fe/features/main/widgets/tab_bar.dart';
 
 class MyPage extends StatefulWidget {
   const MyPage({Key? key}) : super(key: key);
@@ -17,7 +19,7 @@ class _MyPageState extends State<MyPage> {
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
   final String _settingsIconPath = 'assets/images/my_page/Ic_Settings.png';
 
-  // 기존 _pickImage 대신, 바텀시트를 호출하는 함수 추가
+  // 바텀시트: 프로필 사진 설정 옵션
   void _showBottomSheet(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
@@ -26,7 +28,7 @@ class _MyPageState extends State<MyPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // 배경은 투명하게
+      backgroundColor: Colors.transparent, // 배경 투명 처리
       isDismissible: true,
       builder: (BuildContext dialogContext) {
         return GestureDetector(
@@ -34,17 +36,17 @@ class _MyPageState extends State<MyPage> {
           behavior: HitTestBehavior.opaque,
           child: Stack(
             children: [
-              // 전체 화면 오버레이 (투명)
+              // 전체 오버레이 (투명)
               Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.transparent,
               ),
-              // 하단에 바텀시트 배치
+              // 하단 바텀시트
               Align(
                 alignment: Alignment.bottomCenter,
                 child: GestureDetector(
-                  onTap: () {}, // 바텀시트 내부 터치 시 닫히지 않도록
+                  onTap: () {}, // 내부 터치 시 닫히지 않도록
                   child: Container(
                     width: 375 * scaleFactor,
                     height: 299 * scaleFactor,
@@ -83,11 +85,11 @@ class _MyPageState extends State<MyPage> {
                           ),
                         ),
                         SizedBox(height: 33 * scaleFactor),
-                        // 두 개의 옵션 버튼
+                        // 옵션 버튼들
                         Center(
                           child: Column(
                             children: [
-                              // 앨범에서 사진 선택 버튼
+                              // 앨범에서 사진 선택
                               GestureDetector(
                                 onTap: () {
                                   Navigator.pop(dialogContext);
@@ -122,8 +124,8 @@ class _MyPageState extends State<MyPage> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 30 * scaleFactor), // 두 옵션 사이 간격
-                              // 기본 이미지 적용 버튼
+                              SizedBox(height: 30 * scaleFactor),
+                              // 기본 이미지 적용
                               GestureDetector(
                                 onTap: () {
                                   Navigator.pop(dialogContext);
@@ -204,6 +206,7 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
+  // 갤러리에서 이미지 선택
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -212,126 +215,6 @@ class _MyPageState extends State<MyPage> {
         _profileImage = File(pickedFile.path);
       });
     }
-  }
-
-  /* void _editField(String fieldName) {
-    context.pushNamed('editField', pathParameters: {'fieldName': fieldName});
-  }*/
-
-  @override
-  Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    const double baseWidth = 375.0;
-    final double scaleFactor = deviceWidth / baseWidth;
-
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          "MY",
-          style: TextStyle(
-            fontSize: 18 * scaleFactor,
-            fontWeight: FontWeight.w600,
-            height: 26 / 18,
-            letterSpacing: -0.45 * scaleFactor,
-            color: const Color(0xFF27282C),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20 * scaleFactor),
-            child: GestureDetector(
-              onTap: () {
-                context.push('/settings');
-              },
-              child: Image.asset(
-                _settingsIconPath,
-                width: 24 * scaleFactor,
-                height: 24 * scaleFactor,
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Scaffold(
-              resizeToAvoidBottomInset: false,
-              extendBodyBehindAppBar: true,
-              appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(0),
-                child: Container(),
-              ),
-              body: Column(
-                children: [
-                  SizedBox(height: 16 * scaleFactor),
-                  Align(
-                    alignment: Alignment.center,
-                    child: ClipOval(
-                      child: _profileImage != null
-                          ? Image.file(
-                              _profileImage!,
-                              width: 84 * scaleFactor,
-                              height: 84 * scaleFactor,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
-                              _defaultImagePath,
-                              width: 84 * scaleFactor,
-                              height: 84 * scaleFactor,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                  ),
-                  SizedBox(height: 30 * scaleFactor),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-                    child: _buildInfoSection(scaleFactor),
-                  ),
-                  SizedBox(height: 16 * scaleFactor),
-                  Container(
-                    width: deviceWidth,
-                    height: 16 * scaleFactor,
-                    color: const Color(0xFFF7F8FB),
-                  ),
-                  SizedBox(height: 16 * scaleFactor),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-                    child: _buildMenuSection(scaleFactor),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          // 카메라 아이콘: 기존 _pickImage 대신 _showBottomSheet 호출
-          Positioned(
-            top: 68 * scaleFactor,
-            left: 202 * scaleFactor,
-            child: GestureDetector(
-              onTap: () => _showBottomSheet(context),
-              child: Image.asset(
-                _galleryIconPath,
-                width: 30 * scaleFactor,
-                height: 30 * scaleFactor,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 30 * scaleFactor,
-                    height: 30 * scaleFactor,
-                    color: Colors.red,
-                    child: const Icon(Icons.error, color: Colors.white),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildInfoSection(double scaleFactor) {
@@ -350,7 +233,7 @@ class _MyPageState extends State<MyPage> {
             onTap: () => context.push('/emailEdit')),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow("비밀번호 변경", "", scaleFactor,
-            hasArrow: true, onTap: () => context.push('/passwordEdit')),
+            hasArrow: true, onTap: () => context.push('/myPasswordEdit')),
       ],
     );
   }
@@ -433,6 +316,132 @@ class _MyPageState extends State<MyPage> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    const double baseWidth = 375.0;
+    final double scaleFactor = deviceWidth / baseWidth;
+
+    return Scaffold(
+      backgroundColor: Colors.white, // 원하는 배경색 지정
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "MY",
+          style: TextStyle(
+            fontSize: 18 * scaleFactor,
+            fontWeight: FontWeight.w600,
+            height: 26 / 18,
+            letterSpacing: -0.45 * scaleFactor,
+            color: const Color(0xFF27282C),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 20 * scaleFactor),
+            child: GestureDetector(
+              onTap: () {
+                context.push('/settings');
+              },
+              child: Image.asset(
+                _settingsIconPath,
+                width: 24 * scaleFactor,
+                height: 24 * scaleFactor,
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: Stack(
+        children: [
+          // 메인 컨텐츠: 스크롤 가능한 정보 영역
+          GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.only(top: 16 * scaleFactor),
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: ClipOval(
+                      child: _profileImage != null
+                          ? Image.file(
+                              _profileImage!,
+                              width: 84 * scaleFactor,
+                              height: 84 * scaleFactor,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              _defaultImagePath,
+                              width: 84 * scaleFactor,
+                              height: 84 * scaleFactor,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                  ),
+                  SizedBox(height: 30 * scaleFactor),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: _buildInfoSection(scaleFactor),
+                  ),
+                  SizedBox(height: 16 * scaleFactor),
+                  Container(
+                    width: deviceWidth,
+                    height: 16 * scaleFactor,
+                    color: const Color(0xFFF7F8FB),
+                  ),
+                  SizedBox(height: 16 * scaleFactor),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: _buildMenuSection(scaleFactor),
+                  ),
+                  SizedBox(height: 16 * scaleFactor),
+                ],
+              ),
+            ),
+          ),
+          // 카메라(갤러리) 아이콘: 프로필 사진 설정을 위한 버튼
+          Positioned(
+            top: 68 * scaleFactor,
+            left: 202 * scaleFactor,
+            child: GestureDetector(
+              onTap: () => _showBottomSheet(context),
+              child: Image.asset(
+                _galleryIconPath,
+                width: 30 * scaleFactor,
+                height: 30 * scaleFactor,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 30 * scaleFactor,
+                    height: 30 * scaleFactor,
+                    color: Colors.red,
+                    child: const Icon(Icons.error, color: Colors.white),
+                  );
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+      // 하단에 TabBarWidget 추가 (현재 마이 페이지이므로 currentIndex를 2로 설정)
+      bottomNavigationBar: TabBarWidget(
+        currentIndex: 2,
+        onTabSelected: (index) {
+          if (index == 0) {
+            context.go('/mainPage');
+          } else if (index == 1) {
+            context.push('/storage');
+          } else if (index == 2) {
+            // 이미 마이 페이지이므로 아무 작업도 하지 않음.
+          }
+        },
       ),
     );
   }

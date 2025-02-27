@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../features/onboarding/pages/splash_screen.dart';
-import '../../../features/onboarding/pages/login_page.dart'; //수정필요
+import '../../../features/onboarding/pages/login_page.dart';
 
 // Login 관련 페이지
 import '../../../features/auth/start_login_page/presentation/pages/email_login_page.dart';
@@ -15,10 +15,12 @@ import '../../../features/auth/start_login_page/presentation/pages/profile_regis
 import '../../../features/auth/start_login_page/presentation/pages/code_connect_page.dart';
 //main 관련 페이지
 import 'package:love_keeper_fe/features/main/presentation/pages/main_page.dart';
+import 'package:love_keeper_fe/features/main/presentation/pages/notification_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/calendar_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/storage_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/detail_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/dday_page.dart';
+
 // Letter 관련 페이지
 //import '../../../features//auth/letter/presentation/pages/letter_page.dart';
 import '../../../features/auth/letter/presentation/pages/send_letter_screen.dart';
@@ -44,14 +46,14 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.mainPage,
+    initialLocation: RouteNames.onboarding,
     debugLogDiagnostics: true,
     routes: [
 //onboarding Page Route
       GoRoute(
         path: RouteNames.onboarding,
         name: ' onboarding',
-        builder: (context, state) => const LoginPage(), //수정필요
+        builder: (context, state) => const LoginPage(), // 처음나오는 시작하기 페이지
       ),
       GoRoute(
         path: RouteNames.splashScreen,
@@ -113,6 +115,12 @@ GoRouter appRouter(AppRouterRef ref) {
           return MainPage(initialIndex: initialIndex);
         },
       ),
+      GoRoute(
+        path: RouteNames.notificationPage,
+        name: ' notificationPage',
+        builder: (context, state) => const NotificationPage(),
+      ),
+
       // Calendar Page Route
       GoRoute(
         path: '/calendar',

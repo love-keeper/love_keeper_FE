@@ -428,7 +428,7 @@ class _StoragePageState extends State<StoragePage> {
         onTabSelected: (index) {
           if (index == 1) return;
           if (index == 0) {
-            context.pop();
+            context.go('/mainPage');
           } else if (index == 2) {
             context.pushReplacement('/main?initialIndex=2');
           }

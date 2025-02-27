@@ -50,6 +50,7 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
         hasText && _inviteCodeController.text == expectedInviteCode;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

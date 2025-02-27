@@ -261,6 +261,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
         guideMessage.isEmpty;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

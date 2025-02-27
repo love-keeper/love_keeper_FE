@@ -15,6 +15,7 @@ class SettingsPage extends StatelessWidget {
     final double scaleFactor = deviceWidth / baseWidth;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -92,7 +93,7 @@ class SettingsPage extends StatelessWidget {
               'dialogSaveText': "돌아가기",
               'onDialogExit': () {
                 // 연결 끊기 버튼 누르면, 커플 연결 시작 화면으로 이동 (예: 'coupleConnect' 라우트)
-                context.pushReplacementNamed('coupleConnect');
+                context.go('/disconnected_SC');
               },
               'onDialogSave': () {
                 context.pop(); // 설정 페이지로 돌아감
@@ -120,7 +121,7 @@ class SettingsPage extends StatelessWidget {
               'dialogExitText': "탈퇴하기",
               'dialogSaveText': "돌아가기",
               'onDialogExit': () {
-                context.pushReplacementNamed('home'); //온보딩으로 가는로직 구현하기
+                context.go('/onboarding'); //온보딩으로 가는로직 구현하기
               },
               'onDialogSave': () {
                 context.pop(); // 설정 페이지로 돌아감

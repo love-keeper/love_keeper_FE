@@ -26,9 +26,13 @@ class _MainPageState extends State<MainPage> {
 
   void _onTabSelected(int index) {
     if (index == 1) {
-      // StoragePage로 이동 (GoRouter 사용)
+      // '보관함' 탭: /storage 라우트로 이동
       context.push('/storage');
+    } else if (index == 2) {
+      // '마이' 탭: /my 라우트로 이동
+      context.push('/my');
     } else {
+      // '홈' 탭은 내부 화면 업데이트
       setState(() {
         _currentIndex = index;
       });
@@ -64,7 +68,7 @@ class _MainPageState extends State<MainPage> {
             ),
             onPressed: () {
               // NotificationPage로 이동 (GoRouter 사용)
-              context.push('/notification');
+              context.push('/notificationPage');
             },
           ),
           const SizedBox(width: 10),
@@ -87,7 +91,6 @@ class _MainPageState extends State<MainPage> {
           index: _currentIndex,
           children: [
             _buildHomeScreen(width),
-            _buildMyScreen(),
           ],
         ),
       ),
@@ -150,15 +153,6 @@ class _MainPageState extends State<MainPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildMyScreen() {
-    return const Center(
-      child: Text(
-        '마이 화면',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
       ),
     );
   }
