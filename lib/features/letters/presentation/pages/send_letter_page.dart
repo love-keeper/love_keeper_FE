@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/line_painter.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/letter_preview.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_bottom_sheet_dialog.dart';
-import 'package:love_keeper_fe/features/auth/letter/data/letter_texts.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/line_painter.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_preview.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper_fe/features/letters/data/letter_texts.dart';
 
 class SendLetterPage extends StatefulWidget {
-  const SendLetterPage({Key? key}) : super(key: key);
+  const SendLetterPage({super.key});
 
   @override
   _SendLetterPageState createState() => _SendLetterPageState();
@@ -21,13 +21,13 @@ class _SendLetterPageState extends State<SendLetterPage> {
   int currentStep = 0;
   bool isPreview = false;
   bool showExitDialog = false;
-  final List<String> stepTexts = ["", "", "", ""];
+  final List<String> stepTexts = ['', '', '', ''];
 
   late List<String> questionTexts;
   // 보내는 편지용 질문 텍스트 사용
 
-  String userName = "나"; // 보내는 사람 이름 (예시)
-  String partnerName = "상대방"; // 받는 사람 이름 (예시)
+  String userName = '나'; // 보내는 사람 이름 (예시)
+  String partnerName = '상대방'; // 받는 사람 이름 (예시)
 
   @override
   void initState() {
@@ -74,19 +74,19 @@ class _SendLetterPageState extends State<SendLetterPage> {
   // 백엔드에 임시 저장 요청을 보내는 함수
   Future<void> _saveTemporaryLetter() async {
     Map<String, dynamic> tempLetterData = {
-      "sender": userName,
-      "receiver": partnerName,
-      "stepTexts": stepTexts, // 각 단계별 텍스트 리스트
-      "currentStep": currentStep,
-      "timestamp": DateTime.now().toIso8601String(),
-      "isTemporary": true, // 임시 저장 여부 플래그
+      'sender': userName,
+      'receiver': partnerName,
+      'stepTexts': stepTexts, // 각 단계별 텍스트 리스트
+      'currentStep': currentStep,
+      'timestamp': DateTime.now().toIso8601String(),
+      'isTemporary': true, // 임시 저장 여부 플래그
     };
 
-    final url = Uri.parse("https://your-backend-url.com/api/saveTempLetter");
+    final url = Uri.parse('https://your-backend-url.com/api/saveTempLetter');
     try {
       final response = await http.post(
         url,
-        headers: {"Content-Type": "application/json"},
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(tempLetterData),
       );
       if (response.statusCode == 200) {
@@ -94,11 +94,11 @@ class _SendLetterPageState extends State<SendLetterPage> {
         _exitToHome();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("임시저장 실패: ${response.statusCode}")));
+            SnackBar(content: Text('임시저장 실패: ${response.statusCode}')));
       }
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("임시저장 중 오류 발생: $e")));
+          .showSnackBar(SnackBar(content: Text('임시저장 중 오류 발생: $e')));
     }
   }
 
@@ -131,19 +131,19 @@ class _SendLetterPageState extends State<SendLetterPage> {
 
   void _sendLetter() async {
     // 미리보기에서 사용된 방식과 동일하게 비어있지 않은 텍스트만 합칩니다.
-    String letterContent = stepTexts.where((text) => text.isNotEmpty).join(" ");
+    String letterContent = stepTexts.where((text) => text.isNotEmpty).join(' ');
     Map<String, dynamic> letterData = {
-      "sender": userName,
-      "receiver": partnerName,
-      "content": letterContent,
-      "timestamp": DateTime.now().toIso8601String(),
+      'sender': userName,
+      'receiver': partnerName,
+      'content': letterContent,
+      'timestamp': DateTime.now().toIso8601String(),
     };
 
-    final url = Uri.parse("https://your-backend-url.com/api/sendLetter");
+    final url = Uri.parse('https://your-backend-url.com/api/sendLetter');
     try {
       final response = await http.post(
         url,
-        headers: {"Content-Type": "application/json"},
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(letterData),
       );
 
@@ -154,11 +154,11 @@ class _SendLetterPageState extends State<SendLetterPage> {
         });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("전송 실패: ${response.statusCode}")));
+            SnackBar(content: Text('전송 실패: ${response.statusCode}')));
       }
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("전송 중 오류 발생: $e")));
+          .showSnackBar(SnackBar(content: Text('전송 중 오류 발생: $e')));
     }
   }
 
@@ -169,14 +169,14 @@ class _SendLetterPageState extends State<SendLetterPage> {
     final double scaleFactor = deviceWidth / baseWidth;
     final List<double> lineLengths = getLineLengths(currentStep);
     final String previewContent =
-        stepTexts.where((text) => text.isNotEmpty).join(" "); //미리보기 모드
-    void _showExitDialog() {
+        stepTexts.where((text) => text.isNotEmpty).join(' '); //미리보기 모드
+    void displayExitDialog() {
       // 키보드를 먼저 닫음
       FocusScope.of(context).unfocus();
 
       // 키보드가 완전히 닫힌 후 바텀 시트를 띄우도록 약간의 딜레이 추가
       Future.delayed(const Duration(milliseconds: 200), () {
-        showModalBottomSheet(
+        showModalBottomSheet<void>(
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent, // 배경을 투명하게 유지
@@ -200,10 +200,10 @@ class _SendLetterPageState extends State<SendLetterPage> {
                       height: 288 * scaleFactor, // 바텀시트 높이 조정
                       child: CustomBottomSheetDialog(
                         scaleFactor: scaleFactor,
-                        title: "작성을 중단하시겠어요?",
-                        content: "나가기 선택 시,\n작성된 편지는 저장되지 않습니다.",
-                        exitText: "나가기",
-                        saveText: "저장하기",
+                        title: '작성을 중단하시겠어요?',
+                        content: '나가기 선택 시,\n작성된 편지는 저장되지 않습니다.',
+                        exitText: '나가기',
+                        saveText: '저장하기',
                         showSaveButton: true,
                         onExit: _exitToHome,
                         onSave: _saveTemporaryLetter,
@@ -219,19 +219,13 @@ class _SendLetterPageState extends State<SendLetterPage> {
       });
     }
 
-    void _hideExitDialog() {
-      setState(() {
-        showExitDialog = false;
-      });
-    }
-
 //뒤로가기 버튼
-    void _handleBackButton() {
+    void handleBackButton() {
       if (currentStep == 0) {
         if (_textController.text.isEmpty) {
           _exitToHome();
         } else {
-          _showExitDialog();
+          displayExitDialog();
         }
       } else {
         setState(() {
@@ -245,11 +239,11 @@ class _SendLetterPageState extends State<SendLetterPage> {
     if (isPreview) {
       return Scaffold(
         body: LetterPreview(
-          partnerName: "상대방",
-          userName: "나",
+          partnerName: '상대방',
+          userName: '나',
           content: previewContent,
           scaleFactor: scaleFactor,
-          actionButtonText: "전송하기",
+          actionButtonText: '전송하기',
           onAction: _sendLetter,
           onOutsideTap: _closePreview,
         ),
@@ -283,14 +277,14 @@ class _SendLetterPageState extends State<SendLetterPage> {
                       ),
                       constraints: const BoxConstraints(),
                       padding: EdgeInsets.zero,
-                      onPressed: _handleBackButton,
+                      onPressed: handleBackButton,
                     ),
                   ),
                   actions: [
                     Padding(
                       padding: EdgeInsets.only(right: 20.0 * scaleFactor),
                       child: TextButton(
-                        onPressed: _showExitDialog,
+                        onPressed: displayExitDialog,
                         child: Text(
                           '나가기',
                           style: TextStyle(

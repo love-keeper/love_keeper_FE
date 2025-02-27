@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
 class DisconnectPage extends StatelessWidget {
   final String appBarTitle;
@@ -24,7 +24,7 @@ class DisconnectPage extends StatelessWidget {
   final VoidCallback onDialogSave;
 
   const DisconnectPage({
-    Key? key,
+    super.key,
     required this.appBarTitle,
     required this.richTextPrefix,
     required this.richTextSuffix,
@@ -41,7 +41,7 @@ class DisconnectPage extends StatelessWidget {
     required this.dialogSaveText,
     required this.onDialogExit,
     required this.onDialogSave,
-  }) : super(key: key);
+  });
 
   void _showCustomExitDialog(BuildContext context, double scaleFactor) {
     // 키보드 닫기
@@ -210,7 +210,7 @@ class DisconnectPage extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    "돌아가기",
+                    '돌아가기',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16 * scaleFactor,

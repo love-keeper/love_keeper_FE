@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class PwFindingPage extends StatefulWidget {
-  const PwFindingPage({Key? key}) : super(key: key);
+  const PwFindingPage({super.key});
 
   @override
   _PwFindingPageState createState() => _PwFindingPageState();
@@ -80,7 +80,7 @@ class _PwFindingPageState extends State<PwFindingPage> {
                           height: 26 * scaleFactor,
                           alignment: Alignment.topCenter,
                           child: Text(
-                            "이메일이 발송되었습니다",
+                            '이메일이 발송되었습니다',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 18 * scaleFactor,
@@ -98,7 +98,7 @@ class _PwFindingPageState extends State<PwFindingPage> {
                           color: Colors.transparent,
                           alignment: Alignment.topCenter,
                           child: Text(
-                            "메일이 도착하지 않았다면,\n스팸 메일함을 확인하거나 재전송 버튼을 눌러 주세요.\n문제가 계속되면 1:1 카카오톡 문의를 이용해 주세요.",
+                            '메일이 도착하지 않았다면,\n스팸 메일함을 확인하거나 재전송 버튼을 눌러 주세요.\n문제가 계속되면 1:1 카카오톡 문의를 이용해 주세요.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16 * scaleFactor,
@@ -126,7 +126,7 @@ class _PwFindingPageState extends State<PwFindingPage> {
                               ),
                               child: Center(
                                 child: Text(
-                                  "확인",
+                                  '확인',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 16 * scaleFactor,
@@ -167,8 +167,8 @@ class _PwFindingPageState extends State<PwFindingPage> {
     // 입력 도중에 형식이 올바르지 않으면 가이드 문구 설정
     final String guideMessage =
         hasText && !emailRegex.hasMatch(_emailController.text)
-            ? "올바른 이메일 형식을 입력해 주세요."
-            : "";
+            ? '올바른 이메일 형식을 입력해 주세요.'
+            : '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -177,7 +177,7 @@ class _PwFindingPageState extends State<PwFindingPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "비밀번호 찾기",
+          '비밀번호 찾기',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -198,7 +198,7 @@ class _PwFindingPageState extends State<PwFindingPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: hasText,
-        buttonText: "이메일 보내기",
+        buttonText: '이메일 보내기',
         onPressed: () => _showConfirmationBottomSheet(context, scaleFactor),
       ),
       body: SingleChildScrollView(
@@ -209,7 +209,7 @@ class _PwFindingPageState extends State<PwFindingPage> {
             // 앱바 바로 아래에 안내 문구 추가 (16 단위 여백 후)
             SizedBox(height: 16 * scaleFactor),
             Text(
-              "비밀번호 재설정을 위한 인증 메일이 전송됩니다.\n메일에 포함된 링크를 클릭하여 비밀번호를 재설정해 주세요.",
+              '비밀번호 재설정을 위한 인증 메일이 전송됩니다.\n메일에 포함된 링크를 클릭하여 비밀번호를 재설정해 주세요.',
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 14 * scaleFactor,
@@ -222,8 +222,8 @@ class _PwFindingPageState extends State<PwFindingPage> {
             SizedBox(height: 36 * scaleFactor),
             // EditFieldWidget을 사용하여 이메일 입력 필드를 표시
             EditFieldWidget(
-              label: "이메일",
-              hintText: "가입하신 이메일 주소를 입력해 주세요.",
+              label: '이메일',
+              hintText: '가입하신 이메일 주소를 입력해 주세요.',
               controller: _emailController,
               scaleFactor: scaleFactor,
               autofocus: true, // 페이지 진입 시 키보드 활성화
@@ -245,7 +245,7 @@ class _PwFindingPageState extends State<PwFindingPage> {
                   onPressed: () =>
                       _showConfirmationBottomSheet(context, scaleFactor),
                   child: Text(
-                    "재전송",
+                    '재전송',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14 * scaleFactor,

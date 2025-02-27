@@ -5,37 +5,37 @@ import '../../../features/onboarding/pages/splash_screen.dart';
 import '../../../features/onboarding/pages/login_page.dart';
 
 // Login 관련 페이지
-import '../../../features/auth/start_login_page/presentation/pages/email_login_page.dart';
-import '../../../features/auth/start_login_page/presentation/pages/pw_finding_page.dart';
-import '../../../features/auth/start_login_page/presentation/pages/password_edit_page.dart';
-import '../../../features/auth/start_login_page/presentation/pages/signup_page.dart';
-import '../../../features/auth/start_login_page/presentation/pages/email_password_input_page.dart';
-import '../../../features/auth/start_login_page/presentation/pages/profile_registration_page.dart';
-import '../../../features/auth/start_login_page/presentation/pages/code_connect_page.dart';
+import '../../../features/auth/presentation/pages/email_login_page.dart';
+import '../../../features/auth/presentation/pages/pw_finding_page.dart';
+import '../../../features/auth/presentation/pages/password_edit_page.dart';
+import '../../../features/auth/presentation/pages/signup_page.dart';
+import '../../../features/auth/presentation/pages/email_password_input_page.dart';
+import '../../../features/auth/presentation/pages/profile_registration_page.dart';
+import '../../../features/auth/presentation/pages/code_connect_page.dart';
 // main 관련 페이지
 import 'package:love_keeper_fe/features/main/presentation/pages/main_page.dart';
 import 'package:love_keeper_fe/features/main/presentation/pages/notification_page.dart';
-import 'package:love_keeper_fe/features/main/presentation/pages/calendar_page.dart';
-import 'package:love_keeper_fe/features/main/presentation/pages/storage_page.dart';
-import 'package:love_keeper_fe/features/main/presentation/pages/detail_page.dart';
-import 'package:love_keeper_fe/features/main/presentation/pages/dday_page.dart';
+import 'package:love_keeper_fe/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:love_keeper_fe/features/couples/presentation/pages/storage_page.dart';
+import 'package:love_keeper_fe/features/calendar/presentation/pages/detail_page.dart';
+import 'package:love_keeper_fe/features/couples/presentation/pages/dday_page.dart';
 import 'package:love_keeper_fe/features/main/widgets/tab_bar.dart';
 // Letter 관련 페이지
-import '../../../features/auth/letter/presentation/pages/send_letter_screen.dart';
-import '../../../features/auth/letter/presentation/pages/send_letter_page.dart';
-import '../../../features/auth/letter/presentation/pages/reply_letter_page.dart';
+import '../../../features/letters/presentation/pages/send_letter_screen.dart';
+import '../../../features/letters/presentation/pages/send_letter_page.dart';
+import '../../../features/letters/presentation/pages/reply_letter_page.dart';
 // My_page 관련 페이지
-import '../../../features/auth/my_page/presentation/pages/my_page.dart';
-import '../../../features/auth/my_page/presentation/pages/settings_page.dart';
-import '../../../features/auth/my_page/presentation/pages/disconnect_page.dart';
-import '../../../features/auth/my_page/presentation/pages/disconnected_screen.dart';
-import '../../../features/auth/my_page/presentation/pages/nickname_edit_page.dart';
+import '../../../features/members/presentation/pages/my_page.dart';
+import '../../../features/members/presentation/pages/settings_page.dart';
+import '../../../features/couples/presentation/pages/disconnect_page.dart';
+import '../../../features/couples/presentation/pages/disconnected_screen.dart';
+import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/auth/my_page/presentation/pages/Birthdate_edit_page.dart';
-import '../../../features/auth/my_page/presentation/pages/relationship_start_edit_page.dart';
-import '../../../features/auth/my_page/presentation/pages/email_edit_page.dart';
-import '../../../features/auth/my_page/presentation/pages/new_email_input_page.dart';
-import '../../../features/auth/my_page/presentation/pages/new_email_ certification.dart';
-import '../../../features/auth/my_page/presentation/pages/my_password_edit_page.dart';
+import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
+import '../../../features/members/presentation/pages/email_edit_page.dart';
+import '../../../features/members/presentation/pages/new_email_input_page.dart';
+import '../../../features/members/presentation/pages/new_email_ certification.dart';
+import '../../../features/members/presentation/pages/my_password_edit_page.dart';
 
 import 'route_names.dart';
 
@@ -44,7 +44,7 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.mainPage,
+    initialLocation: RouteNames.sendLetter,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding 및 Login 관련 라우트들
@@ -78,7 +78,7 @@ GoRouter appRouter(AppRouterRef ref) {
         name: ' signupPage',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
-          final String email = (extra['email'] as String?) ?? "";
+          final String email = (extra['email'] as String?) ?? '';
           return SignupPage(email: email);
         },
       ),
@@ -197,7 +197,7 @@ GoRouter appRouter(AppRouterRef ref) {
           final Future<void> Function() onComplete =
               extra['onComplete'] as Future<void> Function()? ?? () async {};
           return SendLetterScreen(
-            receiverName: (letterData['receiver'] as String?) ?? "상대방",
+            receiverName: (letterData['receiver'] as String?) ?? '상대방',
             onComplete: onComplete,
           );
         },
@@ -215,17 +215,17 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           return DisconnectPage(
-            appBarTitle: (extra['appBarTitle'] as String?) ?? "연결끊기",
-            richTextPrefix: (extra['richTextPrefix'] as String?) ?? "상대방",
+            appBarTitle: (extra['appBarTitle'] as String?) ?? '연결끊기',
+            richTextPrefix: (extra['richTextPrefix'] as String?) ?? '상대방',
             richTextSuffix:
-                (extra['richTextSuffix'] as String?) ?? " 님과\n연결을 끊으시겠어요?",
+                (extra['richTextSuffix'] as String?) ?? ' 님과\n연결을 끊으시겠어요?',
             imagePath: (extra['imagePath'] as String?) ??
                 'assets/images/my_page/Img_Disconnect.png',
             imageWidth: (extra['imageWidth'] as double?) ?? 223.0,
             imageHeight: (extra['imageHeight'] as double?) ?? 176.0,
             bottomText: (extra['bottomText'] as String?) ??
-                "기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.",
-            actionButtonText: (extra['actionButtonText'] as String?) ?? "연결 끊기",
+                '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+            actionButtonText: (extra['actionButtonText'] as String?) ?? '연결 끊기',
             gapBetweenImageAndText1:
                 (extra['gapBetweenImageAndText1'] as double?) ?? 78,
             gapBetweenImageAndText2:

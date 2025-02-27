@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/main/widgets/letter_box_widget.dart';
-import 'package:love_keeper_fe/features/main/widgets/promise_box_widget.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_box_widget.dart';
+import 'package:love_keeper_fe/features/promises/presentation/widgets/promise_box_widget.dart';
 import 'package:intl/intl.dart';
 
 class StoragePage extends StatefulWidget {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class NewEmailInputPage extends StatefulWidget {
-  const NewEmailInputPage({Key? key}) : super(key: key);
+  const NewEmailInputPage({super.key});
 
   @override
   _NewEmailInputPageState createState() => _NewEmailInputPageState();
@@ -43,8 +43,8 @@ class _NewEmailInputPageState extends State<NewEmailInputPage> {
     // 입력 도중에 형식이 올바르지 않으면 가이드 문구 설정
     final String guideMessage =
         hasText && !emailRegex.hasMatch(_newEmailController.text)
-            ? "올바른 이메일 형식을 입력해 주세요."
-            : "";
+            ? '올바른 이메일 형식을 입력해 주세요.'
+            : '';
 
     return Scaffold(
       backgroundColor: Colors.white, // 배경을 흰색으로 지정
@@ -53,7 +53,7 @@ class _NewEmailInputPageState extends State<NewEmailInputPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "이메일 변경",
+          '이메일 변경',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -74,7 +74,7 @@ class _NewEmailInputPageState extends State<NewEmailInputPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: hasText,
-        buttonText: "다음",
+        buttonText: '다음',
         onPressed: () {
           context.push('/newEmail_CE');
         },
@@ -87,8 +87,8 @@ class _NewEmailInputPageState extends State<NewEmailInputPage> {
             SizedBox(height: 16 * scaleFactor),
             // EditFieldWidget을 사용하여 새 이메일 입력
             EditFieldWidget(
-              label: "이메일",
-              hintText: "변경할 이메일을 입력해 주세요",
+              label: '이메일',
+              hintText: '변경할 이메일을 입력해 주세요',
               controller: _newEmailController,
               scaleFactor: scaleFactor,
               autofocus: true, // 페이지 진입 시 키보드 활성화

@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class ProfileRegistrationPage extends StatefulWidget {
-  const ProfileRegistrationPage({Key? key}) : super(key: key);
+  const ProfileRegistrationPage({super.key});
 
   @override
   _ProfileRegistrationPageState createState() =>
@@ -95,7 +95,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                         // 바텀시트 상단 텍스트
                         Center(
                           child: Text(
-                            "프로필 사진 설정",
+                            '프로필 사진 설정',
                             style: TextStyle(
                               fontSize: 14 * scaleFactor,
                               fontWeight: FontWeight.w600,
@@ -130,7 +130,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                                       ),
                                       SizedBox(width: 15 * scaleFactor),
                                       Text(
-                                        "앨범에서 사진 선택",
+                                        '앨범에서 사진 선택',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 18 * scaleFactor,
@@ -169,7 +169,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                                       ),
                                       SizedBox(width: 15 * scaleFactor),
                                       Text(
-                                        "기본 이미지 적용",
+                                        '기본 이미지 적용',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 18 * scaleFactor,
@@ -202,7 +202,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                               ),
                               child: Center(
                                 child: Text(
-                                  "취소",
+                                  '취소',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 16 * scaleFactor,
@@ -252,8 +252,8 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
         RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01]).$');
     final String guideMessage =
         hasBirthdate && !birthdateRegex.hasMatch(_birthdateController.text)
-            ? "유효한 날짜 형식(YYYY.MM.DD.)을 입력해 주세요"
-            : "";
+            ? '유효한 날짜 형식(YYYY.MM.DD.)을 입력해 주세요'
+            : '';
 
     // 두 필드 모두 입력되었고, 생년월일 가이드 문구가 없으면 버튼 활성화
     final bool isSaveEnabled = hasNickname &&
@@ -267,7 +267,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "프로필 등록",
+          '프로필 등록',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -288,7 +288,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: isSaveEnabled,
-        buttonText: "시작하기",
+        buttonText: '시작하기',
         onPressed: () {
           // 커플 연결 페이지로 이동 (예시: '/relationshipConnection')
           context.push('/codeConnect');
@@ -333,18 +333,18 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
             SizedBox(height: 36 * scaleFactor),
             // 닉네임 입력 필드
             EditFieldWidget(
-              label: "닉네임",
-              hintText: "닉네임을 입력해 주세요.",
+              label: '닉네임',
+              hintText: '닉네임을 입력해 주세요.',
               controller: _nicknameController,
               scaleFactor: scaleFactor,
               autofocus: true,
-              guideMessage: "",
+              guideMessage: '',
             ),
             SizedBox(height: 36 * scaleFactor),
             // 생년월일 입력 필드 (EditFieldWidget 재사용)
             EditFieldWidget(
-              label: "생년월일",
-              hintText: "YYYY.MM.DD.",
+              label: '생년월일',
+              hintText: 'YYYY.MM.DD.',
               controller: _birthdateController,
               scaleFactor: scaleFactor,
               autofocus: false,

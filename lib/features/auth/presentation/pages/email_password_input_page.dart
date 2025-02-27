@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class EmailPasswordInputPage extends StatefulWidget {
-  const EmailPasswordInputPage({Key? key}) : super(key: key);
+  const EmailPasswordInputPage({super.key});
 
   @override
   _EmailPasswordInputPageState createState() => _EmailPasswordInputPageState();
@@ -88,7 +88,7 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
                         // 큰 텍스트: 약관동의
                         Center(
                           child: Text(
-                            "약관동의",
+                            '약관동의',
                             style: TextStyle(
                               fontSize: 20 * scaleFactor,
                               fontWeight: FontWeight.w600,
@@ -100,7 +100,7 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
                         // 작은 텍스트: 전체 동의 (선택 포함)
                         Center(
                           child: Text(
-                            "전체 동의 (선택 포함)",
+                            '전체 동의 (선택 포함)',
                             style: TextStyle(
                               fontSize: 16 * scaleFactor,
                               fontWeight: FontWeight.w400,
@@ -127,7 +127,7 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
                             ),
                             child: Center(
                               child: Text(
-                                "동의하고 계속하기",
+                                '동의하고 계속하기',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 16 * scaleFactor,
@@ -164,15 +164,15 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
     // 비밀번호가 조건을 만족하지 않으면 가이드 메시지 출력
     final String passwordGuideMessage =
         hasPassword && !passwordRegex.hasMatch(_passwordController.text)
-            ? "비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요."
-            : "";
+            ? '비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
     // 비밀번호 확인 필드의 경우, 입력된 내용이 비밀번호와 다르면 가이드 메시지 출력
     final String confirmGuideMessage = showConfirmField &&
             hasConfirm &&
             (_confirmController.text != _passwordController.text)
-        ? "비밀번호가 일치하지 않습니다. 다시 입력해 주세요."
-        : "";
+        ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
+        : '';
 
     // 버튼 활성화 조건:
     // - 아직 비밀번호 확인 필드가 안 보일 경우: 비밀번호 필드가 채워지고 정규식을 만족하면 활성화
@@ -191,7 +191,7 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "이메일로 시작",
+          '이메일로 시작',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -212,7 +212,7 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: isButtonEnabled,
-        buttonText: "다음",
+        buttonText: '다음',
         onPressed: () {
           if (!showConfirmField) {
             // 아직 비밀번호 확인 필드가 보이지 않는 경우:
@@ -247,8 +247,8 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
               SizedBox(height: 16 * scaleFactor),
               // 비밀번호 입력 필드
               EditFieldWidget(
-                label: "비밀번호",
-                hintText: "8자 이상 영문/숫자/특수문자 포함",
+                label: '비밀번호',
+                hintText: '8자 이상 영문/숫자/특수문자 포함',
                 controller: _passwordController,
                 scaleFactor: scaleFactor,
                 autofocus: true,
@@ -259,8 +259,8 @@ class _EmailPasswordInputPageState extends State<EmailPasswordInputPage> {
               if (showConfirmField) ...[
                 SizedBox(height: 36 * scaleFactor),
                 EditFieldWidget(
-                  label: "비밀번호 확인",
-                  hintText: "비밀번호를 다시 입력해 주세요",
+                  label: '비밀번호 확인',
+                  hintText: '비밀번호를 다시 입력해 주세요',
                   controller: _confirmController,
                   scaleFactor: scaleFactor,
                   autofocus: false,

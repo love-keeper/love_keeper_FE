@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
-  final String appVersion = "0.1.1"; // 기본 버전 초기값
+  final String appVersion = '0.1.1'; // 기본 버전 초기값
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class SettingsPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "설정",
+          '설정',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -50,47 +50,47 @@ class SettingsPage extends StatelessWidget {
           SizedBox(height: 16 * scaleFactor),
 
           // '알림' 카테고리
-          _buildCategoryTitle("알림", scaleFactor),
+          _buildCategoryTitle('알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
 
           // 알림 설정 옵션들
-          _buildNotificationOption("푸시 알림", scaleFactor),
+          _buildNotificationOption('푸시 알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-          _buildNotificationOption("이메일 알림", scaleFactor),
+          _buildNotificationOption('이메일 알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-          _buildNotificationOption("마케팅 정보 알림", scaleFactor),
+          _buildNotificationOption('마케팅 정보 알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
 
           // 회색 구분 바
           _buildDivider(deviceWidth, scaleFactor),
 
           // '개인' 카테고리
-          _buildCategoryTitle("개인", scaleFactor),
+          _buildCategoryTitle('개인', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
 
           // 개인 설정 옵션들 (로그아웃 / 연결 끊기 / 회원 탈퇴)
-          _buildNavigationOption("로그아웃", scaleFactor, onTap: () {
+          _buildNavigationOption('로그아웃', scaleFactor, onTap: () {
             _showLogoutDialog(context, scaleFactor);
           }),
           SizedBox(height: 16 * scaleFactor),
 
           //연결 끊기 페이지 이동, 고라우터 사용
-          _buildNavigationOption("연결 끊기", scaleFactor, onTap: () {
+          _buildNavigationOption('연결 끊기', scaleFactor, onTap: () {
             context.pushNamed('disconnectPage', extra: {
-              'appBarTitle': "연결끊기",
-              'richTextPrefix': "상대방",
-              'richTextSuffix': " 님과\n연결을 끊으시겠어요?",
+              'appBarTitle': '연결끊기',
+              'richTextPrefix': '상대방',
+              'richTextSuffix': ' 님과\n연결을 끊으시겠어요?',
               'imagePath': 'assets/images/my_page/Img_Disconnect.png',
               'imageWidth': 223.0,
               'imageHeight': 176.0,
-              'bottomText': "기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.",
-              'actionButtonText': "연결 끊기",
+              'bottomText': '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+              'actionButtonText': '연결 끊기',
               'gapBetweenImageAndText1': 78.0,
               'gapBetweenImageAndText2': 69.0,
-              'dialogTitle': "정말 연결을 끊으시겠어요?",
-              'dialogContent': "연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.",
-              'dialogExitText': "연결 끊기",
-              'dialogSaveText': "돌아가기",
+              'dialogTitle': '정말 연결을 끊으시겠어요?',
+              'dialogContent': '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
+              'dialogExitText': '연결 끊기',
+              'dialogSaveText': '돌아가기',
               'onDialogExit': () {
                 // 연결 끊기 버튼 누르면, 커플 연결 시작 화면으로 이동 (예: 'coupleConnect' 라우트)
                 context.go('/disconnected_SC');
@@ -103,23 +103,23 @@ class SettingsPage extends StatelessWidget {
 
           SizedBox(height: 16 * scaleFactor),
 
-          _buildNavigationOption("회원 탈퇴", scaleFactor, onTap: () {
+          _buildNavigationOption('회원 탈퇴', scaleFactor, onTap: () {
             context.pushNamed('disconnectPage', extra: {
-              'appBarTitle': "회원탈퇴",
-              'richTextPrefix': "러브키퍼",
-              'richTextSuffix': "를\n정말 떠나시겠어요?",
+              'appBarTitle': '회원탈퇴',
+              'richTextPrefix': '러브키퍼',
+              'richTextSuffix': '를\n정말 떠나시겠어요?',
               'imagePath': 'assets/images/my_page/Img_Withdraw.png',
               'imageWidth': 138.0,
               'imageHeight': 138.0,
               'bottomText':
-                  "탈퇴 시, 상대방과의 연결이 끊어져요.\n기록된 데이터는 모두 삭제되며 복구할 수 없어요.",
-              'actionButtonText': "탈퇴하기",
+                  '탈퇴 시, 상대방과의 연결이 끊어져요.\n기록된 데이터는 모두 삭제되며 복구할 수 없어요.',
+              'actionButtonText': '탈퇴하기',
               'gapBetweenImageAndText1': 97.0,
               'gapBetweenImageAndText2': 88.0,
-              'dialogTitle': "정말 탈퇴하시겠어요?",
-              'dialogContent': "탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.",
-              'dialogExitText': "탈퇴하기",
-              'dialogSaveText': "돌아가기",
+              'dialogTitle': '정말 탈퇴하시겠어요?',
+              'dialogContent': '탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.',
+              'dialogExitText': '탈퇴하기',
+              'dialogSaveText': '돌아가기',
               'onDialogExit': () {
                 context.go('/onboarding'); //온보딩으로 가는로직 구현하기
               },
@@ -134,7 +134,7 @@ class SettingsPage extends StatelessWidget {
           _buildDivider(deviceWidth, scaleFactor),
 
           // '기타' 카테고리 추가
-          _buildCategoryTitle("기타", scaleFactor),
+          _buildCategoryTitle('기타', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
 
           // 버전 정보
@@ -142,7 +142,7 @@ class SettingsPage extends StatelessWidget {
           SizedBox(height: 16 * scaleFactor),
 
           // 약관 및 정책
-          _buildNavigationOption("약관 및 정책", scaleFactor),
+          _buildNavigationOption('약관 및 정책', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
         ],
       ),
@@ -267,7 +267,7 @@ class SettingsPage extends StatelessWidget {
             SizedBox(
               height: 24 * scaleFactor,
               child: Text(
-                "버전 정보",
+                '버전 정보',
                 style: TextStyle(
                   color: const Color(0xFF27282C),
                   fontSize: 16 * scaleFactor,
@@ -329,10 +329,10 @@ class SettingsPage extends StatelessWidget {
                     height: 288 * scaleFactor, // 바텀시트 높이 조정
                     child: CustomBottomSheetDialog(
                       scaleFactor: scaleFactor,
-                      title: "정말 로그아웃하시겠어요?",
-                      content: "로그아웃 선택 시,\n현재 계정에서 로그아웃 됩니다.",
-                      exitText: "로그아웃",
-                      saveText: "돌아가기",
+                      title: '정말 로그아웃하시겠어요?',
+                      content: '로그아웃 선택 시,\n현재 계정에서 로그아웃 됩니다.',
+                      exitText: '로그아웃',
+                      saveText: '돌아가기',
                       showSaveButton: true,
                       onExit: () => _logoutFunction(context), // context 전달
                       onSave: () => Navigator.pop(context),
@@ -357,8 +357,7 @@ class SettingsPage extends StatelessWidget {
 // 알림 상태 관리 토글 버튼
 class PushNotificationToggle extends StatefulWidget {
   final double scaleFactor;
-  const PushNotificationToggle({Key? key, required this.scaleFactor})
-      : super(key: key);
+  const PushNotificationToggle({super.key, required this.scaleFactor});
 
   @override
   _PushNotificationToggleState createState() => _PushNotificationToggleState();

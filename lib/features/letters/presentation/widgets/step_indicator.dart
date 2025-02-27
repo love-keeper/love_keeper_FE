@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/line_painter.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/line_painter.dart';
 
 class StepIndicator extends StatelessWidget {
   final int currentStep;
@@ -7,11 +7,11 @@ class StepIndicator extends StatelessWidget {
   final List<double> lineLengths;
 
   const StepIndicator({
-    Key? key,
+    super.key,
     required this.currentStep,
     required this.scaleFactor,
     required this.lineLengths,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

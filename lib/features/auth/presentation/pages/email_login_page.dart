@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class EmailLoginPage extends StatefulWidget {
-  const EmailLoginPage({Key? key}) : super(key: key);
+  const EmailLoginPage({super.key});
 
   @override
   _EmailLoginPageState createState() => _EmailLoginPageState();
@@ -19,8 +19,8 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
   bool showPasswordGuide = false;
 
   // 디버그용 백엔드 값 (실제 구현 시 백엔드 연동)
-  static const String debugEmail = "000@gmail.com";
-  static const String debugPassword = "password123";
+  static const String debugEmail = '000@gmail.com';
+  static const String debugPassword = 'password123';
 
   @override
   void initState() {
@@ -64,8 +64,8 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
 
     final String emailGuideMessage =
         hasEmail && !emailRegex.hasMatch(_emailController.text)
-            ? "올바른 이메일 형식을 입력해 주세요."
-            : "";
+            ? '올바른 이메일 형식을 입력해 주세요.'
+            : '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -73,7 +73,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        title: const Text("이메일로 시작"),
+        title: const Text('이메일로 시작'),
         titleTextStyle: TextStyle(
           fontSize: 18 * scaleFactor,
           fontWeight: FontWeight.w600,
@@ -114,7 +114,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                     context.push('/pwFinding');
                   },
                   child: Text(
-                    "비밀번호를 잊으셨나요?",
+                    '비밀번호를 잊으셨나요?',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14 * scaleFactor,
@@ -131,7 +131,7 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
           SaveButtonWidget(
             scaleFactor: scaleFactor,
             enabled: showPasswordField ? (hasEmail && hasPassword) : hasEmail,
-            buttonText: showPasswordField ? "로그인" : "다음",
+            buttonText: showPasswordField ? '로그인' : '다음',
             onPressed: () {
               if (!showPasswordField) {
                 if (_emailController.text == debugEmail &&
@@ -165,8 +165,8 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
               SizedBox(height: 16 * scaleFactor),
               // 이메일 입력 위젯 (EditFieldWidget 재사용)
               EditFieldWidget(
-                label: "이메일",
-                hintText: "이메일 주소를 입력해 주세요.",
+                label: '이메일',
+                hintText: '이메일 주소를 입력해 주세요.',
                 controller: _emailController,
                 scaleFactor: scaleFactor,
                 autofocus: true,
@@ -180,13 +180,13 @@ class _EmailLoginPageState extends State<EmailLoginPage> {
                 SizedBox(height: 36 * scaleFactor),
                 // 비밀번호 입력 위젯 (EditFieldWidget 재사용, obscureText: true로 설정)
                 EditFieldWidget(
-                  label: "비밀번호",
-                  hintText: "비밀번호를 입력해 주세요.",
+                  label: '비밀번호',
+                  hintText: '비밀번호를 입력해 주세요.',
                   controller: _passwordController,
                   scaleFactor: scaleFactor,
                   autofocus: false,
                   guideMessage:
-                      showPasswordGuide ? "비밀번호가 일치하지 않습니다. 다시 입력해 주세요." : "",
+                      showPasswordGuide ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.' : '',
                   obscureText:
                       true, // 여기서 비밀번호는 *로 표시 (EditFieldWidget에 해당 인자 구현되어 있다고 가정)
                 ),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class CodeConnectPage extends StatefulWidget {
-  const CodeConnectPage({Key? key}) : super(key: key);
+  const CodeConnectPage({super.key});
 
   @override
   _CodeConnectPageState createState() => _CodeConnectPageState();
@@ -14,7 +14,7 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
   final TextEditingController _inviteCodeController = TextEditingController();
 
   // 백엔드에서 받아온 상대방 초대 코드 (가정)
-  final String expectedInviteCode = "S9FDJ24JSF";
+  final String expectedInviteCode = 'S9FDJ24JSF';
 
   @override
   void initState() {
@@ -42,8 +42,8 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
     // 입력한 코드와 예상 코드가 일치하지 않으면 가이드 문구 표시
     final String guideMessage =
         hasText && _inviteCodeController.text != expectedInviteCode
-            ? "입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요."
-            : "";
+            ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
     // SaveButton 활성화 조건: 사용자가 입력한 코드가 있고, 올바른 코드일 때만 활성화
     final bool isButtonEnabled =
@@ -56,7 +56,7 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "코드연결",
+          '코드연결',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -110,7 +110,7 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
             SizedBox(height: 3 * scaleFactor),
             // 안내 문구: "생성된 초대 코드를 복사해 상대방에게 전달해 보세요."
             Text(
-              "생성된 초대 코드를 복사해 상대방에게 전달해 보세요.",
+              '생성된 초대 코드를 복사해 상대방에게 전달해 보세요.',
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 14 * scaleFactor,
@@ -123,8 +123,8 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
             SizedBox(height: 36 * scaleFactor),
             // 상대방 초대 코드 입력 필드 (EditFieldWidget 사용)
             EditFieldWidget(
-              label: "상대방 초대 코드",
-              hintText: "전달 받은 초대 코드를 입력해 주세요.",
+              label: '상대방 초대 코드',
+              hintText: '전달 받은 초대 코드를 입력해 주세요.',
               controller: _inviteCodeController,
               scaleFactor: scaleFactor,
               autofocus: true,
@@ -136,7 +136,7 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: isButtonEnabled,
-        buttonText: "연결하기",
+        buttonText: '연결하기',
         onPressed: () {
           // 연결하기 버튼 누르면 메인 페이지로 이동
           context.push('/mainPage');

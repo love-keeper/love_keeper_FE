@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/email_edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/email_edit_field_widget.dart';
 
-//전에 입력한 이메일 넘겨받기
-class SignupPage extends StatefulWidget {
-  final String email;
-  const SignupPage({Key? key, required this.email}) : super(key: key);
+class EmailEditPage extends StatefulWidget {
+  const EmailEditPage({super.key});
 
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _EmailEditPageState createState() => _EmailEditPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _EmailEditPageState extends State<EmailEditPage> {
   final TextEditingController _emailCodeController = TextEditingController();
-  String _verificationCode = "";
+  String _verificationCode = '';
 
   @override
   void initState() {
@@ -39,9 +37,9 @@ class _SignupPageState extends State<SignupPage> {
   Future<void> _sendVerificationCode() async {
     // 실제 API 호출 대신, 임의의 코드를 할당
     setState(() {
-      _verificationCode = "123456";
+      _verificationCode = '123456';
     });
-    debugPrint("인증코드 전송됨: $_verificationCode");
+    debugPrint('인증코드 전송됨: $_verificationCode');
   }
 
   @override
@@ -53,7 +51,7 @@ class _SignupPageState extends State<SignupPage> {
     final bool hasText = _emailCodeController.text.isNotEmpty;
     final bool codeMatches = _emailCodeController.text == _verificationCode;
 
-    void _showResendBottomSheet(BuildContext context, double scaleFactor) {
+    void showResendBottomSheet(BuildContext context, double scaleFactor) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -106,7 +104,7 @@ class _SignupPageState extends State<SignupPage> {
                             height: 26 * scaleFactor,
                             alignment: Alignment.topCenter,
                             child: Text(
-                              "메일을 받지 못하셨나요?",
+                              '메일을 받지 못하셨나요?',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 18 * scaleFactor,
@@ -124,7 +122,7 @@ class _SignupPageState extends State<SignupPage> {
                             color: Colors.transparent,
                             alignment: Alignment.topCenter,
                             child: Text(
-                              "스팸 메일함을 확인하거나,\n인증코드 재전송 버튼을 눌러 주세요.\n문제가 계속되면 1:1 카카오톡 문의를 이용해 주세요.",
+                              '스팸 메일함을 확인하거나,\n인증코드 재전송 버튼을 눌러 주세요.\n문제가 계속되면 1:1 카카오톡 문의를 이용해 주세요.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 16 * scaleFactor,
@@ -151,7 +149,7 @@ class _SignupPageState extends State<SignupPage> {
                                 ),
                                 child: Center(
                                   child: Text(
-                                    "확인",
+                                    '확인',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16 * scaleFactor,
@@ -179,9 +177,12 @@ class _SignupPageState extends State<SignupPage> {
       );
     }
 
+    // 실제 이메일은 백엔드에서 받아오되, 없으면 기본값으로 "000@gmail.com" 사용
+    const String actualEmail = '000@gmail.com'; // 추후 백엔드 연동 시 수정
+
     // 입력된 텍스트가 있을 때, 입력값이 인증 코드와 일치하지 않으면 안내 문구 표시
     final String guideMessage =
-        hasText && !codeMatches ? "인증코드가 일치하지 않습니다. 다시 입력해 주세요." : "";
+        hasText && !codeMatches ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.' : '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -190,7 +191,7 @@ class _SignupPageState extends State<SignupPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "이메일로 시작",
+          '이메일 변경',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -228,9 +229,9 @@ class _SignupPageState extends State<SignupPage> {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                onPressed: () => _showResendBottomSheet(context, scaleFactor),
+                onPressed: () => showResendBottomSheet(context, scaleFactor),
                 child: Text(
-                  "메일을 받지 못하셨나요?",
+                  '메일을 받지 못하셨나요?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14 * scaleFactor,
@@ -248,9 +249,9 @@ class _SignupPageState extends State<SignupPage> {
           SaveButtonWidget(
             scaleFactor: scaleFactor,
             enabled: hasText,
-            buttonText: "인증하기",
+            buttonText: '다음',
             onPressed: () {
-              context.push('/emailPwInput'); // 이메일로 시작, 새비밀번호로 가입하는 페이지 파기
+              context.push('/newEmailInput');
             },
           ),
         ],
@@ -261,10 +262,11 @@ class _SignupPageState extends State<SignupPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 16 * scaleFactor),
+            // 백엔드에서 받아온 이메일을 좌측 정렬 텍스트로 표시
             Padding(
               padding: EdgeInsets.only(left: 0 * scaleFactor),
               child: Text(
-                widget.email,
+                actualEmail,
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 18 * scaleFactor,
@@ -280,7 +282,7 @@ class _SignupPageState extends State<SignupPage> {
             Padding(
               padding: EdgeInsets.only(left: 0 * scaleFactor),
               child: Text(
-                "본인 확인을 위해 위 이메일로 인증코드를 전송했습니다.\n인증 번호 6자를 입력해 주세요.",
+                '본인 확인을 위해 위 이메일로 인증코드를 전송했습니다.\n인증 번호 6자를 입력해 주세요.',
                 textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 14 * scaleFactor,
@@ -294,15 +296,15 @@ class _SignupPageState extends State<SignupPage> {
             SizedBox(height: 36 * scaleFactor),
             // 이메일 전용 입력 위젯 (타이머, 재전송 버튼 포함)
             EmailEditFieldWidget(
-              label: "인증코드",
-              hintText: "6자리를 입력해 주세요.",
+              label: '인증코드',
+              hintText: '6자리를 입력해 주세요.',
               controller: _emailCodeController,
               scaleFactor: scaleFactor,
               autofocus: true,
               guideMessage: guideMessage, // 필요 시 안내 문구 입력
               onResend: () {
                 // 재전송 로직 구현
-                debugPrint("재전송 버튼 클릭됨");
+                debugPrint('재전송 버튼 클릭됨');
                 _sendVerificationCode(); // 백엔드한테 재전송 요청 보내는 API 구현하기
               },
             ),

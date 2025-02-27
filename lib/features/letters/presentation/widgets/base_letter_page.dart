@@ -1,6 +1,6 @@
 //편지 작성 기본 공통 UI
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/step_indicator.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/step_indicator.dart';
 
 class BaseLetterPage extends StatelessWidget {
   final String
@@ -13,7 +13,7 @@ class BaseLetterPage extends StatelessWidget {
   final double scaleFactor; // 화면 크기에 따른 스케일
 
   const BaseLetterPage({
-    Key? key,
+    super.key,
     required this.headerText,
     required this.questionText,
     required this.textField,
@@ -21,7 +21,7 @@ class BaseLetterPage extends StatelessWidget {
     required this.currentStep,
     required this.lineLengths,
     required this.scaleFactor,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
-class NicknameEditPage extends StatefulWidget {
-  const NicknameEditPage({Key? key}) : super(key: key);
+class RelationshipStartEditPage extends StatefulWidget {
+  const RelationshipStartEditPage({super.key});
 
   @override
-  _NicknameEditPageState createState() => _NicknameEditPageState();
+  _RelationshipStartEditPageState createState() =>
+      _RelationshipStartEditPageState();
 }
 
-class _NicknameEditPageState extends State<NicknameEditPage> {
-  final TextEditingController _nicknameController = TextEditingController();
+class _RelationshipStartEditPageState extends State<RelationshipStartEditPage> {
+  final TextEditingController _relationshipStartController =
+      TextEditingController();
 
   @override
   void initState() {
     super.initState();
     // 텍스트 변경 시 상태 업데이트
-    _nicknameController.addListener(() {
+    _relationshipStartController.addListener(() {
       setState(() {});
     });
   }
 
   @override
   void dispose() {
-    _nicknameController.dispose();
+    _relationshipStartController.dispose();
     super.dispose();
   }
 
@@ -34,7 +36,15 @@ class _NicknameEditPageState extends State<NicknameEditPage> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
-    final bool hasText = _nicknameController.text.isNotEmpty;
+    final bool hasText = _relationshipStartController.text.isNotEmpty;
+
+    // 정규식을 이용해 YYYY.MM.DD 형식 검사
+    final RegExp relationshipdateRegex =
+        RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01]).$');
+    final String guideMessage = hasText &&
+            !relationshipdateRegex.hasMatch(_relationshipStartController.text)
+        ? '유효한 날짜 형식(YYYY.MM.DD.)을 입력해 주세요'
+        : '';
 
     return Scaffold(
       backgroundColor: Colors.white, // 배경색을 흰색으로 지정
@@ -43,7 +53,7 @@ class _NicknameEditPageState extends State<NicknameEditPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "닉네임 변경",
+          '연애 시작일 변경',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -64,7 +74,7 @@ class _NicknameEditPageState extends State<NicknameEditPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: hasText,
-        buttonText: "변경하기",
+        buttonText: '변경하기',
         onPressed: () {
           // 저장 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
           context.pop();
@@ -73,11 +83,12 @@ class _NicknameEditPageState extends State<NicknameEditPage> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
         child: EditFieldWidget(
-          label: "닉네임",
-          hintText: "사용할 닉네임을 입력해 주세요",
-          controller: _nicknameController,
+          label: '연애 시작일',
+          hintText: 'YYYY.MM.DD.',
+          controller: _relationshipStartController,
           scaleFactor: scaleFactor,
           autofocus: true, // 이 페이지에서는 항상 키보드 활성화
+          guideMessage: guideMessage,
         ),
       ),
     );

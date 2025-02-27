@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/main/presentation/pages/detail_page.dart';
+import 'package:love_keeper_fe/features/calendar/presentation/pages/detail_page.dart';
 
 class EventPopup extends StatelessWidget {
   final DateTime selectedDay;
@@ -17,21 +17,21 @@ class EventPopup extends StatelessWidget {
   String _getKoreanWeekday(DateTime day) {
     switch (day.weekday) {
       case DateTime.monday:
-        return "월요일";
+        return '월요일';
       case DateTime.tuesday:
-        return "화요일";
+        return '화요일';
       case DateTime.wednesday:
-        return "수요일";
+        return '수요일';
       case DateTime.thursday:
-        return "목요일";
+        return '목요일';
       case DateTime.friday:
-        return "금요일";
+        return '금요일';
       case DateTime.saturday:
-        return "토요일";
+        return '토요일';
       case DateTime.sunday:
-        return "일요일";
+        return '일요일';
       default:
-        return "";
+        return '';
     }
   }
 
@@ -62,7 +62,7 @@ class EventPopup extends StatelessWidget {
           children: [
             // 날짜 헤더: "n월 n일 n요일"
             Text(
-              "${selectedDay.month}월 ${selectedDay.day}일 ${_getKoreanWeekday(selectedDay)}",
+              '${selectedDay.month}월 ${selectedDay.day}일 ${_getKoreanWeekday(selectedDay)}',
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -80,7 +80,7 @@ class EventPopup extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => DetailPage(
                       selectedDay: selectedDay,
-                      type: "letter",
+                      type: 'letter',
                     ),
                   ),
                 );
@@ -119,7 +119,7 @@ class EventPopup extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "편지 $letterCount건",
+                            '편지 $letterCount건',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -129,7 +129,7 @@ class EventPopup extends StatelessWidget {
                             ),
                           ),
                           const Text(
-                            "그날의 진심을 다시 느껴 보세요",
+                            '그날의 진심을 다시 느껴 보세요',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
@@ -159,7 +159,7 @@ class EventPopup extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => DetailPage(
                       selectedDay: selectedDay,
-                      type: "promise",
+                      type: 'promise',
                     ),
                   ),
                 );
@@ -198,7 +198,7 @@ class EventPopup extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "우리의 약속 $promiseCount건",
+                            '우리의 약속 $promiseCount건',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -208,7 +208,7 @@ class EventPopup extends StatelessWidget {
                             ),
                           ),
                           const Text(
-                            "둘만의 다짐을 되새겨 보세요",
+                            '둘만의 다짐을 되새겨 보세요',
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,

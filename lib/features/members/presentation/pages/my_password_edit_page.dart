@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class MyPasswordEditPage extends StatefulWidget {
-  const MyPasswordEditPage({Key? key}) : super(key: key);
+  const MyPasswordEditPage({super.key});
 
   @override
   _MyPasswordEditPageState createState() => _MyPasswordEditPageState();
@@ -17,7 +17,7 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
   final TextEditingController _confirmNewPwController = TextEditingController();
 
   // 백엔드에서 받아온(또는 저장된) 현재 비밀번호 (예시)
-  final String currentPassword = "oldpassword";
+  final String currentPassword = 'oldpassword';
 
   // 새 비밀번호 조건: 최소 8자 이상, 영문, 숫자, 특수문자 포함
   final RegExp newPasswordRegex = RegExp(
@@ -53,19 +53,19 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
     final String confirmPw = _confirmNewPwController.text;
 
     // 안내문구 조건
-    String currentPwGuideMessage = "";
+    String currentPwGuideMessage = '';
     if (currentPw.isNotEmpty && currentPw != currentPassword) {
-      currentPwGuideMessage = "비밀번호가 일치하지 않습니다. 다시 입력해 주세요.";
+      currentPwGuideMessage = '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.';
     }
 
-    String newPwGuideMessage = "";
+    String newPwGuideMessage = '';
     if (newPw.isNotEmpty && !newPasswordRegex.hasMatch(newPw)) {
-      newPwGuideMessage = "비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요.";
+      newPwGuideMessage = '비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요.';
     }
 
-    String confirmPwGuideMessage = "";
+    String confirmPwGuideMessage = '';
     if (confirmPw.isNotEmpty && confirmPw != newPw) {
-      confirmPwGuideMessage = "비밀번호가 일치하지 않습니다. 다시 입력해 주세요.";
+      confirmPwGuideMessage = '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.';
     }
 
     // 세 필드 모두 채워지고 가이드 문구가 없으면 저장 버튼 활성화
@@ -83,7 +83,7 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "비밀번호 변경",
+          '비밀번호 변경',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -104,7 +104,7 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: isSaveEnabled,
-        buttonText: "변경하기",
+        buttonText: '변경하기',
         onPressed: () {
           // 비밀번호 변경 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
           context.pop();
@@ -121,8 +121,8 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
               SizedBox(height: 16 * scaleFactor),
               // 현재 비밀번호 입력 필드
               EditFieldWidget(
-                label: "현재 비밀번호",
-                hintText: "현재 비밀번호를 입력해 주세요",
+                label: '현재 비밀번호',
+                hintText: '현재 비밀번호를 입력해 주세요',
                 controller: _currentPwController,
                 scaleFactor: scaleFactor,
                 autofocus: true,
@@ -132,8 +132,8 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
               SizedBox(height: 36 * scaleFactor),
               // 새 비밀번호 입력 필드
               EditFieldWidget(
-                label: "새 비밀번호",
-                hintText: "8자 이상 영문/숫자/특수문자 포함",
+                label: '새 비밀번호',
+                hintText: '8자 이상 영문/숫자/특수문자 포함',
                 controller: _newPwController,
                 scaleFactor: scaleFactor,
                 autofocus: false,
@@ -143,8 +143,8 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
               SizedBox(height: 36 * scaleFactor),
               // 새 비밀번호 확인 입력 필드
               EditFieldWidget(
-                label: "비밀번호 확인",
-                hintText: "비밀번호를 다시 입력해 주세요",
+                label: '비밀번호 확인',
+                hintText: '비밀번호를 다시 입력해 주세요',
                 controller: _confirmNewPwController,
                 scaleFactor: scaleFactor,
                 autofocus: false,

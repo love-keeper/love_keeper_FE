@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/auth/my_page/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class BirthdateEditPage extends StatefulWidget {
-  const BirthdateEditPage({Key? key}) : super(key: key);
+  const BirthdateEditPage({super.key});
 
   @override
   _BirthdateEditPageState createState() => _BirthdateEditPageState();
@@ -40,8 +40,8 @@ class _BirthdateEditPageState extends State<BirthdateEditPage> {
         RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01]).$');
     final String guideMessage =
         hasText && !birthdateRegex.hasMatch(_birthdateController.text)
-            ? "유효한 날짜 형식(YYYY.MM.DD.)을 입력해 주세요"
-            : "";
+            ? '유효한 날짜 형식(YYYY.MM.DD.)을 입력해 주세요'
+            : '';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -51,7 +51,7 @@ class _BirthdateEditPageState extends State<BirthdateEditPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "생년월일 변경",
+          '생년월일 변경',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -72,7 +72,7 @@ class _BirthdateEditPageState extends State<BirthdateEditPage> {
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
         enabled: hasText,
-        buttonText: "변경하기",
+        buttonText: '변경하기',
         onPressed: () {
           // 저장 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
           context.pop();
@@ -81,8 +81,8 @@ class _BirthdateEditPageState extends State<BirthdateEditPage> {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
         child: EditFieldWidget(
-          label: "생년월일",
-          hintText: "YYYY.MM.DD.",
+          label: '생년월일',
+          hintText: 'YYYY.MM.DD.',
           controller: _birthdateController,
           scaleFactor: scaleFactor,
           autofocus: true, // 이 페이지에서는 항상 키보드 활성화

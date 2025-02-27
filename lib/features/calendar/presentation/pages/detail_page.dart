@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/main/widgets/letter_box_widget.dart';
-import 'package:love_keeper_fe/features/main/widgets/promise_box_widget.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_box_widget.dart';
+import 'package:love_keeper_fe/features/promises/presentation/widgets/promise_box_widget.dart';
 
 class DetailPage extends StatelessWidget {
   final DateTime selectedDay;
@@ -54,7 +54,7 @@ class DetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 앱바 제목: "n월 n일" (요일은 제외)
-    String title = "${selectedDay.month}월 ${selectedDay.day}일";
+    String title = '${selectedDay.month}월 ${selectedDay.day}일';
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -81,7 +81,7 @@ class DetailPage extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        child: type == "letter"
+        child: type == 'letter'
             ? _buildLetterGrid(context)
             : _buildPromiseList(context),
       ),
@@ -107,8 +107,8 @@ class DetailPage extends StatelessWidget {
           final letter = sampleLetters[index];
           return LetterBoxWidget(
             title: "${letter['user'] ?? '알 수 없음'}의 편지",
-            content: letter['content'] ?? "",
-            date: letter['date'] ?? "",
+            content: letter['content'] ?? '',
+            date: letter['date'] ?? '',
           );
         },
       ),
@@ -126,8 +126,8 @@ class DetailPage extends StatelessWidget {
             bottom: 15,
           ),
           child: PromiseBoxWidget(
-            content: promise['content'] ?? "",
-            date: promise['date'] ?? "",
+            content: promise['content'] ?? '',
+            date: promise['date'] ?? '',
           ),
         );
       },
