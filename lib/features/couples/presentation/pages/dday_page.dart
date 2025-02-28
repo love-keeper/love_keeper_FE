@@ -1,18 +1,38 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart'; // GoRouter 사용
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
 
-class DdayPage extends StatefulWidget {
+class DdayPage extends ConsumerStatefulWidget {
   const DdayPage({super.key});
 
   @override
   _DdayPageState createState() => _DdayPageState();
 }
 
-class _DdayPageState extends State<DdayPage> {
+class _DdayPageState extends ConsumerState<DdayPage> {
+  // 초기 날짜는 임시 값, 실제 시작 날짜는 API 호출로 받아옴.
   DateTime _selectedDate = DateTime(2024, 12, 5);
+
+  @override
+  void initState() {
+    super.initState();
+    // CouplesViewModel을 통해 시작 날짜를 API에서 받아옵니다.
+    ref
+        .read(couplesViewModelProvider.notifier)
+        .getStartDate()
+        .then((startDateString) {
+      setState(() {
+        // 백엔드에서 "yyyy-MM-dd" 형식으로 보낸다고 가정
+        _selectedDate = DateTime.parse(startDateString);
+      });
+    }).catchError((e) {
+      debugPrint('시작 날짜를 받아오지 못했습니다: $e');
+    });
+  }
 
   void _showDatePicker() {
     showModalBottomSheet(
@@ -60,8 +80,27 @@ class _DdayPageState extends State<DdayPage> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
-                    context.pop(); // GoRouter pop 사용
+                  onPressed: () async {
+                    // 사용자가 선택한 날짜를 "yyyy-MM-dd" 형식의 문자열로 변환합니다.
+                    final newDateStr =
+                        DateFormat('yyyy-MM-dd').format(_selectedDate);
+                    try {
+                      // updateStartDate API 호출
+                      await ref
+                          .read(couplesViewModelProvider.notifier)
+                          .updateStartDate(newDateStr);
+                      // 선택한 날짜를 다시 API를 통해 가져와서 업데이트할 수도 있습니다.
+                      final updatedStartDate = await ref
+                          .read(couplesViewModelProvider.notifier)
+                          .getStartDate();
+                      setState(() {
+                        _selectedDate = DateTime.parse(updatedStartDate);
+                      });
+                    } catch (e) {
+                      debugPrint('시작 날짜 업데이트 실패: $e');
+                    }
+                    // 변경 후 바텀시트 닫기
+                    context.pop();
                   },
                   child: const Text(
                     '변경하기',
@@ -83,6 +122,7 @@ class _DdayPageState extends State<DdayPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 디데이 계산이나 기타 UI 로직은 필요에 따라 추가하세요.
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -105,7 +145,7 @@ class _DdayPageState extends State<DdayPage> {
             color: Color(0xFF27282C),
           ),
           onPressed: () {
-            context.pop(); // GoRouter pop 사용
+            context.pop();
           },
         ),
       ),
@@ -155,6 +195,7 @@ class _DdayPageState extends State<DdayPage> {
       ),
       child: Stack(
         children: [
+          // 프로필 이미지는 FallbackCircleAvatar로 대체
           Positioned(
             left: 20,
             top: 20,
@@ -199,7 +240,7 @@ class _DdayPageState extends State<DdayPage> {
                       color: Color(0xFFFC6383),
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
-                      decorationColor: Color(0xFFFC6383), // 텍스트 색상과 동일하게 설정
+                      decorationColor: Color(0xFFFC6383),
                     ),
                   ),
                 ),
