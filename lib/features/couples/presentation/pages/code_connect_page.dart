@@ -15,15 +15,18 @@ class CodeConnectPage extends ConsumerStatefulWidget {
 
 class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
   final TextEditingController _inviteCodeController = TextEditingController();
-  String generatedInviteCode = ''; // 생성된 초대 코드 저장
+  String generatedInviteCode = '';
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _generateInviteCode(); // 화면 로드 시 초대 코드 생성
     _inviteCodeController.addListener(() {
       setState(() {});
+    });
+    // 빌드 이후에 generateCode 호출
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _generateInviteCode();
     });
   }
 
@@ -41,7 +44,8 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
       final inviteCode =
           await ref.read(couplesViewModelProvider.notifier).generateCode();
       setState(() {
-        generatedInviteCode = inviteCode.inviteCode; // 백엔드에서 받은 초대 코드
+        generatedInviteCode =
+            inviteCode.inviteCode; // 백엔드에서 받은 초대 코드 (필드명 확인 필요)
         _isLoading = false;
       });
     } catch (e) {
@@ -67,7 +71,6 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
         _isLoading = false;
       });
       if (result == '연결 성공') {
-        // 백엔드 응답에 따라 수정
         context.push('/mainPage');
       }
     } catch (e) {
@@ -88,11 +91,10 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     final double scaleFactor = deviceWidth / baseWidth;
 
     final bool hasText = _inviteCodeController.text.isNotEmpty;
-    final String guideMessage = hasText &&
-            _inviteCodeController.text !=
-                generatedInviteCode // 단순 예시, 실제로는 백엔드 검증
-        ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.'
-        : '';
+    final String guideMessage =
+        hasText && _inviteCodeController.text != generatedInviteCode
+            ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
     final bool isButtonEnabled =
         hasText && _inviteCodeController.text.isNotEmpty && !_isLoading;
