@@ -86,7 +86,6 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
     String currentPwGuideMessage = '';
     if (currentPw.isNotEmpty) {
       // 클라이언트 측 검증 제거, 서버에서 처리
-      // currentPwGuideMessage = '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.';
     }
 
     String newPwGuideMessage = '';
@@ -132,11 +131,9 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
           onPressed: () => context.pop(),
         ),
       ),
-<<<<<<< Updated upstream
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // "비밀번호를 잊으셨나요?" 버튼을 저장 버튼 위에 6만큼의 여백과 함께 추가
           Padding(
             padding: EdgeInsets.only(
               left: 20 * scaleFactor,
@@ -153,7 +150,6 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 onPressed: () {
-                  // 비밀번호 찾기 화면으로 이동
                   context.push('/pwFinding');
                 },
                 child: Text(
@@ -162,7 +158,7 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                   style: TextStyle(
                     fontSize: 14 * scaleFactor,
                     fontWeight: FontWeight.w400,
-                    height: 22 / (14 * scaleFactor), // line height가 22가 되도록
+                    height: 22 / 14,
                     letterSpacing: -0.025 * (14 * scaleFactor),
                     color: const Color(0xFF747784),
                     decoration: TextDecoration.underline,
@@ -176,19 +172,9 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
             scaleFactor: scaleFactor,
             enabled: isSaveEnabled,
             buttonText: '변경하기',
-            onPressed: () {
-              // 비밀번호 변경 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
-              context.pop();
-            },
+            onPressed: _isLoading ? null : _updatePassword,
           ),
         ],
-=======
-      bottomNavigationBar: SaveButtonWidget(
-        scaleFactor: scaleFactor,
-        enabled: isSaveEnabled,
-        buttonText: '변경하기',
-        onPressed: _isLoading ? null : _updatePassword,
->>>>>>> Stashed changes
       ),
       body: Stack(
         children: [
@@ -231,33 +217,7 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                   ),
                 ],
               ),
-<<<<<<< Updated upstream
-              SizedBox(height: 36 * scaleFactor),
-              // 새 비밀번호 입력 필드
-              EditFieldWidget(
-                label: '새 비밀번호',
-                hintText: '8자 이상 영문/숫자/특수문자 포함',
-                controller: _newPwController,
-                scaleFactor: scaleFactor,
-                autofocus: false,
-                guideMessage: newPwGuideMessage,
-                obscureText: true,
-              ),
-              SizedBox(height: 36 * scaleFactor),
-              // 새 비밀번호 확인 입력 필드
-              EditFieldWidget(
-                label: '새 비밀번호 확인',
-                hintText: '비밀번호를 다시 입력해 주세요',
-                controller: _confirmNewPwController,
-                scaleFactor: scaleFactor,
-                autofocus: false,
-                guideMessage: confirmPwGuideMessage,
-                obscureText: true,
-              ),
-            ],
-=======
             ),
->>>>>>> Stashed changes
           ),
           if (_isLoading)
             const Center(
