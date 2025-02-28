@@ -70,8 +70,8 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
       setState(() {
         _isLoading = false;
       });
-      if (result == '연결 성공') {
-        context.push('/mainPage');
+      if (result == '커플 연결이 완료되었습니다.') {
+        context.push(RouteNames.mainPage);
       }
     } catch (e) {
       debugPrint('Connect error: $e');
