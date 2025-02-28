@@ -47,7 +47,6 @@ class _ProfileRegistrationPageState
   }
 
   void _showProfileBottomSheet(BuildContext context, double scaleFactor) {
-    // 기존 코드 유지
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -241,31 +240,43 @@ class _ProfileRegistrationPageState
       final authState = ref.read(authStateNotifierProvider);
       final email = authState.email ?? '';
       final password = authState.password;
-      final provider = authState.provider ?? 'LOCAL'; // 기본값으로 LOCAL 설정
+      final provider = authState.provider ?? 'LOCAL';
       final providerId = authState.providerId;
 
       if (email.isEmpty) {
         throw Exception('Email is not set in AuthStateProvider');
       }
 
-      // 소셜 로그인 여부에 따라 분기 처리
+      // YYYY.MM.DD -> YYYY-MM-DD 변환
+      final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
+
+      // 1. Signup 호출
       await ref.read(authViewModelProvider.notifier).signup(
             email: email,
             nickname: _nicknameController.text,
-            birthDate: _birthdateController.text,
-            provider: provider, // 'LOCAL', 'KAKAO', 'NAVER', 'APPLE' 중 하나
-            password: provider == 'LOCAL' ? password : null, // 소셜 로그인은 비밀번호 없음
-            providerId: provider != 'LOCAL'
-                ? providerId
-                : null, // 소셜 로그인 시 providerId 필요
+            birthDate: formattedBirthdate,
+            provider: provider,
+            password: provider == 'LOCAL' ? password : null,
+            providerId: provider != 'LOCAL' ? providerId : null,
             profileImage: _profileImage,
           );
+
+      // 2. Signup 성공 후 Login 호출 (LOCAL일 경우만)
+      if (provider == 'LOCAL' && password != null) {
+        await ref.read(authViewModelProvider.notifier).login(
+              email: email,
+              provider: 'LOCAL',
+              password: password,
+              providerId: null,
+            );
+      }
+
       setState(() {
         _isLoading = false;
       });
       context.pushNamed(RouteNames.codeConnectPage);
     } catch (e) {
-      debugPrint('Signup error: $e');
+      debugPrint('Profile registration error: $e');
       setState(() {
         _isLoading = false;
       });
