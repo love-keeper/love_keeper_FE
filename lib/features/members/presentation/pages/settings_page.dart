@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
@@ -322,7 +323,7 @@ class SettingsPage extends ConsumerWidget {
           .read(authStateNotifierProvider.notifier)
           .clear(); // clearState -> clear
       // 로그인 화면으로 이동
-      context.go('/login');
+      context.go(RouteNames.onboarding);
     } catch (e) {
       // 에러 처리: 사용자에게 알림
       ScaffoldMessenger.of(context).showSnackBar(
