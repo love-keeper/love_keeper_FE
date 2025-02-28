@@ -44,28 +44,28 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: '/calendar',
+    initialLocation: RouteNames.onboarding,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding 및 Login 관련 라우트들
       GoRoute(
         path: RouteNames.onboarding,
-        name: ' onboarding',
+        name: 'onboarding',
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: RouteNames.splashScreen,
-        name: ' splashScreen',
+        name: 'splashScreen',
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: RouteNames.emailLoginPage,
-        name: ' emailLoginPage',
+        name: 'emailLoginPage',
         builder: (context, state) => const EmailLoginPage(),
       ),
       GoRoute(
         path: RouteNames.pwFindingPage,
-        name: ' pwFindingPage',
+        name: 'pwFindingPage',
         builder: (context, state) => const PwFindingPage(),
       ),
       GoRoute(
@@ -82,11 +82,11 @@ GoRouter appRouter(AppRouterRef ref) {
         name: 'signupPage',
         builder: (context, state) => const SignupPage(),
       ),
-      // GoRoute(
-      //   path: RouteNames.emailPasswordInputPage,
-      //   name: ' emailPasswordInputPage',
-      //   builder: (context, state) => const EmailPasswordInputPage(),
-      // ),
+      GoRoute(
+        path: RouteNames.emailPasswordInputPage,
+        name: ' emailPasswordInputPage',
+        builder: (context, state) => const EmailPasswordInputPage(),
+      ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,
         name: 'profileRegistration',

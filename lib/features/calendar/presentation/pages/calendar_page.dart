@@ -10,27 +10,34 @@ class CalendarPage extends ConsumerStatefulWidget {
   const CalendarPage({super.key});
 
   @override
-  _CalendarPageState createState() => _CalendarPageState();
+  ConsumerState<CalendarPage> createState() => _CalendarPageState();
 }
 
 class _CalendarPageState extends ConsumerState<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
+  bool _isFirstLoad = true; // 첫 로드 여부를 추적
 
-  // API로부터 데이터를 가져오기 위해, 화면이 로드될 때 getCalendar() 호출
   @override
   void initState() {
     super.initState();
-    // 예시: 현재 연도와 월에 대해 API 호출
-    ref
-        .read(calendarViewModelProvider.notifier)
-        .getCalendar(_focusedDay.year, _focusedDay.month);
+    // initState에서는 아무것도 하지 않음
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isFirstLoad) {
+      // 첫 로드 시에만 getCalendar 호출
+      Future.microtask(() => ref
+          .read(calendarViewModelProvider.notifier)
+          .getCalendar(_focusedDay.year, _focusedDay.month));
+      _isFirstLoad = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // 뷰모델 상태를 감시합니다.
     final calendarState = ref.watch(calendarViewModelProvider);
-    // Calendar 엔티티에서 편지/약속 이벤트가 있는 날짜들을 추출하는 확장(예시 코드에서 작성한 eventDates 확장)을 사용한다고 가정
     final List<DateTime> eventDates = calendarState.when(
       data: (calendar) => calendar?.eventDates ?? [],
       loading: () => [],
@@ -82,7 +89,6 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             ),
             child: Column(
               children: [
-                // 상단 섹션 (아이콘 및 편지/약속 개수 - 기존 코드 유지)
                 SizedBox(
                   height: 125,
                   child: Stack(
@@ -177,7 +183,6 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                     lastDay: DateTime(2030, 12, 31),
                     focusedDay: _focusedDay,
                     headerVisible: false,
-                    // 이벤트가 있는 날짜만 eventDates에 따라 표시
                     eventLoader: (day) =>
                         eventDates.where((d) => isSameDay(d, day)).toList(),
                     daysOfWeekStyle: const DaysOfWeekStyle(
@@ -191,14 +196,13 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                         if (events.isNotEmpty) {
                           return GestureDetector(
                             onTap: () {
-                              // 오늘 날짜 셀 탭 시 EventPopup 호출
                               showDialog(
                                 context: context,
                                 builder: (context) {
                                   return EventPopup(
                                     selectedDay: day,
-                                    letterCount: 10, // 실제 API 데이터에 따라 수정
-                                    promiseCount: 4, // 실제 API 데이터에 따라 수정
+                                    letterCount: 10,
+                                    promiseCount: 4,
                                   );
                                 },
                               );
@@ -372,6 +376,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                       _focusedDay.month - 1,
                       _focusedDay.day,
                     );
+                    ref
+                        .read(calendarViewModelProvider.notifier)
+                        .getCalendar(_focusedDay.year, _focusedDay.month);
                   });
                 },
               ),
@@ -388,6 +395,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                       _focusedDay.month + 1,
                       _focusedDay.day,
                     );
+                    ref
+                        .read(calendarViewModelProvider.notifier)
+                        .getCalendar(_focusedDay.year, _focusedDay.month);
                   });
                 },
               ),

@@ -90,7 +90,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         _isLoading = false;
       });
       if (result == '인증 성공') {
-        context.push('/emailPwInput'); // 다음 단계로 이동
+        context.push(
+          RouteNames.emailPasswordInputPage,
+        ); // 다음 단계로 이동
       }
     } catch (e) {
       debugPrint('Verify code error: $e');
