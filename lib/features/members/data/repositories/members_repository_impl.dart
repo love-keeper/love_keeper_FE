@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:love_keeper_fe/core/network/client/api_client.dart';
+import 'package:love_keeper_fe/features/members/data/models/request/send_email_code_request.dart';
+import 'package:love_keeper_fe/features/members/data/models/request/verify_email_code_request.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -49,6 +51,22 @@ class MembersRepositoryImpl implements MembersRepository {
     final response = await apiClient.updateProfileImage(profileImage);
     _handleResponse(response);
     return response.result!;
+  }
+
+  @override
+  Future<String> sendEmailCode(String email) async {
+    final request = SendEmailCodeRequest(email: email);
+    final response = await apiClient.sendEmailCode(request);
+    _handleResponse(response);
+    return response.result!.code; // 반환값은 인증 코드
+  }
+
+  @override
+  Future<String> verifyEmailCode(String email, String code) async {
+    final request = VerifyEmailCodeRequest(email: email, code: code);
+    final response = await apiClient.verifyEmailCode(request);
+    _handleResponse(response);
+    return response.result!; // "이메일 변경 성공" 반환
   }
 
   void _handleResponse(ApiResponse response) {

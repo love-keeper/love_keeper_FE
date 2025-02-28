@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class EmailPasswordInputPage extends ConsumerStatefulWidget {
-  final String email;
-
-  const EmailPasswordInputPage({super.key, required this.email});
+  const EmailPasswordInputPage({super.key});
 
   @override
   _EmailPasswordInputPageState createState() => _EmailPasswordInputPageState();
@@ -24,6 +22,7 @@ class _EmailPasswordInputPageState
     r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]).{8,}$',
   );
   bool showConfirmField = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -112,29 +111,13 @@ class _EmailPasswordInputPageState
                         ),
                         SizedBox(height: 40 * scaleFactor),
                         GestureDetector(
-                          onTap: () async {
+                          onTap: () {
                             Navigator.pop(dialogContext);
-                            // 약관 동의 후 signup 호출
-                            try {
-                              await ref
-                                  .read(authViewModelProvider.notifier)
-                                  .signup(
-                                    email: widget.email,
-                                    nickname:
-                                        'DefaultNickname', // 임시 값, 다음 화면에서 입력
-                                    birthDate: '1990-01-01', // 임시 값, 다음 화면에서 입력
-                                    provider: 'LOCAL',
-                                    password: _passwordController.text,
-                                    providerId: null,
-                                    profileImage: null,
-                                  );
-                              context.push('/profileRegistration');
-                            } catch (e) {
-                              debugPrint('Signup error: $e');
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('회원가입 실패: $e')),
-                              );
-                            }
+                            // AuthStateProvider에 비밀번호 저장
+                            ref
+                                .read(authStateNotifierProvider.notifier)
+                                .updatePassword(_passwordController.text);
+                            context.push('/profileRegistration');
                           },
                           child: Container(
                             width: 334 * scaleFactor,
@@ -196,8 +179,11 @@ class _EmailPasswordInputPageState
         ? (hasPassword &&
             hasConfirm &&
             passwordRegex.hasMatch(_passwordController.text) &&
-            (_passwordController.text == _confirmController.text))
-        : (hasPassword && passwordRegex.hasMatch(_passwordController.text));
+            (_passwordController.text == _confirmController.text) &&
+            !_isLoading)
+        : (hasPassword &&
+            passwordRegex.hasMatch(_passwordController.text) &&
+            !_isLoading);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -228,54 +214,64 @@ class _EmailPasswordInputPageState
         scaleFactor: scaleFactor,
         enabled: isButtonEnabled,
         buttonText: '다음',
-        onPressed: () async {
-          if (!showConfirmField) {
-            if (hasPassword &&
-                passwordRegex.hasMatch(_passwordController.text)) {
-              setState(() {
-                showConfirmField = true;
-              });
-            }
-          } else {
-            if (hasPassword &&
-                hasConfirm &&
-                _passwordController.text == _confirmController.text) {
-              _showTermsBottomSheet(context, scaleFactor);
-            }
-          }
-        },
+        onPressed: _isLoading
+            ? null
+            : () async {
+                if (!showConfirmField) {
+                  if (hasPassword &&
+                      passwordRegex.hasMatch(_passwordController.text)) {
+                    setState(() {
+                      showConfirmField = true;
+                    });
+                  }
+                } else {
+                  if (hasPassword &&
+                      hasConfirm &&
+                      _passwordController.text == _confirmController.text) {
+                    _showTermsBottomSheet(context, scaleFactor);
+                  }
+                }
+              },
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 16 * scaleFactor),
-              EditFieldWidget(
-                label: '비밀번호',
-                hintText: '8자 이상 영문/숫자/특수문자 포함',
-                controller: _passwordController,
-                scaleFactor: scaleFactor,
-                autofocus: true,
-                guideMessage: passwordGuideMessage,
-                obscureText: true,
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 16 * scaleFactor),
+                  EditFieldWidget(
+                    label: '비밀번호',
+                    hintText: '8자 이상 영문/숫자/특수문자 포함',
+                    controller: _passwordController,
+                    scaleFactor: scaleFactor,
+                    autofocus: true,
+                    guideMessage: passwordGuideMessage,
+                    obscureText: true,
+                  ),
+                  if (showConfirmField) ...[
+                    SizedBox(height: 36 * scaleFactor),
+                    EditFieldWidget(
+                      label: '비밀번호 확인',
+                      hintText: '비밀번호를 다시 입력해 주세요',
+                      controller: _confirmController,
+                      scaleFactor: scaleFactor,
+                      autofocus: false,
+                      guideMessage: confirmGuideMessage,
+                      obscureText: true,
+                    ),
+                  ],
+                ],
               ),
-              if (showConfirmField) ...[
-                SizedBox(height: 36 * scaleFactor),
-                EditFieldWidget(
-                  label: '비밀번호 확인',
-                  hintText: '비밀번호를 다시 입력해 주세요',
-                  controller: _confirmController,
-                  scaleFactor: scaleFactor,
-                  autofocus: false,
-                  guideMessage: confirmGuideMessage,
-                  obscureText: true,
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }

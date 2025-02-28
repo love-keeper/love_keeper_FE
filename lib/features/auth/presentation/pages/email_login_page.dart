@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
@@ -18,9 +19,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool showPasswordField = false;
   bool showPasswordGuide = false;
-
-  static const String debugEmail = '000@gmail.com';
-  static const String debugPassword = 'password123';
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -44,6 +43,61 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
     super.dispose();
   }
 
+  Future<void> _handleNextOrLogin() async {
+    if (!emailRegex.hasMatch(_emailController.text)) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final authViewModel = ref.read(authViewModelProvider.notifier);
+      if (!showPasswordField) {
+        final result =
+            await authViewModel.emailDuplication(_emailController.text);
+        ref
+            .read(authStateNotifierProvider.notifier)
+            .updateEmail(_emailController.text); // 이메일 저장
+        setState(() {
+          _isLoading = false;
+        });
+        if (result == '사용 가능한 이메일입니다.') {
+          context.push(RouteNames.signupPage); // SignupPage로 이동
+        } else {
+          setState(() {
+            showPasswordField = true;
+          });
+        }
+      } else {
+        await authViewModel.login(
+          email: _emailController.text,
+          provider: 'LOCAL',
+          password: _passwordController.text,
+          providerId: null,
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        context.go(RouteNames.mainPage);
+      }
+    } catch (e) {
+      debugPrint('Error: $e');
+      setState(() {
+        _isLoading = false;
+        if (showPasswordField) showPasswordGuide = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(showPasswordField ? '로그인 실패: $e' : '이메일 확인 실패: $e')),
+      );
+    }
+  }
+
+  final RegExp emailRegex = RegExp(
+    r'^[^@]+@[^@]+\.(com|net|org|edu|co\.kr|ac\.kr)$',
+    caseSensitive: false,
+  );
+
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -52,11 +106,6 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
 
     final bool hasEmail = _emailController.text.isNotEmpty;
     final bool hasPassword = _passwordController.text.isNotEmpty;
-
-    final RegExp emailRegex = RegExp(
-      r'^[^@]+@[^@]+\.(com|net|org|edu|co\.kr|ac\.kr)$',
-      caseSensitive: false,
-    );
 
     final String emailGuideMessage =
         hasEmail && !emailRegex.hasMatch(_emailController.text)
@@ -125,78 +174,55 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
             ),
           SaveButtonWidget(
             scaleFactor: scaleFactor,
-            enabled: showPasswordField ? (hasEmail && hasPassword) : hasEmail,
+            enabled: showPasswordField
+                ? (hasEmail && hasPassword && !_isLoading)
+                : (hasEmail && !_isLoading),
             buttonText: showPasswordField ? '로그인' : '다음',
-            onPressed: () async {
-              if (!showPasswordField) {
-                if (!emailRegex.hasMatch(_emailController.text)) {
-                  return; // 이메일 형식이 맞지 않으면 동작 중지
-                }
-                try {
-                  final result = await ref
-                      .read(authViewModelProvider.notifier)
-                      .emailDuplication(_emailController.text);
-                  if (result == '사용 가능한 이메일입니다.') {
-                    // 중복이 아니면 인증 페이지로 이동
-                    context.push(RouteNames.newEmailcertification,
-                        extra: {'email': _emailController.text});
-                  } else {
-                    // 중복이면 비밀번호 입력 필드 표시
-                    setState(() {
-                      showPasswordField = true;
-                    });
-                  }
-                } catch (e) {
-                  // 중복된 경우 (예: COMMON409) 비밀번호 입력 필드 표시
-                  setState(() {
-                    showPasswordField = true;
-                  });
-                }
-              } else {
-                if (hasPassword && _passwordController.text == debugPassword) {
-                  context.go('/mainPage');
-                } else {
-                  setState(() {
-                    showPasswordGuide = true;
-                  });
-                }
-              }
-            },
+            onPressed: _isLoading ? null : _handleNextOrLogin,
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 16 * scaleFactor),
-              EditFieldWidget(
-                label: '이메일',
-                hintText: '이메일 주소를 입력해 주세요.',
-                controller: _emailController,
-                scaleFactor: scaleFactor,
-                autofocus: true,
-                guideMessage: emailGuideMessage,
-                readOnly: showPasswordField,
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 16 * scaleFactor),
+                  EditFieldWidget(
+                    label: '이메일',
+                    hintText: '이메일 주소를 입력해 주세요.',
+                    controller: _emailController,
+                    scaleFactor: scaleFactor,
+                    autofocus: true,
+                    guideMessage: emailGuideMessage,
+                    readOnly: showPasswordField,
+                  ),
+                  if (showPasswordField) ...[
+                    SizedBox(height: 36 * scaleFactor),
+                    EditFieldWidget(
+                      label: '비밀번호',
+                      hintText: '비밀번호를 입력해 주세요.',
+                      controller: _passwordController,
+                      scaleFactor: scaleFactor,
+                      autofocus: false,
+                      guideMessage: showPasswordGuide
+                          ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
+                          : '',
+                      obscureText: true,
+                    ),
+                  ],
+                ],
               ),
-              if (showPasswordField) ...[
-                SizedBox(height: 36 * scaleFactor),
-                EditFieldWidget(
-                  label: '비밀번호',
-                  hintText: '비밀번호를 입력해 주세요.',
-                  controller: _passwordController,
-                  scaleFactor: scaleFactor,
-                  autofocus: false,
-                  guideMessage:
-                      showPasswordGuide ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.' : '',
-                  obscureText: true,
-                ),
-              ],
-            ],
+            ),
           ),
-        ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }

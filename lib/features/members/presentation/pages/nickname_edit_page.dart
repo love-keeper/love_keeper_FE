@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
-class NicknameEditPage extends StatefulWidget {
+class NicknameEditPage extends ConsumerStatefulWidget {
   const NicknameEditPage({super.key});
 
   @override
   _NicknameEditPageState createState() => _NicknameEditPageState();
 }
 
-class _NicknameEditPageState extends State<NicknameEditPage> {
+class _NicknameEditPageState extends ConsumerState<NicknameEditPage> {
   final TextEditingController _nicknameController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    // 텍스트 변경 시 상태 업데이트
     _nicknameController.addListener(() {
       setState(() {});
     });
@@ -28,16 +30,45 @@ class _NicknameEditPageState extends State<NicknameEditPage> {
     super.dispose();
   }
 
+  Future<void> _updateNickname() async {
+    final nickname = _nicknameController.text;
+    if (nickname.isEmpty) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await ref
+          .read(membersViewModelProvider.notifier)
+          .updateNickname(nickname);
+      setState(() {
+        _isLoading = false;
+      });
+      if (result == '닉네임 변경 성공') {
+        // 백엔드 응답에 따라 수정
+        context.pop();
+      }
+    } catch (e) {
+      debugPrint('Update nickname error: $e');
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('닉네임 변경 실패: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // 화면 너비에 따른 scaleFactor 계산 (기준: 375)
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
     final bool hasText = _nicknameController.text.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: Colors.white, // 배경색을 흰색으로 지정
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -63,22 +94,27 @@ class _NicknameEditPageState extends State<NicknameEditPage> {
       ),
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
-        enabled: hasText,
+        enabled: hasText && !_isLoading,
         buttonText: '변경하기',
-        onPressed: () {
-          // 저장 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
-          context.pop();
-        },
+        onPressed: _isLoading ? null : _updateNickname,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-        child: EditFieldWidget(
-          label: '닉네임',
-          hintText: '사용할 닉네임을 입력해 주세요',
-          controller: _nicknameController,
-          scaleFactor: scaleFactor,
-          autofocus: true, // 이 페이지에서는 항상 키보드 활성화
-        ),
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+            child: EditFieldWidget(
+              label: '닉네임',
+              hintText: '사용할 닉네임을 입력해 주세요',
+              controller: _nicknameController,
+              scaleFactor: scaleFactor,
+              autofocus: true,
+            ),
+          ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }

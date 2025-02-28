@@ -9,11 +9,14 @@ import 'package:love_keeper_fe/features/drafts/data/models/request/create_draft_
 import 'package:love_keeper_fe/features/drafts/data/models/response/draft_response.dart';
 import 'package:love_keeper_fe/features/letters/data/models/request/create_letter_request.dart';
 import 'package:love_keeper_fe/features/letters/data/models/response/letter_list_response.dart';
+import 'package:love_keeper_fe/features/members/data/models/request/send_email_code_request.dart';
 import 'package:love_keeper_fe/features/members/data/models/request/update_birthday_request.dart';
 import 'package:love_keeper_fe/features/members/data/models/request/update_nickname_request.dart';
 import 'package:love_keeper_fe/features/members/data/models/request/update_password_request.dart';
+import 'package:love_keeper_fe/features/members/data/models/request/verify_email_code_request.dart';
 import 'package:love_keeper_fe/features/members/data/models/response/birthday_response.dart';
 import 'package:love_keeper_fe/features/members/data/models/response/nickname_response.dart';
+import 'package:love_keeper_fe/features/members/data/models/response/send_email_code_response.dart';
 import 'package:love_keeper_fe/features/promises/data/models/request/create_promise_request.dart';
 import 'package:love_keeper_fe/features/promises/data/models/response/promise_list_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -116,6 +119,14 @@ abstract class ApiClient {
   @MultiPart()
   Future<ApiResponse<String>> updateProfileImage(
       @Part(name: 'profileImage') File profileImage);
+
+  @POST('/api/members/email/send-code')
+  Future<ApiResponse<SendEmailCodeResponse>> sendEmailCode(
+      @Body() SendEmailCodeRequest request); // 추가
+
+  @PATCH('/api/members/email/verify-code')
+  Future<ApiResponse<String>> verifyEmailCode(
+      @Body() VerifyEmailCodeRequest request); // 추가
 
   // DRAFTS
 

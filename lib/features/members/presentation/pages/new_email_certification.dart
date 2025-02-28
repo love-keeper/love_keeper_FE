@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/email_edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
-class NewEmailcertification extends ConsumerStatefulWidget {
+class NewEmailCertification extends ConsumerStatefulWidget {
   final String email;
 
-  const NewEmailcertification({super.key, required this.email});
+  const NewEmailCertification({super.key, required this.email});
 
   @override
-  _NewEmailcertificationState createState() => _NewEmailcertificationState();
+  _NewEmailCertificationState createState() => _NewEmailCertificationState();
 }
 
-class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
+class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
   final TextEditingController _newEmailCerController = TextEditingController();
   bool _isCodeSent = false;
   bool _isLoading = false;
@@ -24,7 +23,6 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
   void initState() {
     super.initState();
     _sendVerificationCode();
-
     _newEmailCerController.addListener(() {
       setState(() {});
     });
@@ -41,8 +39,9 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
       _isLoading = true;
     });
     try {
-      final code =
-          await ref.read(authViewModelProvider.notifier).sendCode(widget.email);
+      final code = await ref
+          .read(membersViewModelProvider.notifier)
+          .sendEmailCode(widget.email);
       setState(() {
         _isCodeSent = true;
         _isLoading = false;
@@ -67,15 +66,17 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
       _isLoading = true;
     });
     try {
-      final result = await ref.read(authViewModelProvider.notifier).verifyCode(
-            widget.email,
-            int.tryParse(_newEmailCerController.text) ?? 0,
-          );
-      if (result == '인증 성공') {
-        context.pushNamed(
-          RouteNames.signupPage,
-          extra: {'email': widget.email},
-        );
+      final result =
+          await ref.read(membersViewModelProvider.notifier).verifyEmailCode(
+                widget.email,
+                _newEmailCerController.text,
+              );
+      setState(() {
+        _isLoading = false;
+      });
+      if (result == '이메일 변경 성공') {
+        // 백엔드 응답에 맞게 조정
+        context.pop(); // 인증 성공 시 이전 화면으로 이동
       }
     } catch (e) {
       debugPrint('Verify code error: $e');
@@ -286,7 +287,7 @@ class _NewEmailcertificationState extends ConsumerState<NewEmailcertification> {
             scaleFactor: scaleFactor,
             enabled: hasText && !_isLoading,
             buttonText: '다음',
-            onPressed: _isLoading ? null : _verifyCode, // 직접 전달
+            onPressed: _isLoading ? null : _verifyCode,
           ),
         ],
       ),

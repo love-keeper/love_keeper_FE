@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/email_edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
-  final String email;
-  const SignupPage({super.key, required this.email});
+  const SignupPage({super.key});
 
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -35,12 +36,20 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   }
 
   Future<void> _sendVerificationCode() async {
+    final email = ref.read(authStateNotifierProvider).email ?? '';
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('이메일이 설정되지 않았습니다.')),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
     try {
       final code =
-          await ref.read(authViewModelProvider.notifier).sendCode(widget.email);
+          await ref.read(authViewModelProvider.notifier).sendCode(email);
       setState(() {
         _isCodeSent = true;
         _isLoading = false;
@@ -61,14 +70,25 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   }
 
   Future<void> _verifyCode() async {
+    final email = ref.read(authStateNotifierProvider).email ?? '';
+    if (email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('이메일이 설정되지 않았습니다.')),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
     try {
       final result = await ref.read(authViewModelProvider.notifier).verifyCode(
-            widget.email,
+            email,
             int.tryParse(_emailCodeController.text) ?? 0,
           );
+      setState(() {
+        _isLoading = false;
+      });
       if (result == '인증 성공') {
         context.push('/emailPwInput'); // 다음 단계로 이동
       }
@@ -90,6 +110,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
     final bool hasText = _emailCodeController.text.isNotEmpty;
+
+    final email = ref.watch(authStateNotifierProvider).email ?? '';
 
     void showResendBottomSheet(BuildContext context, double scaleFactor) {
       showModalBottomSheet(
@@ -280,7 +302,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
             scaleFactor: scaleFactor,
             enabled: hasText && !_isLoading,
             buttonText: '인증하기',
-            onPressed: _isLoading ? null : _verifyCode, // 직접 전달
+            onPressed: _isLoading ? null : _verifyCode,
           ),
         ],
       ),
@@ -295,7 +317,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 Padding(
                   padding: EdgeInsets.only(left: 0 * scaleFactor),
                   child: Text(
-                    widget.email,
+                    email,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 18 * scaleFactor,

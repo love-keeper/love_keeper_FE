@@ -34,7 +34,7 @@ import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/members/presentation/pages/email_edit_page.dart';
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
-import '../../../features/auth/presentation/pages/new_email_certification.dart';
+import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
 
 import 'route_names.dart';
@@ -69,32 +69,32 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) => const PwFindingPage(),
       ),
       GoRoute(
-        path: RouteNames.passwordEditPage,
-        name: ' passwordEditPage',
-        builder: (context, state) => const PasswordEditPage(),
+        path: '/password-change',
+        name: 'passwordChange',
+        builder: (context, state) {
+          final email = state.uri.queryParameters['email'] ?? '';
+          final code = state.uri.queryParameters['code'] ?? '';
+          return PasswordEditPage(email: email, code: code);
+        },
       ),
       GoRoute(
         path: RouteNames.signupPage,
-        name: ' signupPage',
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>? ?? {};
-          final String email = (extra['email'] as String?) ?? '';
-          return SignupPage(email: email);
-        },
+        name: 'signupPage',
+        builder: (context, state) => const SignupPage(),
       ),
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
         name: ' emailPasswordInputPage',
-        builder: (context, state) => EmailPasswordInputPage(email: ''),
+        builder: (context, state) => const EmailPasswordInputPage(),
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,
-        name: ' profileRegistration',
+        name: 'profileRegistration',
         builder: (context, state) => const ProfileRegistrationPage(),
       ),
       GoRoute(
         path: RouteNames.codeConnectPage,
-        name: ' codeConnect',
+        name: '/codeConnect',
         builder: (context, state) => const CodeConnectPage(),
       ),
 
@@ -260,23 +260,23 @@ GoRouter appRouter(AppRouterRef ref) {
         name: 'relationshipStartEditPage',
         builder: (context, state) => const RelationshipStartEditPage(),
       ),
-      GoRoute(
-        path: RouteNames.emailEditPage,
-        name: 'emailEditPage',
-        builder: (context, state) => const EmailEditPage(),
-      ),
+      // GoRoute(
+      //   path: RouteNames.emailEditPage,
+      //   name: 'emailEditPage',
+      //   builder: (context, state) => const EmailEditPage(),
+      // ),
       GoRoute(
         path: RouteNames.newEmailInputPage,
         name: 'newEmailInputPage',
         builder: (context, state) => const NewEmailInputPage(),
       ),
       GoRoute(
-        path: RouteNames.newEmailcertification,
-        name: 'newEmailcertification',
+        path: RouteNames.newEmailCertification,
+        name: 'newEmailCertification',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
-          final String email = extra['email'] as String? ?? '';
-          return NewEmailcertification(email: email);
+          final email = extra['email'] as String? ?? '';
+          return NewEmailCertification(email: email);
         },
       ),
       GoRoute(

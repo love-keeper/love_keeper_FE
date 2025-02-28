@@ -64,4 +64,28 @@ class MembersViewModel extends _$MembersViewModel {
       rethrow;
     }
   }
+
+  Future<String> sendEmailCode(String email) async {
+    state = const AsyncValue.loading();
+    try {
+      final result = await _repository.sendEmailCode(email);
+      state = AsyncValue.data(result);
+      return result;
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<String> verifyEmailCode(String email, String code) async {
+    state = const AsyncValue.loading();
+    try {
+      final result = await _repository.verifyEmailCode(email, code);
+      state = AsyncValue.data(result);
+      return result;
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      rethrow;
+    }
+  }
 }

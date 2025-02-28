@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
-class BirthdateEditPage extends StatefulWidget {
+class BirthdateEditPage extends ConsumerStatefulWidget {
   const BirthdateEditPage({super.key});
 
   @override
   _BirthdateEditPageState createState() => _BirthdateEditPageState();
 }
 
-class _BirthdateEditPageState extends State<BirthdateEditPage> {
+class _BirthdateEditPageState extends ConsumerState<BirthdateEditPage> {
   final TextEditingController _birthdateController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    // 텍스트 변경 시 상태 업데이트
     _birthdateController.addListener(() {
       setState(() {});
     });
@@ -28,24 +30,55 @@ class _BirthdateEditPageState extends State<BirthdateEditPage> {
     super.dispose();
   }
 
+  Future<void> _updateBirthday() async {
+    final inputDate = _birthdateController.text;
+    if (!birthdateRegex.hasMatch(inputDate)) return;
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // YYYY.MM.DD -> YYYY-MM-DD 변환
+      final formattedDate = inputDate.replaceAll('.', '-');
+      final result = await ref
+          .read(membersViewModelProvider.notifier)
+          .updateBirthday(formattedDate);
+      setState(() {
+        _isLoading = false;
+      });
+      if (result == '생일 업데이트 성공') {
+        // 백엔드 응답에 따라 수정
+        context.pop();
+      }
+    } catch (e) {
+      debugPrint('Update birthday error: $e');
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('생일 업데이트 실패: $e')),
+      );
+    }
+  }
+
+  final RegExp birthdateRegex =
+      RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$');
+
   @override
   Widget build(BuildContext context) {
-    // 화면 너비에 따른 scaleFactor 계산 (기준: 375)
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
     final bool hasText = _birthdateController.text.isNotEmpty;
-    // 정규식을 이용해 YYYY.MM.DD 형식 검사
-    final RegExp birthdateRegex =
-        RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01]).$');
+
     final String guideMessage =
         hasText && !birthdateRegex.hasMatch(_birthdateController.text)
-            ? '유효한 날짜 형식(YYYY.MM.DD.)을 입력해 주세요'
+            ? '유효한 날짜 형식(YYYY.MM.DD)을 입력해 주세요'
             : '';
 
     return Scaffold(
       backgroundColor: Colors.white,
-      // 항상 키보드 활성화를 위해 autofocus 옵션 설정 (EditFieldWidget에서 처리)
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -71,23 +104,28 @@ class _BirthdateEditPageState extends State<BirthdateEditPage> {
       ),
       bottomNavigationBar: SaveButtonWidget(
         scaleFactor: scaleFactor,
-        enabled: hasText,
+        enabled: hasText && guideMessage.isEmpty && !_isLoading,
         buttonText: '변경하기',
-        onPressed: () {
-          // 저장 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
-          context.pop();
-        },
+        onPressed: _isLoading ? null : _updateBirthday,
       ),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-        child: EditFieldWidget(
-          label: '생년월일',
-          hintText: 'YYYY.MM.DD.',
-          controller: _birthdateController,
-          scaleFactor: scaleFactor,
-          autofocus: true, // 이 페이지에서는 항상 키보드 활성화
-          guideMessage: guideMessage,
-        ),
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+            child: EditFieldWidget(
+              label: '생년월일',
+              hintText: 'YYYY.MM.DD',
+              controller: _birthdateController,
+              scaleFactor: scaleFactor,
+              autofocus: true,
+              guideMessage: guideMessage,
+            ),
+          ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
     );
   }
