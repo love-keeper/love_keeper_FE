@@ -14,23 +14,26 @@ class DdayPage extends ConsumerStatefulWidget {
 }
 
 class _DdayPageState extends ConsumerState<DdayPage> {
-  // 초기 날짜는 임시 값, 실제 시작 날짜는 API 호출로 받아옴.
+  // 초기 날짜는 임시 값, 백엔드에서 받아온 값으로 업데이트
   DateTime _selectedDate = DateTime(2024, 12, 5);
 
   @override
   void initState() {
     super.initState();
-    // CouplesViewModel을 통해 시작 날짜를 API에서 받아옵니다.
-    ref
-        .read(couplesViewModelProvider.notifier)
-        .getStartDate()
-        .then((startDateString) {
-      setState(() {
-        // 백엔드에서 "yyyy-MM-dd" 형식으로 보낸다고 가정
-        _selectedDate = DateTime.parse(startDateString);
+    // 백엔드에서 시작 날짜를 지연 호출로 가져옴
+    Future(() {
+      ref
+          .read(couplesViewModelProvider.notifier)
+          .getStartDate()
+          .then((startDateString) {
+        if (mounted) {
+          setState(() {
+            _selectedDate = DateTime.parse(startDateString);
+          });
+        }
+      }).catchError((e) {
+        debugPrint('시작 날짜를 받아오지 못했습니다: $e');
       });
-    }).catchError((e) {
-      debugPrint('시작 날짜를 받아오지 못했습니다: $e');
     });
   }
 
@@ -81,25 +84,19 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                     ),
                   ),
                   onPressed: () async {
-                    // 사용자가 선택한 날짜를 "yyyy-MM-dd" 형식의 문자열로 변환합니다.
                     final newDateStr =
                         DateFormat('yyyy-MM-dd').format(_selectedDate);
                     try {
-                      // updateStartDate API 호출
                       await ref
                           .read(couplesViewModelProvider.notifier)
                           .updateStartDate(newDateStr);
-                      // 선택한 날짜를 다시 API를 통해 가져와서 업데이트할 수도 있습니다.
-                      final updatedStartDate = await ref
-                          .read(couplesViewModelProvider.notifier)
-                          .getStartDate();
-                      setState(() {
-                        _selectedDate = DateTime.parse(updatedStartDate);
-                      });
+                      // UI는 이미 setState로 업데이트됐으므로 추가 호출 불필요
                     } catch (e) {
                       debugPrint('시작 날짜 업데이트 실패: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('날짜 업데이트 실패: $e')),
+                      );
                     }
-                    // 변경 후 바텀시트 닫기
                     context.pop();
                   },
                   child: const Text(
@@ -122,7 +119,6 @@ class _DdayPageState extends ConsumerState<DdayPage> {
 
   @override
   Widget build(BuildContext context) {
-    // 디데이 계산이나 기타 UI 로직은 필요에 따라 추가하세요.
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -195,7 +191,6 @@ class _DdayPageState extends ConsumerState<DdayPage> {
       ),
       child: Stack(
         children: [
-          // 프로필 이미지는 FallbackCircleAvatar로 대체
           Positioned(
             left: 20,
             top: 20,

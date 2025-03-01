@@ -17,6 +17,7 @@ import 'package:love_keeper_fe/features/members/data/models/request/verify_email
 import 'package:love_keeper_fe/features/members/data/models/response/birthday_response.dart';
 import 'package:love_keeper_fe/features/members/data/models/response/nickname_response.dart';
 import 'package:love_keeper_fe/features/members/data/models/response/send_email_code_response.dart';
+import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
 import 'package:love_keeper_fe/features/promises/data/models/request/create_promise_request.dart';
 import 'package:love_keeper_fe/features/promises/data/models/response/promise_list_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -102,6 +103,8 @@ abstract class ApiClient {
   Future<ApiResponse<String>> deleteCouple();
 
   // MEMBERS
+  @GET('/api/members/me') // 추가
+  Future<ApiResponse<MemberInfo>> getMemberInfo();
 
   @PATCH('/api/members/nickname')
   Future<ApiResponse<NicknameResponse>> updateNickname(

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:love_keeper_fe/features/members/data/repositories/members_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
 import '../../domain/repositories/members_repository.dart';
 
 part 'members_viewmodel.g.dart';
@@ -10,16 +11,27 @@ class MembersViewModel extends _$MembersViewModel {
   late final MembersRepository _repository;
 
   @override
-  AsyncValue<dynamic> build() {
+  AsyncValue<MemberInfo?> build() {
     _repository = ref.watch(membersRepositoryProvider);
+    _fetchMemberInfo();
     return const AsyncValue.data(null);
+  }
+
+  Future<void> _fetchMemberInfo() async {
+    state = const AsyncValue.loading();
+    try {
+      final memberInfo = await _repository.getMemberInfo();
+      state = AsyncValue.data(memberInfo);
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
   }
 
   Future<String> updateNickname(String nickname) async {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updateNickname(nickname);
-      state = AsyncValue.data(result);
+      await _fetchMemberInfo(); // 정보 갱신
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -31,7 +43,7 @@ class MembersViewModel extends _$MembersViewModel {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updateBirthday(birthday);
-      state = AsyncValue.data(result);
+      await _fetchMemberInfo();
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -45,7 +57,7 @@ class MembersViewModel extends _$MembersViewModel {
     try {
       final result = await _repository.updatePassword(
           currentPassword, newPassword, newPasswordConfirm);
-      state = AsyncValue.data(result);
+      state = AsyncValue.data(state.value);
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -57,7 +69,7 @@ class MembersViewModel extends _$MembersViewModel {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updateProfileImage(profileImage);
-      state = AsyncValue.data(result);
+      await _fetchMemberInfo();
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -69,7 +81,7 @@ class MembersViewModel extends _$MembersViewModel {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.sendEmailCode(email);
-      state = AsyncValue.data(result);
+      state = AsyncValue.data(state.value);
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -81,7 +93,7 @@ class MembersViewModel extends _$MembersViewModel {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.verifyEmailCode(email, code);
-      state = AsyncValue.data(result);
+      await _fetchMemberInfo();
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);

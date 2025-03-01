@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -57,16 +58,17 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
             await authViewModel.emailDuplication(_emailController.text);
         ref
             .read(authStateNotifierProvider.notifier)
-            .updateEmail(_emailController.text); // 이메일 저장
+            .updateEmail(_emailController.text);
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
         if (result == '사용 가능한 이메일입니다.') {
-          context.push(RouteNames.signupPage); // SignupPage로 이동
+          context.push(RouteNames.signupPage);
         } else {
           setState(() {
             showPasswordField = true;
-          });
+          }); // 중복이면 비밀번호 필드 표시
         }
       } else {
         await authViewModel.login(
@@ -75,6 +77,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           password: _passwordController.text,
           providerId: null,
         );
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
@@ -82,14 +85,23 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
       }
     } catch (e) {
       debugPrint('Error: $e');
+      if (!mounted) return;
       setState(() {
         _isLoading = false;
         if (showPasswordField) showPasswordGuide = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(showPasswordField ? '로그인 실패: $e' : '이메일 확인 실패: $e')),
-      );
+      // 409 처리
+      if (e is DioException && e.response?.statusCode == 409) {
+        setState(() {
+          showPasswordField = true;
+        }); // 중복 이메일이면 비밀번호 필드 표시
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text(showPasswordField ? '로그인 실패: $e' : '이메일 확인 실패: $e')),
+        );
+      }
     }
   }
 
