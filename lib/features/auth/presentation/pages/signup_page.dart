@@ -312,7 +312,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 16 * scaleFactor),
+                        SizedBox(height: 36 * scaleFactor),
                         EmailEditFieldWidget(
                           label: '인증코드',
                           hintText: '6자리를 입력해 주세요.',
@@ -337,7 +337,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: 6 * scaleFactor),
+                    padding: EdgeInsets.only(bottom: 0 * scaleFactor),
                     child: SizedBox(
                       width: 131 * scaleFactor,
                       height: 22 * scaleFactor,

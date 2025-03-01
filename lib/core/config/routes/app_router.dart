@@ -50,22 +50,22 @@ GoRouter appRouter(AppRouterRef ref) {
       // Onboarding 및 Login 관련 라우트들
       GoRoute(
         path: RouteNames.onboarding,
-        name: ' onboarding',
+        name: 'onboarding',
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: RouteNames.splashScreen,
-        name: ' splashScreen',
+        name: 'splashScreen',
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: RouteNames.emailLoginPage,
-        name: ' emailLoginPage',
+        name: 'emailLoginPage',
         builder: (context, state) => const EmailLoginPage(),
       ),
       GoRoute(
         path: RouteNames.pwFindingPage,
-        name: ' pwFindingPage',
+        name: 'pwFindingPage',
         builder: (context, state) => const PwFindingPage(),
       ),
       GoRoute(

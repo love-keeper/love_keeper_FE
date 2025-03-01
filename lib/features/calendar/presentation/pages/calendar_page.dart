@@ -1,109 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart'; // GoRouter 확장을 위해 추가
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/features/calendar/damain/entities/calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/event_popup.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
+import 'package:love_keeper_fe/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
+import 'package:love_keeper_fe/features/calendar/presentation/widgets/event_popup.dart';
 
-class CalendarPage extends StatefulWidget {
+class CalendarPage extends ConsumerStatefulWidget {
   const CalendarPage({super.key});
 
   @override
-  _CalendarPageState createState() => _CalendarPageState();
+  ConsumerState<CalendarPage> createState() => _CalendarPageState();
 }
 
-class _CalendarPageState extends State<CalendarPage> {
+class _CalendarPageState extends ConsumerState<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
+  bool _isFirstLoad = true; // 첫 로드 여부를 추적
 
-  final List<DateTime> _eventDays = [
-    DateTime(2025, 2, 13),
-    DateTime(2025, 3, 1),
-    DateTime(2025, 3, 5),
-    DateTime(2025, 3, 10),
-    DateTime(2025, 3, 15),
-  ];
-
-  List<dynamic> _getEventsForDay(DateTime day) {
-    return _eventDays.where((eventDay) => isSameDay(eventDay, day)).toList();
+  @override
+  void initState() {
+    super.initState();
+    // initState에서는 아무것도 하지 않음
   }
 
-  Widget _buildCustomCalendarHeader() {
-    return Container(
-      padding: const EdgeInsets.only(top: 1, left: 10, bottom: 15, right: 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          RichText(
-            text: TextSpan(
-              text: '${_focusedDay.year}년 ',
-              style: const TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.w600,
-                letterSpacing: -0.575,
-                color: Color(0xFF27282C),
-                height: 40 / 23,
-              ),
-              children: [
-                TextSpan(
-                  text: '${_focusedDay.month}월',
-                  style: const TextStyle(
-                    fontSize: 23,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xffFF859B),
-                    letterSpacing: -0.575,
-                    height: 40 / 23,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Color(0xffFF859B),
-                  size: 24,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _focusedDay = DateTime(
-                      _focusedDay.year,
-                      _focusedDay.month - 1,
-                      _focusedDay.day,
-                    );
-                  });
-                },
-              ),
-              IconButton(
-                icon: const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Color(0xffFF859B),
-                  size: 24,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _focusedDay = DateTime(
-                      _focusedDay.year,
-                      _focusedDay.month + 1,
-                      _focusedDay.day,
-                    );
-                  });
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isFirstLoad) {
+      // 첫 로드 시에만 getCalendar 호출
+      Future.microtask(() => ref
+          .read(calendarViewModelProvider.notifier)
+          .getCalendar(_focusedDay.year, _focusedDay.month));
+      _isFirstLoad = false;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // 셀 높이 54 (38 + 16)
+    final calendarState = ref.watch(calendarViewModelProvider);
+    final List<DateTime> eventDates = calendarState.when(
+      data: (calendar) => calendar?.eventDates ?? [],
+      loading: () => [],
+      error: (error, stack) => [],
+    );
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // 앱바 투명
+        backgroundColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
         leading: IconButton(
@@ -111,7 +55,7 @@ class _CalendarPageState extends State<CalendarPage> {
             Icons.arrow_back_ios_new_rounded,
             color: Color(0xFF27282C),
           ),
-          onPressed: () => context.pop(), // GoRouter 사용
+          onPressed: () => context.pop(),
         ),
         title: const Text(
           '캘린더',
@@ -145,7 +89,6 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
             child: Column(
               children: [
-                // 상단 섹션: 아이콘 및 편지/약속 개수 (기존 그대로)
                 SizedBox(
                   height: 125,
                   child: Stack(
@@ -240,18 +183,19 @@ class _CalendarPageState extends State<CalendarPage> {
                     lastDay: DateTime(2030, 12, 31),
                     focusedDay: _focusedDay,
                     headerVisible: false,
-                    eventLoader: _getEventsForDay,
+                    eventLoader: (day) =>
+                        eventDates.where((d) => isSameDay(d, day)).toList(),
                     daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(fontSize: 14, color: Colors.grey),
                       weekendStyle: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     calendarBuilders: CalendarBuilders(
                       todayBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
+                        final events =
+                            eventDates.where((d) => isSameDay(d, day)).toList();
                         if (events.isNotEmpty) {
                           return GestureDetector(
                             onTap: () {
-                              // 오늘 날짜 셀 탭 시, EventPopup 호출 (예시)
                               showDialog(
                                 context: context,
                                 builder: (context) {
@@ -273,36 +217,17 @@ class _CalendarPageState extends State<CalendarPage> {
                                 color: const Color(0xffFF859B),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Stack(
-                                clipBehavior: Clip.none,
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      '${day.day}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        letterSpacing: -0.4,
-                                        height: 24 / 16,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                              child: Center(
+                                child: Text(
+                                  '${day.day}',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    letterSpacing: -0.4,
+                                    height: 24 / 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                                  const Positioned(
-                                    bottom: -15,
-                                    left: 0,
-                                    right: 0,
-                                    child: Center(
-                                      child: Text(
-                                        '오늘',
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: Color(0xffFC6383),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                           );
@@ -317,42 +242,24 @@ class _CalendarPageState extends State<CalendarPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                Center(
-                                  child: Text(
-                                    '${day.day}',
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      letterSpacing: -0.4,
-                                      height: 24 / 16,
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                            child: Center(
+                              child: Text(
+                                '${day.day}',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  letterSpacing: -0.4,
+                                  height: 24 / 16,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
                                 ),
-                                const Positioned(
-                                  bottom: -10,
-                                  left: 0,
-                                  right: 0,
-                                  child: Center(
-                                    child: Text(
-                                      '오늘',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        color: Color(0xffFC6383),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           );
                         }
                       },
                       defaultBuilder: (context, day, focusedDay) {
-                        final events = _getEventsForDay(day);
+                        final events =
+                            eventDates.where((d) => isSameDay(d, day)).toList();
                         if (events.isNotEmpty) {
                           return GestureDetector(
                             onTap: () {
@@ -420,6 +327,83 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCustomCalendarHeader() {
+    return Container(
+      padding: const EdgeInsets.only(top: 1, left: 10, bottom: 15, right: 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          RichText(
+            text: TextSpan(
+              text: '${_focusedDay.year}년 ',
+              style: const TextStyle(
+                fontSize: 23,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.575,
+                color: Color(0xFF27282C),
+                height: 40 / 23,
+              ),
+              children: [
+                TextSpan(
+                  text: '${_focusedDay.month}월',
+                  style: const TextStyle(
+                    fontSize: 23,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xffFF859B),
+                    letterSpacing: -0.575,
+                    height: 40 / 23,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Color(0xffFF859B),
+                  size: 24,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _focusedDay = DateTime(
+                      _focusedDay.year,
+                      _focusedDay.month - 1,
+                      _focusedDay.day,
+                    );
+                    ref
+                        .read(calendarViewModelProvider.notifier)
+                        .getCalendar(_focusedDay.year, _focusedDay.month);
+                  });
+                },
+              ),
+              IconButton(
+                icon: const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: Color(0xffFF859B),
+                  size: 24,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _focusedDay = DateTime(
+                      _focusedDay.year,
+                      _focusedDay.month + 1,
+                      _focusedDay.day,
+                    );
+                    ref
+                        .read(calendarViewModelProvider.notifier)
+                        .getCalendar(_focusedDay.year, _focusedDay.month);
+                  });
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

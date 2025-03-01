@@ -1,18 +1,41 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart'; // GoRouter 사용
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
 
-class DdayPage extends StatefulWidget {
+class DdayPage extends ConsumerStatefulWidget {
   const DdayPage({super.key});
 
   @override
   _DdayPageState createState() => _DdayPageState();
 }
 
-class _DdayPageState extends State<DdayPage> {
+class _DdayPageState extends ConsumerState<DdayPage> {
+  // 초기 날짜는 임시 값, 백엔드에서 받아온 값으로 업데이트
   DateTime _selectedDate = DateTime(2024, 12, 5);
+
+  @override
+  void initState() {
+    super.initState();
+    // 백엔드에서 시작 날짜를 지연 호출로 가져옴
+    Future(() {
+      ref
+          .read(couplesViewModelProvider.notifier)
+          .getStartDate()
+          .then((startDateString) {
+        if (mounted) {
+          setState(() {
+            _selectedDate = DateTime.parse(startDateString);
+          });
+        }
+      }).catchError((e) {
+        debugPrint('시작 날짜를 받아오지 못했습니다: $e');
+      });
+    });
+  }
 
   void _showDatePicker() {
     showModalBottomSheet(
@@ -60,8 +83,21 @@ class _DdayPageState extends State<DdayPage> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                   ),
-                  onPressed: () {
-                    context.pop(); // GoRouter pop 사용
+                  onPressed: () async {
+                    final newDateStr =
+                        DateFormat('yyyy-MM-dd').format(_selectedDate);
+                    try {
+                      await ref
+                          .read(couplesViewModelProvider.notifier)
+                          .updateStartDate(newDateStr);
+                      // UI는 이미 setState로 업데이트됐으므로 추가 호출 불필요
+                    } catch (e) {
+                      debugPrint('시작 날짜 업데이트 실패: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('날짜 업데이트 실패: $e')),
+                      );
+                    }
+                    context.pop();
                   },
                   child: const Text(
                     '변경하기',
@@ -105,7 +141,7 @@ class _DdayPageState extends State<DdayPage> {
             color: Color(0xFF27282C),
           ),
           onPressed: () {
-            context.pop(); // GoRouter pop 사용
+            context.pop();
           },
         ),
       ),
@@ -199,7 +235,7 @@ class _DdayPageState extends State<DdayPage> {
                       color: Color(0xFFFC6383),
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
-                      decorationColor: Color(0xFFFC6383), // 텍스트 색상과 동일하게 설정
+                      decorationColor: Color(0xFFFC6383),
                     ),
                   ),
                 ),
