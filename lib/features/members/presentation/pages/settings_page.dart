@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
-  final String appVersion = '0.1.1'; // 기본 버전 초기값
+  final String appVersion = '0.1.1';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
@@ -47,33 +51,21 @@ class SettingsPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 16 * scaleFactor),
-
-          // '알림' 카테고리
           _buildCategoryTitle('알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-
-          // 알림 설정 옵션들
           _buildNotificationOption('푸시 알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
           _buildNotificationOption('이메일 알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
           _buildNotificationOption('마케팅 정보 알림', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-
-          // 회색 구분 바
           _buildDivider(deviceWidth, scaleFactor),
-
-          // '개인' 카테고리
           _buildCategoryTitle('개인', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-
-          // 개인 설정 옵션들 (로그아웃 / 연결 끊기 / 회원 탈퇴)
           _buildNavigationOption('로그아웃', scaleFactor, onTap: () {
-            _showLogoutDialog(context, scaleFactor);
+            _showLogoutDialog(context, ref, scaleFactor);
           }),
           SizedBox(height: 16 * scaleFactor),
-
-          //연결 끊기 페이지 이동, 고라우터 사용
           _buildNavigationOption('연결 끊기', scaleFactor, onTap: () {
             context.pushNamed('disconnectPage', extra: {
               'appBarTitle': '연결끊기',
@@ -90,18 +82,11 @@ class SettingsPage extends StatelessWidget {
               'dialogContent': '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
               'dialogExitText': '연결 끊기',
               'dialogSaveText': '돌아가기',
-              'onDialogExit': () {
-                // 연결 끊기 버튼 누르면, 커플 연결 시작 화면으로 이동 (예: 'coupleConnect' 라우트)
-                context.go('/disconnected_SC');
-              },
-              'onDialogSave': () {
-                context.pop(); // 설정 페이지로 돌아감
-              },
+              'onDialogExit': () => context.go('/disconnected_SC'),
+              'onDialogSave': () => context.pop(),
             });
           }),
-
           SizedBox(height: 16 * scaleFactor),
-
           _buildNavigationOption('회원 탈퇴', scaleFactor, onTap: () {
             context.pushNamed('disconnectPage', extra: {
               'appBarTitle': '회원탈퇴',
@@ -119,28 +104,16 @@ class SettingsPage extends StatelessWidget {
               'dialogContent': '탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.',
               'dialogExitText': '탈퇴하기',
               'dialogSaveText': '돌아가기',
-              'onDialogExit': () {
-                context.go('/onboarding'); //온보딩으로 가는로직 구현하기
-              },
-              'onDialogSave': () {
-                context.pop(); // 설정 페이지로 돌아감
-              },
+              'onDialogExit': () => context.go('/onboarding'),
+              'onDialogSave': () => context.pop(),
             });
           }),
           SizedBox(height: 16 * scaleFactor),
-
-          // 회색 구분 바
           _buildDivider(deviceWidth, scaleFactor),
-
-          // '기타' 카테고리 추가
           _buildCategoryTitle('기타', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-
-          // 버전 정보
           _buildVersionInfo(scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-
-          // 약관 및 정책
           _buildNavigationOption('약관 및 정책', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
         ],
@@ -297,35 +270,29 @@ class SettingsPage extends StatelessWidget {
     );
   }
 
-  // 로그아웃 필드를 누르면 호출되는 함수: 커스텀 바텀 시트를 표시
-  void _showLogoutDialog(BuildContext context, double scaleFactor) {
-    // 키보드를 먼저 닫음
+  void _showLogoutDialog(
+      BuildContext context, WidgetRef ref, double scaleFactor) {
     FocusScope.of(context).unfocus();
-
-    // 키보드가 완전히 닫힌 후 바텀 시트를 띄우도록 약간의 딜레이 추가
     Future.delayed(const Duration(milliseconds: 200), () {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
-        backgroundColor: Colors.transparent, // 배경을 투명하게 유지
-        isDismissible: true, // 배경 클릭 시 닫히도록 설정
-        enableDrag: true, // 드래그하여 닫을 수 있도록 설정
+        backgroundColor: Colors.transparent,
+        isDismissible: true,
+        enableDrag: true,
         builder: (BuildContext context) {
-          // scaleFactor를 build 내에서 정의해야 함(예시: 이미 정의되어 있다고 가정)
-          // 여기서는 기존에 정의된 scaleFactor 변수가 있다고 가정합니다.
           return GestureDetector(
-            onTap: () => Navigator.pop(context), // 배경 클릭 시 닫기
+            onTap: () => Navigator.pop(context),
             behavior: HitTestBehavior.opaque,
             child: Stack(
               children: [
-                // 바텀시트를 하단에 붙이기
                 Positioned(
                   left: 0,
                   right: 0,
                   bottom: 0,
                   child: SizedBox(
                     width: double.infinity,
-                    height: 288 * scaleFactor, // 바텀시트 높이 조정
+                    height: 288 * scaleFactor,
                     child: CustomBottomSheetDialog(
                       scaleFactor: scaleFactor,
                       title: '정말 로그아웃하시겠어요?',
@@ -333,7 +300,7 @@ class SettingsPage extends StatelessWidget {
                       exitText: '로그아웃',
                       saveText: '돌아가기',
                       showSaveButton: true,
-                      onExit: () => _logoutFunction(context), // context 전달
+                      onExit: () => _logoutFunction(context, ref),
                       onSave: () => Navigator.pop(context),
                       onDismiss: () => Navigator.pop(context),
                     ),
@@ -347,9 +314,22 @@ class SettingsPage extends StatelessWidget {
     });
   }
 
-  void _logoutFunction(BuildContext context) {
-    // 로그아웃 API 호출 등 로그아웃 처리 후,
-    Navigator.pop(context);
+  Future<void> _logoutFunction(BuildContext context, WidgetRef ref) async {
+    try {
+      // AuthViewModel의 logout 호출
+      await ref.read(authViewModelProvider.notifier).logout();
+      // 로그아웃 성공 시 인증 상태 초기화
+      ref
+          .read(authStateNotifierProvider.notifier)
+          .clear(); // clearState -> clear
+      // 로그인 화면으로 이동
+      context.go(RouteNames.onboarding);
+    } catch (e) {
+      // 에러 처리: 사용자에게 알림
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('로그아웃 실패: $e')),
+      );
+    }
   }
 }
 
