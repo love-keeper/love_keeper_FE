@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/date_text_input_formatter.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
 class BirthdateEditPage extends ConsumerStatefulWidget {
@@ -119,6 +120,7 @@ class _BirthdateEditPageState extends ConsumerState<BirthdateEditPage> {
               scaleFactor: scaleFactor,
               autofocus: true,
               guideMessage: guideMessage,
+              inputFormatters: [DateTextInputFormatter()],
             ),
           ),
           if (_isLoading)

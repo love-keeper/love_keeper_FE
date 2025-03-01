@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// 상단 라벨과 텍스트 필드(입력 시 삭제 아이콘 포함)를 구현한 위젯
 class EditFieldWidget extends StatefulWidget {
@@ -10,6 +11,7 @@ class EditFieldWidget extends StatefulWidget {
   final String guideMessage; // 조건 안내 문구
   final bool obscureText;
   final bool readOnly; // 추가: 텍스트 필드 수정 불가 여부
+  final List<TextInputFormatter>? inputFormatters; // 입력 포매터 추가
 
   const EditFieldWidget({
     Key? key,
@@ -21,6 +23,7 @@ class EditFieldWidget extends StatefulWidget {
     this.guideMessage = "",
     this.obscureText = false, // 기본값은 false
     this.readOnly = false, // 기본값 false
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -29,6 +32,7 @@ class EditFieldWidget extends StatefulWidget {
 
 class _EditFieldWidgetState extends State<EditFieldWidget> {
   bool get hasText => widget.controller.text.isNotEmpty;
+
   // 리스너 콜백을 별도 메소드로 분리
   void _onControllerChanged() {
     if (mounted) {
@@ -85,6 +89,7 @@ class _EditFieldWidgetState extends State<EditFieldWidget> {
                 textAlign: TextAlign.left,
                 readOnly: widget.readOnly,
                 obscureText: widget.obscureText,
+                inputFormatters: widget.inputFormatters, // 입력 포매터 적용
                 style: TextStyle(
                   fontSize: 18 * widget.scaleFactor,
                   fontWeight: FontWeight.w600,

@@ -129,7 +129,7 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
     }
   }
 
-  void _sendLetter() async {
+  void _replyLetter() async {
     // 미리보기에서 사용된 방식과 동일하게 비어있지 않은 텍스트만 합칩니다.
     String letterContent = stepTexts.where((text) => text.isNotEmpty).join(' ');
     Map<String, dynamic> letterData = {
@@ -246,7 +246,7 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
           content: previewContent,
           scaleFactor: scaleFactor,
           actionButtonText: '전송하기',
-          onAction: _sendLetter,
+          onAction: _replyLetter,
           onOutsideTap: _closePreview,
         ),
       );
@@ -516,5 +516,3 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
     }
   }
 }
-
-class Preview {} // 필요 시 추가 (현재 사용되지 않음)

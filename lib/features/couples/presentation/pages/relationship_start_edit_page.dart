@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/date_text_input_formatter.dart';
 
 class RelationshipStartEditPage extends ConsumerStatefulWidget {
   const RelationshipStartEditPage({super.key});
@@ -122,6 +123,7 @@ class _RelationshipStartEditPageState
               scaleFactor: scaleFactor,
               autofocus: true,
               guideMessage: guideMessage,
+              inputFormatters: [DateTextInputFormatter()],
             ),
           ),
           if (_isLoading)

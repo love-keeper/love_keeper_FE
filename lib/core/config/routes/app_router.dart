@@ -32,7 +32,7 @@ import '../../../features/couples/presentation/pages/disconnect_page.dart';
 import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
-import '../../../features/members/presentation/pages/email_edit_page.dart';
+//import '../../../features/members/presentation/pages/email_edit_page.dart'; -> 사용 안함
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
 import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
@@ -44,7 +44,7 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.splashScreen,
+    initialLocation: RouteNames.profileRegistrationPage,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding 및 Login 관련 라우트들

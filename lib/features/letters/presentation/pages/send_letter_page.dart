@@ -517,5 +517,3 @@ class _SendLetterPageState extends State<SendLetterPage> {
     }
   }
 }
-
-class Preview {} // 필요 시 추가 (현재 사용되지 않음)

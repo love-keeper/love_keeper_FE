@@ -8,6 +8,7 @@ import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/date_text_input_formatter.dart';
 
 class ProfileRegistrationPage extends ConsumerStatefulWidget {
   const ProfileRegistrationPage({super.key});
@@ -389,6 +390,7 @@ class _ProfileRegistrationPageState
                   scaleFactor: scaleFactor,
                   autofocus: false,
                   guideMessage: guideMessage,
+                  inputFormatters: [DateTextInputFormatter()],
                 ),
               ],
             ),
