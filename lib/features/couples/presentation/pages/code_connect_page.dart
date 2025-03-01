@@ -15,24 +15,27 @@ class CodeConnectPage extends ConsumerStatefulWidget {
 
 class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
   final TextEditingController _inviteCodeController = TextEditingController();
+  late FocusNode _focusNode;
   String generatedInviteCode = '';
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
     _inviteCodeController.addListener(() {
       setState(() {});
     });
-    // 빌드 이후에 generateCode 호출
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _generateInviteCode();
+      _focusNode.requestFocus();
     });
   }
 
   @override
   void dispose() {
     _inviteCodeController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -99,102 +102,118 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     final bool isButtonEnabled =
         hasText && _inviteCodeController.text.isNotEmpty && !_isLoading;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          '코드연결',
-          style: TextStyle(
-            fontSize: 18 * scaleFactor,
-            fontWeight: FontWeight.w600,
-            height: 26 / 18,
-            letterSpacing: -0.025 * (18 * scaleFactor),
-            color: const Color(0xFF27282C),
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            '코드 연결',
+            style: TextStyle(
+              fontSize: 18 * scaleFactor,
+              fontWeight: FontWeight.w600,
+              height: 26 / 18,
+              letterSpacing: -0.025 * (18 * scaleFactor),
+              color: const Color(0xFF27282C),
+            ),
+          ),
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/images/letter_page/Ic_Back.png',
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
+            ),
+            onPressed: () => context.pop(),
           ),
         ),
-        leading: IconButton(
-          icon: Image.asset(
-            'assets/images/letter_page/Ic_Back.png',
-            width: 24 * scaleFactor,
-            height: 24 * scaleFactor,
-          ),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 16 * scaleFactor),
-                Container(
-                  width: 150 * scaleFactor,
-                  height: 26 * scaleFactor,
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        generatedInviteCode.isEmpty
-                            ? '로딩 중...'
-                            : generatedInviteCode,
-                        style: TextStyle(
-                          fontSize: 18 * scaleFactor,
-                          fontWeight: FontWeight.w600,
-                          height: 26 / 18,
-                          letterSpacing: -0.025 * (18 * scaleFactor),
-                          color: const Color(0xFFFF859B),
+        body: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 16 * scaleFactor),
+                        Container(
+                          width: 150 * scaleFactor,
+                          height: 26 * scaleFactor,
+                          alignment: Alignment.centerLeft,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                generatedInviteCode.isEmpty
+                                    ? '로딩 중...'
+                                    : generatedInviteCode,
+                                style: TextStyle(
+                                  fontSize: 18 * scaleFactor,
+                                  fontWeight: FontWeight.w600,
+                                  height: 26 / 18,
+                                  letterSpacing: -0.025 * (18 * scaleFactor),
+                                  color: const Color(0xFFFF859B),
+                                ),
+                              ),
+                              SizedBox(width: 2 * scaleFactor),
+                              Image.asset(
+                                'assets/images/login_page/Ic_Copy.png',
+                                width: 16 * scaleFactor,
+                                height: 16 * scaleFactor,
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 2 * scaleFactor),
-                      Image.asset(
-                        'assets/images/login_page/Ic_Copy.png',
-                        width: 16 * scaleFactor,
-                        height: 16 * scaleFactor,
-                      ),
-                    ],
+                        SizedBox(height: 3 * scaleFactor),
+                        Text(
+                          '생성된 초대 코드를 복사해 상대방에게 전달해 보세요.',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 14 * scaleFactor,
+                            fontWeight: FontWeight.w400,
+                            height: 22 / 14,
+                            letterSpacing: -0.025 * (14 * scaleFactor),
+                            color: const Color(0xFF27282C),
+                          ),
+                        ),
+                        SizedBox(height: 36 * scaleFactor),
+                        EditFieldWidget(
+                          label: '상대방 초대 코드',
+                          hintText: '전달 받은 초대 코드를 입력해 주세요.',
+                          controller: _inviteCodeController,
+                          scaleFactor: scaleFactor,
+                          autofocus: true,
+                          guideMessage: guideMessage,
+                          focusNode: _focusNode,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 3 * scaleFactor),
-                Text(
-                  '생성된 초대 코드를 복사해 상대방에게 전달해 보세요.',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 14 * scaleFactor,
-                    fontWeight: FontWeight.w400,
-                    height: 22 / 14,
-                    letterSpacing: -0.025 * (14 * scaleFactor),
-                    color: const Color(0xFF27282C),
-                  ),
-                ),
-                SizedBox(height: 36 * scaleFactor),
-                EditFieldWidget(
-                  label: '상대방 초대 코드',
-                  hintText: '전달 받은 초대 코드를 입력해 주세요.',
-                  controller: _inviteCodeController,
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
+              ),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12 * scaleFactor),
+                child: SaveButtonWidget(
                   scaleFactor: scaleFactor,
-                  autofocus: true,
-                  guideMessage: guideMessage,
+                  enabled: isButtonEnabled,
+                  buttonText: '연결하기',
+                  onPressed: _isLoading ? null : _connectPartner,
                 ),
-              ],
+              ),
             ),
-          ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
-      ),
-      bottomNavigationBar: SaveButtonWidget(
-        scaleFactor: scaleFactor,
-        enabled: isButtonEnabled,
-        buttonText: '연결하기',
-        onPressed: _isLoading ? null : _connectPartner,
+          ],
+        ),
       ),
     );
   }

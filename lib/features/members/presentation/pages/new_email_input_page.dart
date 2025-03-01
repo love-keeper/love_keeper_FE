@@ -15,19 +15,25 @@ class NewEmailInputPage extends ConsumerStatefulWidget {
 
 class _NewEmailInputPageState extends ConsumerState<NewEmailInputPage> {
   final TextEditingController _newEmailController = TextEditingController();
+  late FocusNode _focusNode; // FocusNode 추가
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode(); // FocusNode 초기화
     _newEmailController.addListener(() {
       setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus(); // 페이지 로드 후 포커스 요청
     });
   }
 
   @override
   void dispose() {
     _newEmailController.dispose();
+    _focusNode.dispose(); // FocusNode 해제
     super.dispose();
   }
 
@@ -40,7 +46,6 @@ class _NewEmailInputPageState extends ConsumerState<NewEmailInputPage> {
     });
 
     try {
-      // 인증 코드는 NewEmailCertification에서 실행되므로 여기서는 이동만 처리
       setState(() {
         _isLoading = false;
       });
@@ -76,61 +81,79 @@ class _NewEmailInputPageState extends ConsumerState<NewEmailInputPage> {
             ? '올바른 이메일 형식을 입력해 주세요.'
             : '';
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          '이메일 변경',
-          style: TextStyle(
-            fontSize: 18 * scaleFactor,
-            fontWeight: FontWeight.w600,
-            height: 26 / 18,
-            letterSpacing: -0.45 * scaleFactor,
-            color: const Color(0xFF27282C),
+        resizeToAvoidBottomInset: true, // 키보드에 따라 화면 조정
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            '이메일 변경',
+            style: TextStyle(
+              fontSize: 18 * scaleFactor,
+              fontWeight: FontWeight.w600,
+              height: 26 / 18,
+              letterSpacing: -0.45 * scaleFactor,
+              color: const Color(0xFF27282C),
+            ),
+          ),
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/images/letter_page/Ic_Back.png',
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
+            ),
+            onPressed: () => context.pop(),
           ),
         ),
-        leading: IconButton(
-          icon: Image.asset(
-            'assets/images/letter_page/Ic_Back.png',
-            width: 24 * scaleFactor,
-            height: 24 * scaleFactor,
-          ),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      bottomNavigationBar: SaveButtonWidget(
-        scaleFactor: scaleFactor,
-        enabled: hasText && guideMessage.isEmpty && !_isLoading,
-        buttonText: '다음',
-        onPressed: _isLoading ? null : _proceedToCertification,
-      ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 16 * scaleFactor),
-                EditFieldWidget(
-                  label: '이메일',
-                  hintText: '변경할 이메일을 입력해 주세요',
-                  controller: _newEmailController,
-                  scaleFactor: scaleFactor,
-                  autofocus: true,
-                  guideMessage: guideMessage,
+        body: Column(
+          children: [
+            SizedBox(height: 16 * scaleFactor),
+            Expanded(
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        EditFieldWidget(
+                          label: '이메일',
+                          hintText: '변경할 이메일을 입력해 주세요',
+                          controller: _newEmailController,
+                          scaleFactor: scaleFactor,
+                          autofocus: false, // autofocus를 FocusNode로 대체
+                          guideMessage: guideMessage,
+                          focusNode: _focusNode, // FocusNode 전달
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
+              ),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: 10 * scaleFactor,
                 ),
-              ],
+                child: SaveButtonWidget(
+                  scaleFactor: scaleFactor,
+                  enabled: hasText && guideMessage.isEmpty && !_isLoading,
+                  buttonText: '다음',
+                  onPressed: _isLoading ? null : _proceedToCertification,
+                ),
+              ),
             ),
-          ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

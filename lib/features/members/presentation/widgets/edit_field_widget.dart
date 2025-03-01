@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// 상단 라벨과 텍스트 필드(입력 시 삭제 아이콘 포함)를 구현한 위젯
 class EditFieldWidget extends StatefulWidget {
-  final String label; // 예: "닉네임", "생년월일" 등
-  final String hintText; // 힌트 텍스트
+  final String label;
+  final String hintText;
   final TextEditingController controller;
   final double scaleFactor;
-  final bool autofocus; // autofocus 매개변수 추가
-  final String guideMessage; // 조건 안내 문구
+  final bool autofocus;
+  final String guideMessage;
   final bool obscureText;
-  final bool readOnly; // 추가: 텍스트 필드 수정 불가 여부
-  final List<TextInputFormatter>? inputFormatters; // 입력 포매터 추가
+  final bool readOnly;
+  final List<TextInputFormatter>? inputFormatters;
+  final FocusNode? focusNode; // FocusNode 추가
 
   const EditFieldWidget({
     Key? key,
@@ -19,11 +19,12 @@ class EditFieldWidget extends StatefulWidget {
     required this.hintText,
     required this.controller,
     required this.scaleFactor,
-    this.autofocus = false, // 기본값 설정
+    this.autofocus = false,
     this.guideMessage = "",
-    this.obscureText = false, // 기본값은 false
-    this.readOnly = false, // 기본값 false
+    this.obscureText = false,
+    this.readOnly = false,
     this.inputFormatters,
+    this.focusNode, // 매개변수 추가
   }) : super(key: key);
 
   @override
@@ -33,7 +34,6 @@ class EditFieldWidget extends StatefulWidget {
 class _EditFieldWidgetState extends State<EditFieldWidget> {
   bool get hasText => widget.controller.text.isNotEmpty;
 
-  // 리스너 콜백을 별도 메소드로 분리
   void _onControllerChanged() {
     if (mounted) {
       setState(() {});
@@ -57,7 +57,6 @@ class _EditFieldWidgetState extends State<EditFieldWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 라벨 영역 (예: "닉네임")
         SizedBox(
           width: 89 * widget.scaleFactor,
           height: 24 * widget.scaleFactor,
@@ -75,21 +74,20 @@ class _EditFieldWidgetState extends State<EditFieldWidget> {
             ),
           ),
         ),
-
         SizedBox(height: 0 * widget.scaleFactor),
-        // 텍스트 필드 영역와 하단 선, 삭제 아이콘
         SizedBox(
           width: 335 * widget.scaleFactor,
           height: 38 * widget.scaleFactor,
           child: Stack(
             children: [
               TextField(
-                autofocus: widget.autofocus, // 여기서 autofocus 사용
+                autofocus: widget.autofocus,
                 controller: widget.controller,
+                focusNode: widget.focusNode, // FocusNode 적용
                 textAlign: TextAlign.left,
                 readOnly: widget.readOnly,
                 obscureText: widget.obscureText,
-                inputFormatters: widget.inputFormatters, // 입력 포매터 적용
+                inputFormatters: widget.inputFormatters,
                 style: TextStyle(
                   fontSize: 18 * widget.scaleFactor,
                   fontWeight: FontWeight.w600,
@@ -110,14 +108,13 @@ class _EditFieldWidgetState extends State<EditFieldWidget> {
                     color: const Color(0xFFC3C6CF),
                   ),
                   contentPadding: EdgeInsets.fromLTRB(
-                    0 * widget.scaleFactor, // 왼쪽 패딩 0
-                    4 * widget.scaleFactor, // 위에서 4만큼
-                    24 * widget.scaleFactor, // 오른쪽 24만큼
-                    8 * widget.scaleFactor, // 아래에서 8만큼
+                    0 * widget.scaleFactor,
+                    4 * widget.scaleFactor,
+                    24 * widget.scaleFactor,
+                    8 * widget.scaleFactor,
                   ),
                 ),
               ),
-              // 하단 선 (텍스트 필드 하단에서 0.5 위에 위치)
               Positioned(
                 left: 0,
                 right: 0,
@@ -127,7 +124,6 @@ class _EditFieldWidgetState extends State<EditFieldWidget> {
                   color: const Color(0xFFFF859B),
                 ),
               ),
-              // 삭제 아이콘 (텍스트 필드 오른쪽, 입력된 경우에만 표시)
               if (hasText && !widget.readOnly)
                 Positioned(
                   right: 0,
@@ -146,7 +142,6 @@ class _EditFieldWidgetState extends State<EditFieldWidget> {
             ],
           ),
         ),
-        // 안내 문구 (텍스트 필드 바로 아래 3 단위 여백)
         if (widget.guideMessage.isNotEmpty)
           Padding(
             padding: EdgeInsets.only(top: 3 * widget.scaleFactor),

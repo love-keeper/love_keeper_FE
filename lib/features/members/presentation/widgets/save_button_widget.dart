@@ -20,7 +20,7 @@ class SaveButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: 20 * scaleFactor, vertical: 10 * scaleFactor),
+          horizontal: 20 * scaleFactor, vertical: 0 * scaleFactor),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: Size(double.infinity, 52 * scaleFactor),
