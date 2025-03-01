@@ -75,7 +75,7 @@ class _RelationshipStartEditPageState extends State<RelationshipStartEditPage> {
         scaleFactor: scaleFactor,
         enabled: hasText,
         buttonText: '변경하기',
-        onPressed: () {
+        onPressed: () async {
           // 저장 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
           context.pop();
         },

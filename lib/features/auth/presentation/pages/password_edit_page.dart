@@ -92,7 +92,7 @@ class _PasswordEditPageState extends State<PasswordEditPage> {
         scaleFactor: scaleFactor,
         enabled: isSaveEnabled,
         buttonText: '변경하기',
-        onPressed: () {
+        onPressed: () async {
           if (isSaveEnabled) {
             // 여기서 백엔드 API를 호출해서 비밀번호를 변경하고,
             // 성공 시 스택 삭제하고

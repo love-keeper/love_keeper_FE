@@ -250,7 +250,7 @@ class _EmailEditPageState extends State<EmailEditPage> {
             scaleFactor: scaleFactor,
             enabled: hasText,
             buttonText: '다음',
-            onPressed: () {
+            onPressed: () async {
               context.push('/newEmailInput');
             },
           ),

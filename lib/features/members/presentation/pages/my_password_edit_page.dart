@@ -144,7 +144,7 @@ class _MyPasswordEditPageState extends State<MyPasswordEditPage> {
             scaleFactor: scaleFactor,
             enabled: isSaveEnabled,
             buttonText: '변경하기',
-            onPressed: () {
+            onPressed: () async {
               // 비밀번호 변경 처리 (예: 백엔드 API 호출 후 이전 페이지로 이동)
               context.pop();
             },

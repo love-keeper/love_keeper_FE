@@ -289,7 +289,7 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
         scaleFactor: scaleFactor,
         enabled: isSaveEnabled,
         buttonText: '시작하기',
-        onPressed: () {
+        onPressed: () async {
           // 커플 연결 페이지로 이동 (예시: '/relationshipConnection')
           context.push('/codeConnect');
         },

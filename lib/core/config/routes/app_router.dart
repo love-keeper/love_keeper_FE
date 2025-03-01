@@ -86,6 +86,7 @@ GoRouter appRouter(AppRouterRef ref) {
         path: RouteNames.emailPasswordInputPage,
         name: ' emailPasswordInputPage',
         builder: (context, state) => EmailPasswordInputPage(email: ''),
+        //일단 오류나서 이렇게 수정해뒀어..
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,

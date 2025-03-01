@@ -75,7 +75,7 @@ class _NewEmailInputPageState extends State<NewEmailInputPage> {
         scaleFactor: scaleFactor,
         enabled: hasText,
         buttonText: '다음',
-        onPressed: () {
+        onPressed: () async {
           context.push('/newEmail_CE');
         },
       ),

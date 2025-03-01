@@ -137,7 +137,7 @@ class _CodeConnectPageState extends State<CodeConnectPage> {
         scaleFactor: scaleFactor,
         enabled: isButtonEnabled,
         buttonText: '연결하기',
-        onPressed: () {
+        onPressed: () async {
           // 연결하기 버튼 누르면 메인 페이지로 이동
           context.push('/mainPage');
         },

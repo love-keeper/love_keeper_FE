@@ -199,7 +199,8 @@ class _PwFindingPageState extends State<PwFindingPage> {
         scaleFactor: scaleFactor,
         enabled: hasText,
         buttonText: '이메일 보내기',
-        onPressed: () => _showConfirmationBottomSheet(context, scaleFactor),
+        onPressed: () async =>
+            _showConfirmationBottomSheet(context, scaleFactor),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
