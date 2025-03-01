@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'members_viewmodel.dart';
+part of 'auth_state_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$membersViewModelHash() => r'281fd97a2d81de3049cc2180186a1057294198e3';
+String _$authStateNotifierHash() => r'9eb866105ae3520d80fe831eb02f9dad4c3d037b';
 
-/// See also [MembersViewModel].
-@ProviderFor(MembersViewModel)
-final membersViewModelProvider =
-    AutoDisposeNotifierProvider<MembersViewModel, AsyncValue<dynamic>>.internal(
-  MembersViewModel.new,
-  name: r'membersViewModelProvider',
+/// See also [AuthStateNotifier].
+@ProviderFor(AuthStateNotifier)
+final authStateNotifierProvider =
+    NotifierProvider<AuthStateNotifier, AuthState>.internal(
+  AuthStateNotifier.new,
+  name: r'authStateNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$membersViewModelHash,
+      : _$authStateNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$MembersViewModel = AutoDisposeNotifier<AsyncValue<dynamic>>;
+typedef _$AuthStateNotifier = Notifier<AuthState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

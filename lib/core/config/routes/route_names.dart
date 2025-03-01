@@ -37,6 +37,6 @@ class RouteNames {
       '/relationship'; //연애 시작일 편집 화면
   static const String emailEditPage = '/emailEdit'; //이메일 변경 인증화면
   static const String newEmailInputPage = '/newEmailInput'; //새 이메일 설정화면
-  static const String newEmailcertification = '/newEmail_CE'; //새 이메일 인증화면
+  static const String newEmailCertification = '/newEmail_CE'; //새 이메일 인증화면
   static const String myPasswordEditPage = '/myPasswordEdit'; //마이 비밀번호 변경화면
 }

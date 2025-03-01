@@ -1,12 +1,15 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
 
-class ProfileRegistrationPage extends StatefulWidget {
+class ProfileRegistrationPage extends ConsumerStatefulWidget {
   const ProfileRegistrationPage({super.key});
 
   @override
@@ -14,17 +17,16 @@ class ProfileRegistrationPage extends StatefulWidget {
       _ProfileRegistrationPageState();
 }
 
-class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
+class _ProfileRegistrationPageState
+    extends ConsumerState<ProfileRegistrationPage> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _birthdateController = TextEditingController();
   File? _profileImage;
-  // 카메라 아이콘(기본) 이미지 경로
   final String _cameraImagePath = 'assets/images/my_page/Ic_Gallery.png';
-  // 기본 프로필 이미지로 사용할 경로
   final String _defaultProfilePath =
       'assets/images/my_page/Ic_Default Profile.png';
-  // 사용자가 기본 이미지를 선택했는지 여부
   bool _useDefaultProfile = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -44,12 +46,11 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
     super.dispose();
   }
 
-  // 프로필 이미지 선택 바텀시트
   void _showProfileBottomSheet(BuildContext context, double scaleFactor) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // 배경을 투명하게 유지
+      backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {
         return GestureDetector(
@@ -57,17 +58,15 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
           behavior: HitTestBehavior.opaque,
           child: Stack(
             children: [
-              // 전체 화면 오버레이 (투명)
               Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.transparent,
               ),
-              // 하단에 바텀시트 배치
               Align(
                 alignment: Alignment.bottomCenter,
                 child: GestureDetector(
-                  onTap: () {}, // 바텀시트 내부 터치 시 닫히지 않도록
+                  onTap: () {},
                   child: Container(
                     width: 375 * scaleFactor,
                     height: 299 * scaleFactor,
@@ -81,7 +80,6 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                     child: Column(
                       children: [
                         SizedBox(height: 7 * scaleFactor),
-                        // 드래그 핸들
                         Container(
                           width: 50 * scaleFactor,
                           height: 5 * scaleFactor,
@@ -92,7 +90,6 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                           ),
                         ),
                         SizedBox(height: 20 * scaleFactor),
-                        // 바텀시트 상단 텍스트
                         Center(
                           child: Text(
                             '프로필 사진 설정',
@@ -106,11 +103,9 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                           ),
                         ),
                         SizedBox(height: 34 * scaleFactor),
-                        // 두 옵션 버튼
                         Center(
                           child: Column(
                             children: [
-                              // 앨범에서 사진 선택 버튼
                               GestureDetector(
                                 onTap: () {
                                   Navigator.pop(dialogContext);
@@ -146,7 +141,6 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                                 ),
                               ),
                               SizedBox(height: 30 * scaleFactor),
-                              // 기본 이미지 적용 버튼
                               GestureDetector(
                                 onTap: () {
                                   Navigator.pop(dialogContext);
@@ -188,7 +182,6 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
                           ),
                         ),
                         SizedBox(height: 24 * scaleFactor),
-                        // 취소 버튼
                         Center(
                           child: GestureDetector(
                             onTap: () => Navigator.pop(dialogContext),
@@ -239,6 +232,60 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
     }
   }
 
+  Future<void> _registerProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final authState = ref.read(authStateNotifierProvider);
+      final email = authState.email ?? '';
+      final password = authState.password;
+      final provider = authState.provider ?? 'LOCAL';
+      final providerId = authState.providerId;
+
+      if (email.isEmpty) {
+        throw Exception('Email is not set in AuthStateProvider');
+      }
+
+      // YYYY.MM.DD -> YYYY-MM-DD 변환
+      final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
+
+      // 1. Signup 호출
+      await ref.read(authViewModelProvider.notifier).signup(
+            email: email,
+            nickname: _nicknameController.text,
+            birthDate: formattedBirthdate,
+            provider: provider,
+            password: provider == 'LOCAL' ? password : null,
+            providerId: provider != 'LOCAL' ? providerId : null,
+            profileImage: _profileImage,
+          );
+
+      // 2. Signup 성공 후 Login 호출 (LOCAL일 경우만)
+      if (provider == 'LOCAL' && password != null) {
+        await ref.read(authViewModelProvider.notifier).login(
+              email: email,
+              provider: 'LOCAL',
+              password: password,
+              providerId: null,
+            );
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+      context.pushNamed(RouteNames.codeConnectPage);
+    } catch (e) {
+      debugPrint('Profile registration error: $e');
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('프로필 등록 실패: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -247,18 +294,15 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
     final bool hasNickname = _nicknameController.text.isNotEmpty;
     final bool hasBirthdate = _birthdateController.text.isNotEmpty;
 
-// 정규식을 이용해 YYYY.MM.DD 형식 검사
     final RegExp birthdateRegex =
-        RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01]).$');
+        RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$');
     final String guideMessage =
         hasBirthdate && !birthdateRegex.hasMatch(_birthdateController.text)
-            ? '유효한 날짜 형식(YYYY.MM.DD.)을 입력해 주세요'
+            ? '유효한 날짜 형식(YYYY.MM.DD)을 입력해 주세요'
             : '';
 
-    // 두 필드 모두 입력되었고, 생년월일 가이드 문구가 없으면 버튼 활성화
-    final bool isSaveEnabled = hasNickname &&
-        _birthdateController.text.isNotEmpty &&
-        guideMessage.isEmpty;
+    final bool isSaveEnabled =
+        hasNickname && hasBirthdate && guideMessage.isEmpty && !_isLoading;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -289,69 +333,71 @@ class _ProfileRegistrationPageState extends State<ProfileRegistrationPage> {
         scaleFactor: scaleFactor,
         enabled: isSaveEnabled,
         buttonText: '시작하기',
-        onPressed: () async {
-          // 커플 연결 페이지로 이동 (예시: '/relationshipConnection')
-          context.push('/codeConnect');
-        },
+        onPressed: _isLoading ? null : _registerProfile,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 16 * scaleFactor),
-            // 프로필 이미지 (80x80) 중앙 정렬, 클릭 시 갤러리 선택/기본 이미지 적용 바텀시트 호출
-            GestureDetector(
-              onTap: () => _showProfileBottomSheet(context, scaleFactor),
-              child: _profileImage != null
-                  ? ClipOval(
-                      child: Image.file(
-                        _profileImage!,
-                        width: 80 * scaleFactor,
-                        height: 80 * scaleFactor,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : _useDefaultProfile
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(height: 16 * scaleFactor),
+                GestureDetector(
+                  onTap: () => _showProfileBottomSheet(context, scaleFactor),
+                  child: _profileImage != null
                       ? ClipOval(
-                          child: Image.asset(
-                            _defaultProfilePath,
+                          child: Image.file(
+                            _profileImage!,
                             width: 80 * scaleFactor,
                             height: 80 * scaleFactor,
                             fit: BoxFit.cover,
                           ),
                         )
-                      : ClipOval(
-                          child: Image.asset(
-                            _cameraImagePath,
-                            width: 80 * scaleFactor,
-                            height: 80 * scaleFactor,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                      : _useDefaultProfile
+                          ? ClipOval(
+                              child: Image.asset(
+                                _defaultProfilePath,
+                                width: 80 * scaleFactor,
+                                height: 80 * scaleFactor,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : ClipOval(
+                              child: Image.asset(
+                                _cameraImagePath,
+                                width: 80 * scaleFactor,
+                                height: 80 * scaleFactor,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                ),
+                SizedBox(height: 36 * scaleFactor),
+                EditFieldWidget(
+                  label: '닉네임',
+                  hintText: '닉네임을 입력해 주세요.',
+                  controller: _nicknameController,
+                  scaleFactor: scaleFactor,
+                  autofocus: true,
+                  guideMessage: '',
+                ),
+                SizedBox(height: 36 * scaleFactor),
+                EditFieldWidget(
+                  label: '생년월일',
+                  hintText: 'YYYY.MM.DD',
+                  controller: _birthdateController,
+                  scaleFactor: scaleFactor,
+                  autofocus: false,
+                  guideMessage: guideMessage,
+                ),
+              ],
             ),
-            SizedBox(height: 36 * scaleFactor),
-            // 닉네임 입력 필드
-            EditFieldWidget(
-              label: '닉네임',
-              hintText: '닉네임을 입력해 주세요.',
-              controller: _nicknameController,
-              scaleFactor: scaleFactor,
-              autofocus: true,
-              guideMessage: '',
+          ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
             ),
-            SizedBox(height: 36 * scaleFactor),
-            // 생년월일 입력 필드 (EditFieldWidget 재사용)
-            EditFieldWidget(
-              label: '생년월일',
-              hintText: 'YYYY.MM.DD.',
-              controller: _birthdateController,
-              scaleFactor: scaleFactor,
-              autofocus: false,
-              guideMessage: guideMessage,
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
