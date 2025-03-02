@@ -8,22 +8,20 @@ part of 'couple_info.dart';
 
 _$CoupleInfoImpl _$$CoupleInfoImplFromJson(Map<String, dynamic> json) =>
     _$CoupleInfoImpl(
-      memberId: (json['memberId'] as num).toInt(),
-      nickname: json['nickname'] as String,
-      birthday: json['birthday'] as String,
-      relationshipStartDate: json['relationshipStartDate'] as String,
-      email: json['email'] as String,
-      profileImageUrl: json['profileImageUrl'] as String? ?? null,
-      coupleNickname: json['coupleNickname'] as String,
+      coupleId: (json['coupleId'] as num).toInt(),
+      partnerNickname: json['partnerNickname'] as String,
+      myProfileImageUrl: json['myProfileImageUrl'] as String? ?? null,
+      partnerProfileImageUrl: json['partnerProfileImageUrl'] as String? ?? null,
+      startedAt: json['startedAt'] as String,
+      days: (json['days'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$CoupleInfoImplToJson(_$CoupleInfoImpl instance) =>
     <String, dynamic>{
-      'memberId': instance.memberId,
-      'nickname': instance.nickname,
-      'birthday': instance.birthday,
-      'relationshipStartDate': instance.relationshipStartDate,
-      'email': instance.email,
-      'profileImageUrl': instance.profileImageUrl,
-      'coupleNickname': instance.coupleNickname,
+      'coupleId': instance.coupleId,
+      'partnerNickname': instance.partnerNickname,
+      'myProfileImageUrl': instance.myProfileImageUrl,
+      'partnerProfileImageUrl': instance.partnerProfileImageUrl,
+      'startedAt': instance.startedAt,
+      'days': instance.days,
     };
