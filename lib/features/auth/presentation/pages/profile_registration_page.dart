@@ -8,6 +8,7 @@ import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/date_text_input_formatter.dart';
 
 class ProfileRegistrationPage extends ConsumerStatefulWidget {
   const ProfileRegistrationPage({super.key});
@@ -21,6 +22,7 @@ class _ProfileRegistrationPageState
     extends ConsumerState<ProfileRegistrationPage> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _birthdateController = TextEditingController();
+  late FocusNode _nicknameFocusNode; // FocusNode 추가
   File? _profileImage;
   final String _cameraImagePath = 'assets/images/my_page/Ic_Gallery.png';
   final String _defaultProfilePath =
@@ -31,11 +33,15 @@ class _ProfileRegistrationPageState
   @override
   void initState() {
     super.initState();
+    _nicknameFocusNode = FocusNode();
     _nicknameController.addListener(() {
       setState(() {});
     });
     _birthdateController.addListener(() {
       setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _nicknameFocusNode.requestFocus();
     });
   }
 
@@ -43,6 +49,7 @@ class _ProfileRegistrationPageState
   void dispose() {
     _nicknameController.dispose();
     _birthdateController.dispose();
+    _nicknameFocusNode.dispose();
     super.dispose();
   }
 
@@ -247,10 +254,8 @@ class _ProfileRegistrationPageState
         throw Exception('Email is not set in AuthStateProvider');
       }
 
-      // YYYY.MM.DD -> YYYY-MM-DD 변환
       final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
 
-      // 1. Signup 호출
       await ref.read(authViewModelProvider.notifier).signup(
             email: email,
             nickname: _nicknameController.text,
@@ -261,7 +266,6 @@ class _ProfileRegistrationPageState
             profileImage: _profileImage,
           );
 
-      // 2. Signup 성공 후 Login 호출 (LOCAL일 경우만)
       if (provider == 'LOCAL' && password != null) {
         await ref.read(authViewModelProvider.notifier).login(
               email: email,
@@ -304,100 +308,118 @@ class _ProfileRegistrationPageState
     final bool isSaveEnabled =
         hasNickname && hasBirthdate && guideMessage.isEmpty && !_isLoading;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          '프로필 등록',
-          style: TextStyle(
-            fontSize: 18 * scaleFactor,
-            fontWeight: FontWeight.w600,
-            height: 26 / 18,
-            letterSpacing: -0.45 * scaleFactor,
-            color: const Color(0xFF27282C),
-          ),
-        ),
-        leading: IconButton(
-          icon: Image.asset(
-            'assets/images/letter_page/Ic_Back.png',
-            width: 24 * scaleFactor,
-            height: 24 * scaleFactor,
-          ),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      bottomNavigationBar: SaveButtonWidget(
-        scaleFactor: scaleFactor,
-        enabled: isSaveEnabled,
-        buttonText: '시작하기',
-        onPressed: _isLoading ? null : _registerProfile,
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: 16 * scaleFactor),
-                GestureDetector(
-                  onTap: () => _showProfileBottomSheet(context, scaleFactor),
-                  child: _profileImage != null
-                      ? ClipOval(
-                          child: Image.file(
-                            _profileImage!,
-                            width: 80 * scaleFactor,
-                            height: 80 * scaleFactor,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : _useDefaultProfile
-                          ? ClipOval(
-                              child: Image.asset(
-                                _defaultProfilePath,
-                                width: 80 * scaleFactor,
-                                height: 80 * scaleFactor,
-                                fit: BoxFit.cover,
-                              ),
-                            )
-                          : ClipOval(
-                              child: Image.asset(
-                                _cameraImagePath,
-                                width: 80 * scaleFactor,
-                                height: 80 * scaleFactor,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                ),
-                SizedBox(height: 36 * scaleFactor),
-                EditFieldWidget(
-                  label: '닉네임',
-                  hintText: '닉네임을 입력해 주세요.',
-                  controller: _nicknameController,
-                  scaleFactor: scaleFactor,
-                  autofocus: true,
-                  guideMessage: '',
-                ),
-                SizedBox(height: 36 * scaleFactor),
-                EditFieldWidget(
-                  label: '생년월일',
-                  hintText: 'YYYY.MM.DD',
-                  controller: _birthdateController,
-                  scaleFactor: scaleFactor,
-                  autofocus: false,
-                  guideMessage: guideMessage,
-                ),
-              ],
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            '프로필 등록',
+            style: TextStyle(
+              fontSize: 18 * scaleFactor,
+              fontWeight: FontWeight.w600,
+              height: 26 / 18,
+              letterSpacing: -0.45 * scaleFactor,
+              color: const Color(0xFF27282C),
             ),
           ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/images/letter_page/Ic_Back.png',
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
             ),
-        ],
+            onPressed: () => context.pop(),
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 16 * scaleFactor),
+                        GestureDetector(
+                          onTap: () =>
+                              _showProfileBottomSheet(context, scaleFactor),
+                          child: _profileImage != null
+                              ? ClipOval(
+                                  child: Image.file(
+                                    _profileImage!,
+                                    width: 80 * scaleFactor,
+                                    height: 80 * scaleFactor,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : _useDefaultProfile
+                                  ? ClipOval(
+                                      child: Image.asset(
+                                        _defaultProfilePath,
+                                        width: 80 * scaleFactor,
+                                        height: 80 * scaleFactor,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : ClipOval(
+                                      child: Image.asset(
+                                        _cameraImagePath,
+                                        width: 80 * scaleFactor,
+                                        height: 80 * scaleFactor,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                        ),
+                        SizedBox(height: 36 * scaleFactor),
+                        EditFieldWidget(
+                          label: '닉네임',
+                          hintText: '닉네임을 입력해 주세요.',
+                          controller: _nicknameController,
+                          scaleFactor: scaleFactor,
+                          autofocus: true,
+                          guideMessage: '',
+                          focusNode: _nicknameFocusNode,
+                        ),
+                        SizedBox(height: 36 * scaleFactor),
+                        EditFieldWidget(
+                          label: '생년월일',
+                          hintText: 'YYYY.MM.DD',
+                          controller: _birthdateController,
+                          scaleFactor: scaleFactor,
+                          autofocus: false,
+                          guideMessage: guideMessage,
+                          inputFormatters: [DateTextInputFormatter()],
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
+              ),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 12 * scaleFactor),
+                child: SaveButtonWidget(
+                  scaleFactor: scaleFactor,
+                  enabled: isSaveEnabled,
+                  buttonText: '시작하기',
+                  onPressed: _isLoading ? null : _registerProfile,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

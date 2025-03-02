@@ -32,7 +32,7 @@ import '../../../features/couples/presentation/pages/disconnect_page.dart';
 import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
-import '../../../features/members/presentation/pages/email_edit_page.dart';
+//import '../../../features/members/presentation/pages/email_edit_page.dart'; -> 사용 안함
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
 import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
@@ -44,28 +44,28 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.splashScreen,
+    initialLocation: RouteNames.newEmailCertification,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding 및 Login 관련 라우트들
       GoRoute(
         path: RouteNames.onboarding,
-        name: ' onboarding',
+        name: 'onboarding',
         builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: RouteNames.splashScreen,
-        name: ' splashScreen',
+        name: 'splashScreen',
         builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: RouteNames.emailLoginPage,
-        name: ' emailLoginPage',
+        name: 'emailLoginPage',
         builder: (context, state) => const EmailLoginPage(),
       ),
       GoRoute(
         path: RouteNames.pwFindingPage,
-        name: ' pwFindingPage',
+        name: 'pwFindingPage',
         builder: (context, state) => const PwFindingPage(),
       ),
       GoRoute(
@@ -82,9 +82,14 @@ GoRouter appRouter(AppRouterRef ref) {
         name: 'signupPage',
         builder: (context, state) => const SignupPage(),
       ),
+
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
         name: ' emailPasswordInputPage',
+
+        //builder: (context, state) => EmailPasswordInputPage(email: ''),
+        //일단 오류나서 이렇게 수정해뒀어..
+
         builder: (context, state) => const EmailPasswordInputPage(),
       ),
       GoRoute(

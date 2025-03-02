@@ -14,19 +14,25 @@ class PwFindingPage extends ConsumerStatefulWidget {
 
 class _PwFindingPageState extends ConsumerState<PwFindingPage> {
   final TextEditingController _emailController = TextEditingController();
+  late FocusNode _focusNode; // FocusNode 추가
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _focusNode = FocusNode();
     _emailController.addListener(() {
       setState(() {});
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
     });
   }
 
   @override
   void dispose() {
     _emailController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -195,100 +201,117 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
             ? '올바른 이메일 형식을 입력해 주세요.'
             : '';
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          '비밀번호 찾기',
-          style: TextStyle(
-            fontSize: 18 * scaleFactor,
-            fontWeight: FontWeight.w600,
-            height: 26 / 18,
-            letterSpacing: -0.45 * scaleFactor,
-            color: const Color(0xFF27282C),
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            '비밀번호 찾기',
+            style: TextStyle(
+              fontSize: 18 * scaleFactor,
+              fontWeight: FontWeight.w600,
+              height: 26 / 18,
+              letterSpacing: -0.45 * scaleFactor,
+              color: const Color(0xFF27282C),
+            ),
+          ),
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/images/letter_page/Ic_Back.png',
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
+            ),
+            onPressed: () => context.pop(),
           ),
         ),
-        leading: IconButton(
-          icon: Image.asset(
-            'assets/images/letter_page/Ic_Back.png',
-            width: 24 * scaleFactor,
-            height: 24 * scaleFactor,
-          ),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      bottomNavigationBar: SaveButtonWidget(
-        scaleFactor: scaleFactor,
-        enabled: hasText && !_isLoading,
-        buttonText: '이메일 보내기',
-        onPressed: _isLoading ? null : _resetPasswordRequest,
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 16 * scaleFactor),
-                Text(
-                  '비밀번호 재설정을 위한 인증 메일이 전송됩니다.\n메일에 포함된 링크를 클릭하여 비밀번호를 재설정해 주세요.',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 14 * scaleFactor,
-                    fontWeight: FontWeight.w400,
-                    height: 22 / 14,
-                    letterSpacing: -0.025 * (14 * scaleFactor),
-                    color: const Color(0xFF27282C),
-                  ),
-                ),
-                SizedBox(height: 36 * scaleFactor),
-                EditFieldWidget(
-                  label: '이메일',
-                  hintText: '가입하신 이메일 주소를 입력해 주세요.',
-                  controller: _emailController,
-                  scaleFactor: scaleFactor,
-                  autofocus: true,
-                  guideMessage: guideMessage,
-                ),
-                SizedBox(height: 6 * scaleFactor),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: SizedBox(
-                    width: 36 * scaleFactor,
-                    height: 22 * scaleFactor,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      onPressed: _isLoading ? null : _resetPasswordRequest,
-                      child: Text(
-                        '재전송',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14 * scaleFactor,
-                          fontWeight: FontWeight.w600,
-                          height: 22 / 14,
-                          letterSpacing: -0.025 * (14 * scaleFactor),
-                          color: const Color(0xFFFF859B),
+        body: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 16 * scaleFactor),
+                        Text(
+                          '비밀번호 재설정을 위한 인증 메일이 전송됩니다.\n메일에 포함된 링크를 클릭하여 비밀번호를 재설정해 주세요.',
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 14 * scaleFactor,
+                            fontWeight: FontWeight.w400,
+                            height: 22 / 14,
+                            letterSpacing: -0.025 * (14 * scaleFactor),
+                            color: const Color(0xFF27282C),
+                          ),
                         ),
-                      ),
+                        SizedBox(height: 36 * scaleFactor),
+                        EditFieldWidget(
+                          label: '이메일',
+                          hintText: '가입하신 이메일 주소를 입력해 주세요.',
+                          controller: _emailController,
+                          scaleFactor: scaleFactor,
+                          autofocus: true,
+                          guideMessage: guideMessage,
+                          focusNode: _focusNode,
+                        ),
+                        SizedBox(height: 6 * scaleFactor),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            width: 36 * scaleFactor,
+                            height: 22 * scaleFactor,
+                            child: TextButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              onPressed:
+                                  _isLoading ? null : _resetPasswordRequest,
+                              child: Text(
+                                '재전송',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14 * scaleFactor,
+                                  fontWeight: FontWeight.w600,
+                                  height: 22 / 14,
+                                  letterSpacing: -0.025 * (14 * scaleFactor),
+                                  color: const Color(0xFFFF859B),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                ],
+              ),
+            ),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 12 * scaleFactor),
+                child: SaveButtonWidget(
+                  scaleFactor: scaleFactor,
+                  enabled: hasText && !_isLoading,
+                  buttonText: '이메일 보내기',
+                  onPressed: _isLoading ? null : _resetPasswordRequest,
                 ),
-              ],
+              ),
             ),
-          ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

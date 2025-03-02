@@ -19,6 +19,7 @@ class PasswordEditPage extends ConsumerStatefulWidget {
 class _PasswordEditPageState extends ConsumerState<PasswordEditPage> {
   final TextEditingController _newPwController = TextEditingController();
   final TextEditingController _confirmNewPwController = TextEditingController();
+  late FocusNode _newPwFocusNode; // FocusNode 추가
   bool _isLoading = false;
 
   final RegExp newPasswordRegex = RegExp(
@@ -28,14 +29,19 @@ class _PasswordEditPageState extends ConsumerState<PasswordEditPage> {
   @override
   void initState() {
     super.initState();
+    _newPwFocusNode = FocusNode();
     _newPwController.addListener(() => setState(() {}));
     _confirmNewPwController.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _newPwFocusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
     _newPwController.dispose();
     _confirmNewPwController.dispose();
+    _newPwFocusNode.dispose();
     super.dispose();
   }
 
@@ -92,75 +98,88 @@ class _PasswordEditPageState extends ConsumerState<PasswordEditPage> {
         confirmPwGuideMessage.isEmpty &&
         !_isLoading;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          '비밀번호 재설정',
-          style: TextStyle(
-            fontSize: 18 * scaleFactor,
-            fontWeight: FontWeight.w600,
-            height: 26 / 18,
-            letterSpacing: -0.45 * scaleFactor,
-            color: const Color(0xFF27282C),
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: Text(
+            '비밀번호 재설정',
+            style: TextStyle(
+              fontSize: 18 * scaleFactor,
+              fontWeight: FontWeight.w600,
+              height: 26 / 18,
+              letterSpacing: -0.45 * scaleFactor,
+              color: const Color(0xFF27282C),
+            ),
+          ),
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/images/letter_page/Ic_Back.png',
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
+            ),
+            onPressed: () => context.pop(),
           ),
         ),
-        leading: IconButton(
-          icon: Image.asset(
-            'assets/images/letter_page/Ic_Back.png',
-            width: 24 * scaleFactor,
-            height: 24 * scaleFactor,
-          ),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      bottomNavigationBar: SaveButtonWidget(
-        scaleFactor: scaleFactor,
-        enabled: isSaveEnabled,
-        buttonText: '변경하기',
-        onPressed: _isLoading ? null : _resetPassword,
-      ),
-      body: Stack(
-        children: [
-          GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        body: Column(
+          children: [
+            Expanded(
+              child: Stack(
                 children: [
-                  SizedBox(height: 16 * scaleFactor),
-                  EditFieldWidget(
-                    label: '새 비밀번호',
-                    hintText: '8자 이상 영문/숫자/특수문자 포함',
-                    controller: _newPwController,
-                    scaleFactor: scaleFactor,
-                    autofocus: true,
-                    guideMessage: newPwGuideMessage,
-                    obscureText: true,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 16 * scaleFactor),
+                        EditFieldWidget(
+                          label: '새 비밀번호',
+                          hintText: '8자 이상 영문/숫자/특수문자 포함',
+                          controller: _newPwController,
+                          scaleFactor: scaleFactor,
+                          autofocus: true,
+                          guideMessage: newPwGuideMessage,
+                          obscureText: true,
+                          focusNode: _newPwFocusNode,
+                        ),
+                        SizedBox(height: 36 * scaleFactor),
+                        EditFieldWidget(
+                          label: '비밀번호 확인',
+                          hintText: '비밀번호를 다시 입력해 주세요',
+                          controller: _confirmNewPwController,
+                          scaleFactor: scaleFactor,
+                          autofocus: false,
+                          guideMessage: confirmPwGuideMessage,
+                          obscureText: true,
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: 36 * scaleFactor),
-                  EditFieldWidget(
-                    label: '비밀번호 확인',
-                    hintText: '비밀번호를 다시 입력해 주세요',
-                    controller: _confirmNewPwController,
-                    scaleFactor: scaleFactor,
-                    autofocus: false,
-                    guideMessage: confirmPwGuideMessage,
-                    obscureText: true,
-                  ),
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                 ],
               ),
             ),
-          ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 12 * scaleFactor),
+                child: SaveButtonWidget(
+                  scaleFactor: scaleFactor,
+                  enabled: isSaveEnabled,
+                  buttonText: '변경하기',
+                  onPressed: _isLoading ? null : _resetPassword,
+                ),
+              ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:love_keeper_fe/core/network/client/api_client.dart';
 import 'package:love_keeper_fe/features/members/data/models/request/send_email_code_request.dart';
 import 'package:love_keeper_fe/features/members/data/models/request/verify_email_code_request.dart';
+import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -16,6 +17,22 @@ class MembersRepositoryImpl implements MembersRepository {
   final ApiClient apiClient;
 
   MembersRepositoryImpl(this.apiClient);
+
+  @override
+  Future<MemberInfo> getMemberInfo() async {
+    final response = await apiClient.getMemberInfo();
+    _handleResponse(response);
+    return response.result ??
+        MemberInfo(
+          memberId: 0,
+          nickname: '',
+          birthday: '',
+          relationshipStartDate: '',
+          email: '',
+          profileImageUrl: null,
+          coupleNickname: null,
+        );
+  }
 
   @override
   Future<String> updateNickname(String nickname) async {
@@ -58,7 +75,7 @@ class MembersRepositoryImpl implements MembersRepository {
     final request = SendEmailCodeRequest(email: email);
     final response = await apiClient.sendEmailCode(request);
     _handleResponse(response);
-    return response.result!.code; // 반환값은 인증 코드
+    return response.result!.code;
   }
 
   @override
@@ -66,7 +83,7 @@ class MembersRepositoryImpl implements MembersRepository {
     final request = VerifyEmailCodeRequest(email: email, code: code);
     final response = await apiClient.verifyEmailCode(request);
     _handleResponse(response);
-    return response.result!; // "이메일 변경 성공" 반환
+    return response.result!;
   }
 
   void _handleResponse(ApiResponse response) {

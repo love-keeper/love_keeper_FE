@@ -10,6 +10,7 @@ class EmailEditFieldWidget extends StatefulWidget {
   final bool autofocus;
   final String guideMessage;
   final VoidCallback? onResend; // 재전송 버튼 콜백
+  final FocusNode? focusNode;
 
   const EmailEditFieldWidget({
     super.key,
@@ -19,6 +20,7 @@ class EmailEditFieldWidget extends StatefulWidget {
     required this.scaleFactor,
     this.autofocus = false,
     this.guideMessage = '',
+    this.focusNode,
     this.onResend,
   });
 
@@ -98,6 +100,7 @@ class _EmailEditFieldWidgetState extends State<EmailEditFieldWidget> {
             children: [
               TextField(
                 autofocus: widget.autofocus,
+                focusNode: widget.focusNode,
                 controller: widget.controller,
                 textAlign: TextAlign.left,
                 style: TextStyle(

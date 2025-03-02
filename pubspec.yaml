@@ -21,6 +21,9 @@ dependencies:
 
   flutter_riverpod: ^2.4.10
   riverpod_annotation: ^2.3.4
+  
+  # 텍스트 자동 포맷 관련
+  mask_text_input_formatter: ^2.3.0
 
   # 네비게이션
   go_router: ^13.2.0

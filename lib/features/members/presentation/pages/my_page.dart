@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
 
-class MyPage extends StatefulWidget {
+class MyPage extends ConsumerStatefulWidget {
   const MyPage({super.key});
 
   @override
   _MyPageState createState() => _MyPageState();
 }
 
-class _MyPageState extends State<MyPage> {
+class _MyPageState extends ConsumerState<MyPage> {
   File? _profileImage;
   final String _defaultImagePath = 'assets/images/my_page/Img_Profile.png';
   final String _galleryIconPath = 'assets/images/my_page/Ic_Gallery.png';
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
   final String _settingsIconPath = 'assets/images/my_page/Ic_Settings.png';
 
-  // 바텀시트: 프로필 사진 설정 옵션
+  @override
+  void initState() {
+    super.initState();
+    ref.read(membersViewModelProvider.notifier); // 초기 데이터는 build에서 로드
+  }
+
   void _showBottomSheet(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
@@ -26,7 +34,7 @@ class _MyPageState extends State<MyPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // 배경 투명 처리
+      backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {
         return GestureDetector(
@@ -34,17 +42,15 @@ class _MyPageState extends State<MyPage> {
           behavior: HitTestBehavior.opaque,
           child: Stack(
             children: [
-              // 전체 오버레이 (투명)
               Container(
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.transparent,
               ),
-              // 하단 바텀시트
               Align(
                 alignment: Alignment.bottomCenter,
                 child: GestureDetector(
-                  onTap: () {}, // 내부 터치 시 닫히지 않도록
+                  onTap: () {},
                   child: Container(
                     width: 375 * scaleFactor,
                     height: 299 * scaleFactor,
@@ -58,7 +64,6 @@ class _MyPageState extends State<MyPage> {
                     child: Column(
                       children: [
                         SizedBox(height: 7 * scaleFactor),
-                        // 드래그 핸들
                         Container(
                           width: 50 * scaleFactor,
                           height: 5 * scaleFactor,
@@ -69,10 +74,9 @@ class _MyPageState extends State<MyPage> {
                           ),
                         ),
                         SizedBox(height: 21 * scaleFactor),
-                        // 바텀시트 상단 텍스트
                         Center(
                           child: Text(
-                            "프로필 사진 설정",
+                            '프로필 사진 설정',
                             style: TextStyle(
                               fontSize: 14 * scaleFactor,
                               fontWeight: FontWeight.w600,
@@ -83,11 +87,9 @@ class _MyPageState extends State<MyPage> {
                           ),
                         ),
                         SizedBox(height: 33 * scaleFactor),
-                        // 옵션 버튼들
                         Center(
                           child: Column(
                             children: [
-                              // 앨범에서 사진 선택
                               GestureDetector(
                                 onTap: () {
                                   Navigator.pop(dialogContext);
@@ -107,7 +109,7 @@ class _MyPageState extends State<MyPage> {
                                       ),
                                       SizedBox(width: 15 * scaleFactor),
                                       Text(
-                                        "앨범에서 사진 선택",
+                                        '앨범에서 사진 선택',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 18 * scaleFactor,
@@ -123,13 +125,16 @@ class _MyPageState extends State<MyPage> {
                                 ),
                               ),
                               SizedBox(height: 30 * scaleFactor),
-                              // 기본 이미지 적용
                               GestureDetector(
                                 onTap: () {
                                   Navigator.pop(dialogContext);
                                   setState(() {
                                     _profileImage = null;
                                   });
+                                  ref
+                                      .read(membersViewModelProvider.notifier)
+                                      .updateProfileImage(
+                                          File(_defaultImagePath));
                                 },
                                 child: Container(
                                   width: 168 * scaleFactor,
@@ -145,7 +150,7 @@ class _MyPageState extends State<MyPage> {
                                       ),
                                       SizedBox(width: 15 * scaleFactor),
                                       Text(
-                                        "기본 이미지 적용",
+                                        '기본 이미지 적용',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 18 * scaleFactor,
@@ -164,7 +169,6 @@ class _MyPageState extends State<MyPage> {
                           ),
                         ),
                         SizedBox(height: 24 * scaleFactor),
-                        // 취소 버튼
                         Center(
                           child: GestureDetector(
                             onTap: () => Navigator.pop(dialogContext),
@@ -178,7 +182,7 @@ class _MyPageState extends State<MyPage> {
                               ),
                               child: Center(
                                 child: Text(
-                                  "취소",
+                                  '취소',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 16 * scaleFactor,
@@ -204,7 +208,6 @@ class _MyPageState extends State<MyPage> {
     );
   }
 
-  // 갤러리에서 이미지 선택
   Future<void> _pickImage() async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -212,25 +215,32 @@ class _MyPageState extends State<MyPage> {
       setState(() {
         _profileImage = File(pickedFile.path);
       });
+      await ref
+          .read(membersViewModelProvider.notifier)
+          .updateProfileImage(_profileImage!);
     }
   }
 
-  Widget _buildInfoSection(double scaleFactor) {
+  Widget _buildInfoSection(double scaleFactor, MemberInfo? memberInfo) {
     return Column(
       children: [
-        _buildBoxedRow("닉네임", "", scaleFactor,
+        _buildBoxedRow('닉네임', memberInfo?.nickname ?? '', scaleFactor,
             onTap: () => context.push('/nickname')),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow("생년월일", "", scaleFactor,
+        _buildBoxedRow('생년월일', memberInfo?.birthday ?? '', scaleFactor,
             onTap: () => context.push('/birthdate')),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow("연애 시작일", "", scaleFactor,
+        _buildBoxedRow(
+            '연애 시작일', memberInfo?.relationshipStartDate ?? '', scaleFactor,
             onTap: () => context.push('/relationship')),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow("이메일", "", scaleFactor,
+        _buildBoxedRow('이메일', memberInfo?.email ?? '', scaleFactor,
             onTap: () => context.push('/emailEdit')),
+        // SizedBox(height: 18 * scaleFactor),
+        // _buildBoxedRow(
+        //     '커플 닉네임', memberInfo?.coupleNickname ?? '', scaleFactor), // 추가
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow("비밀번호 변경", "", scaleFactor,
+        _buildBoxedRow('비밀번호 변경', '', scaleFactor,
             hasArrow: true, onTap: () => context.push('/myPasswordEdit')),
       ],
     );
@@ -239,17 +249,17 @@ class _MyPageState extends State<MyPage> {
   Widget _buildMenuSection(double scaleFactor) {
     return Column(
       children: [
-        _buildBoxedRow("공지", "", scaleFactor, hasArrow: true, onTap: () {
-          debugPrint("공지 클릭");
+        _buildBoxedRow('공지', '', scaleFactor, hasArrow: true, onTap: () {
+          debugPrint('공지 클릭');
         }),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow("자주 묻는 질문", "", scaleFactor, hasArrow: true, onTap: () {
-          debugPrint("자주 묻는 질문 클릭");
+        _buildBoxedRow('자주 묻는 질문', '', scaleFactor, hasArrow: true, onTap: () {
+          debugPrint('자주 묻는 질문 클릭');
         }),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow("1:1 카카오톡 문의", "", scaleFactor, hasArrow: true,
+        _buildBoxedRow('1:1 카카오톡 문의', '', scaleFactor, hasArrow: true,
             onTap: () {
-          debugPrint("1:1 카카오톡 문의 클릭");
+          debugPrint('1:1 카카오톡 문의 클릭');
         }),
       ],
     );
@@ -259,10 +269,10 @@ class _MyPageState extends State<MyPage> {
       {bool hasArrow = false, VoidCallback? onTap}) {
     bool showArrow = hasArrow;
     if (!hasArrow &&
-        (title == "닉네임" ||
-            title == "생년월일" ||
-            title == "연애 시작일" ||
-            title == "이메일")) {
+        (title == '닉네임' ||
+            title == '생년월일' ||
+            title == '연애 시작일' ||
+            title == '이메일')) {
       showArrow = value.isEmpty;
     }
 
@@ -320,6 +330,8 @@ class _MyPageState extends State<MyPage> {
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
 
+    final memberState = ref.watch(membersViewModelProvider);
+
     return Scaffold(
       backgroundColor: Colors.white,
       resizeToAvoidBottomInset: false,
@@ -328,7 +340,7 @@ class _MyPageState extends State<MyPage> {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          "MY",
+          'MY',
           style: TextStyle(
             fontSize: 18 * scaleFactor,
             fontWeight: FontWeight.w600,
@@ -359,44 +371,50 @@ class _MyPageState extends State<MyPage> {
             onTap: () => FocusScope.of(context).unfocus(),
             child: SingleChildScrollView(
               padding: EdgeInsets.only(top: 16 * scaleFactor),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: ClipOval(
-                      child: _profileImage != null
-                          ? Image.file(
-                              _profileImage!,
-                              width: 84 * scaleFactor,
-                              height: 84 * scaleFactor,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
-                              _defaultImagePath,
-                              width: 84 * scaleFactor,
-                              height: 84 * scaleFactor,
-                              fit: BoxFit.cover,
-                            ),
+              child: memberState.when(
+                data: (memberInfo) => Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: ClipOval(
+                        child: _profileImage != null
+                            ? Image.file(
+                                _profileImage!,
+                                width: 84 * scaleFactor,
+                                height: 84 * scaleFactor,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                _defaultImagePath,
+                                width: 84 * scaleFactor,
+                                height: 84 * scaleFactor,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 30 * scaleFactor),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-                    child: _buildInfoSection(scaleFactor),
-                  ),
-                  SizedBox(height: 16 * scaleFactor),
-                  Container(
-                    width: deviceWidth,
-                    height: 16 * scaleFactor,
-                    color: const Color(0xFFF7F8FB),
-                  ),
-                  SizedBox(height: 16 * scaleFactor),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-                    child: _buildMenuSection(scaleFactor),
-                  ),
-                  SizedBox(height: 16 * scaleFactor),
-                ],
+                    SizedBox(height: 30 * scaleFactor),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                      child: _buildInfoSection(scaleFactor, memberInfo),
+                    ),
+                    SizedBox(height: 16 * scaleFactor),
+                    Container(
+                      width: deviceWidth,
+                      height: 16 * scaleFactor,
+                      color: const Color(0xFFF7F8FB),
+                    ),
+                    SizedBox(height: 16 * scaleFactor),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                      child: _buildMenuSection(scaleFactor),
+                    ),
+                    SizedBox(height: 16 * scaleFactor),
+                  ],
+                ),
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) => Center(child: Text('Error: $error')),
               ),
             ),
           ),
@@ -422,7 +440,6 @@ class _MyPageState extends State<MyPage> {
           ),
         ],
       ),
-      // 글로벌 탭바는 ShellRoute에서 관리하므로 여기의 bottomNavigationBar는 제거합니다.
     );
   }
 }

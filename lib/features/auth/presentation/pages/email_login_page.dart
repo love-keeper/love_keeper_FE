@@ -18,6 +18,7 @@ class EmailLoginPage extends ConsumerStatefulWidget {
 class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  late FocusNode _emailFocusNode;
   bool showPasswordField = false;
   bool showPasswordGuide = false;
   bool _isLoading = false;
@@ -25,6 +26,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   @override
   void initState() {
     super.initState();
+    _emailFocusNode = FocusNode();
     _emailController.addListener(() {
       setState(() {
         showPasswordGuide = false;
@@ -35,12 +37,16 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
         showPasswordGuide = false;
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _emailFocusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _emailFocusNode.dispose();
     super.dispose();
   }
 
@@ -68,7 +74,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
         } else {
           setState(() {
             showPasswordField = true;
-          }); // 중복이면 비밀번호 필드 표시
+          });
         }
       } else {
         await authViewModel.login(
@@ -90,11 +96,10 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
         _isLoading = false;
         if (showPasswordField) showPasswordGuide = true;
       });
-      // 409 처리
       if (e is DioException && e.response?.statusCode == 409) {
         setState(() {
           showPasswordField = true;
-        }); // 중복 이메일이면 비밀번호 필드 표시
+        });
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -124,117 +129,129 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
             ? '올바른 이메일 형식을 입력해 주세요.'
             : '';
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        title: const Text('이메일로 시작'),
-        titleTextStyle: TextStyle(
-          fontSize: 18 * scaleFactor,
-          fontWeight: FontWeight.w600,
-          height: 26 / 18,
-          letterSpacing: -0.45 * scaleFactor,
-          color: const Color(0xFF27282C),
-        ),
-        leading: IconButton(
-          icon: Image.asset(
-            'assets/images/letter_page/Ic_Back.png',
-            width: 24 * scaleFactor,
-            height: 24 * scaleFactor,
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          title: const Text('이메일로 시작'),
+          titleTextStyle: TextStyle(
+            fontSize: 18 * scaleFactor,
+            fontWeight: FontWeight.w600,
+            height: 26 / 18,
+            letterSpacing: -0.45 * scaleFactor,
+            color: const Color(0xFF27282C),
           ),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (showPasswordField)
-            Padding(
-              padding: EdgeInsets.only(
-                left: 20 * scaleFactor,
-                right: 20 * scaleFactor,
-                bottom: 6 * scaleFactor,
-              ),
-              child: SizedBox(
-                width: 131 * scaleFactor,
-                height: 22 * scaleFactor,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  onPressed: () {
-                    context.push('/pwFinding');
-                  },
-                  child: Text(
-                    '비밀번호를 잊으셨나요?',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14 * scaleFactor,
-                      fontWeight: FontWeight.w400,
-                      height: 22 / 14,
-                      letterSpacing: -0.025 * (14 * scaleFactor),
-                      color: const Color(0xFF747784),
-                      decoration: TextDecoration.underline,
-                    ),
-                  ),
-                ),
-              ),
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/images/letter_page/Ic_Back.png',
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
             ),
-          SaveButtonWidget(
-            scaleFactor: scaleFactor,
-            enabled: showPasswordField
-                ? (hasEmail && hasPassword && !_isLoading)
-                : (hasEmail && !_isLoading),
-            buttonText: showPasswordField ? '로그인' : '다음',
-            onPressed: _isLoading ? null : _handleNextOrLogin,
+            onPressed: () => context.pop(),
           ),
-        ],
-      ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: Stack(
                 children: [
-                  SizedBox(height: 16 * scaleFactor),
-                  EditFieldWidget(
-                    label: '이메일',
-                    hintText: '이메일 주소를 입력해 주세요.',
-                    controller: _emailController,
-                    scaleFactor: scaleFactor,
-                    autofocus: true,
-                    guideMessage: emailGuideMessage,
-                    readOnly: showPasswordField,
-                  ),
-                  if (showPasswordField) ...[
-                    SizedBox(height: 36 * scaleFactor),
-                    EditFieldWidget(
-                      label: '비밀번호',
-                      hintText: '비밀번호를 입력해 주세요.',
-                      controller: _passwordController,
-                      scaleFactor: scaleFactor,
-                      autofocus: false,
-                      guideMessage: showPasswordGuide
-                          ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
-                          : '',
-                      obscureText: true,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 16 * scaleFactor),
+                          EditFieldWidget(
+                            label: '이메일',
+                            hintText: '이메일 주소를 입력해 주세요.',
+                            controller: _emailController,
+                            scaleFactor: scaleFactor,
+                            autofocus: true,
+                            guideMessage: emailGuideMessage,
+                            readOnly: showPasswordField,
+                            focusNode: _emailFocusNode,
+                          ),
+                          if (showPasswordField) ...[
+                            SizedBox(height: 36 * scaleFactor),
+                            EditFieldWidget(
+                              label: '비밀번호',
+                              hintText: '비밀번호를 입력해 주세요.',
+                              controller: _passwordController,
+                              scaleFactor: scaleFactor,
+                              autofocus: false,
+                              guideMessage: showPasswordGuide
+                                  ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
+                                  : '',
+                              obscureText: true,
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                  ],
+                  ),
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                 ],
               ),
             ),
-          ),
-          if (_isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
+            SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (showPasswordField)
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 6 * scaleFactor),
+                      child: SizedBox(
+                        width: 131 * scaleFactor,
+                        height: 22 * scaleFactor,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: () {
+                            context.push('/pwFinding');
+                          },
+                          child: Text(
+                            '비밀번호를 잊으셨나요?',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14 * scaleFactor,
+                              fontWeight: FontWeight.w400,
+                              height: 22 / 14,
+                              letterSpacing: -0.025 * (14 * scaleFactor),
+                              color: const Color(0xFF747784),
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 12 * scaleFactor),
+                    child: SaveButtonWidget(
+                      scaleFactor: scaleFactor,
+                      enabled: showPasswordField
+                          ? (hasEmail && hasPassword && !_isLoading)
+                          : (hasEmail && !_isLoading),
+                      buttonText: showPasswordField ? '로그인' : '다음',
+                      onPressed: _isLoading ? null : _handleNextOrLogin,
+                    ),
+                  ),
+                ],
+              ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
