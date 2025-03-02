@@ -1,4 +1,5 @@
 import 'package:love_keeper_fe/core/network/client/api_client.dart';
+import 'package:love_keeper_fe/features/couples/data/models/response/couple_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -54,6 +55,13 @@ class CouplesRepositoryImpl implements CouplesRepository {
   @override
   Future<String> deleteCouple() async {
     final response = await apiClient.deleteCouple();
+    _handleResponse(response);
+    return response.result!;
+  }
+
+  @override
+  Future<CoupleInfo> getCoupleInfo() async {
+    final response = await apiClient.getCoupleInfo();
     _handleResponse(response);
     return response.result!;
   }

@@ -5,6 +5,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 
 class SocialLoginButtons extends ConsumerWidget {
   const SocialLoginButtons({super.key});
@@ -26,22 +27,12 @@ class SocialLoginButtons extends ConsumerWidget {
       print(
           'User Info: ${user.kakaoAccount?.email}, ${user.kakaoAccount?.profile?.nickname}');
 
-      ref
-          .read(authStateNotifierProvider.notifier)
-          .updateEmail(user.kakaoAccount?.email ?? '');
-      ref.read(authStateNotifierProvider.notifier).updateProvider('KAKAO');
-      ref
-          .read(authStateNotifierProvider.notifier)
-          .updateProviderId(user.id.toString());
-
-      context.pushNamed(
-        RouteNames.profileRegistrationPage,
-        extra: {
-          'email': user.kakaoAccount?.email ?? '',
-          'provider': 'KAKAO',
-          'providerId': user.id.toString(),
-        },
-      );
+      await ref.read(authViewModelProvider.notifier).handleSocialLogin(
+            email: user.kakaoAccount?.email ?? '',
+            provider: 'KAKAO',
+            providerId: user.id.toString(),
+            context: context,
+          );
     } catch (e) {
       print('Kakao Login Failed: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -61,22 +52,12 @@ class SocialLoginButtons extends ConsumerWidget {
         print('Naver Login Success: ${result.accessToken}');
         print('User Info: ${account.email}, ${account.nickname}');
 
-        ref
-            .read(authStateNotifierProvider.notifier)
-            .updateEmail(account.email ?? '');
-        ref.read(authStateNotifierProvider.notifier).updateProvider('NAVER');
-        ref
-            .read(authStateNotifierProvider.notifier)
-            .updateProviderId(account.id);
-
-        context.pushNamed(
-          RouteNames.profileRegistrationPage,
-          extra: {
-            'email': account.email ?? '',
-            'provider': 'NAVER',
-            'providerId': account.id,
-          },
-        );
+        await ref.read(authViewModelProvider.notifier).handleSocialLogin(
+              email: account.email ?? '',
+              provider: 'NAVER',
+              providerId: account.id,
+              context: context,
+            );
       } else {
         throw Exception('Naver login failed: ${result.errorMessage}');
       }
@@ -96,13 +77,19 @@ class SocialLoginButtons extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () => print('Apple login button pressed'),
+            onTap: () {
+              print('Apple login button pressed');
+            },
             child: Container(
               width: 50,
               height: 50,
-              decoration: const BoxDecoration(shape: BoxShape.circle),
-              child: Image.asset('assets/images/onboarding/Btn_Apple LonIn.png',
-                  fit: BoxFit.contain),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle, // BoxDecoration 내에서 shape 사용
+              ),
+              child: Image.asset(
+                'assets/images/onboarding/Btn_Apple LonIn.png',
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           const SizedBox(width: 18),
@@ -111,9 +98,13 @@ class SocialLoginButtons extends ConsumerWidget {
             child: Container(
               width: 50,
               height: 50,
-              decoration: const BoxDecoration(shape: BoxShape.circle),
-              child: Image.asset('assets/images/onboarding/Btn_Kakao LonIn.png',
-                  fit: BoxFit.contain),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle, // BoxDecoration 내에서 shape 사용
+              ),
+              child: Image.asset(
+                'assets/images/onboarding/Btn_Kakao LonIn.png',
+                fit: BoxFit.contain,
+              ),
             ),
           ),
           const SizedBox(width: 18),
@@ -122,9 +113,13 @@ class SocialLoginButtons extends ConsumerWidget {
             child: Container(
               width: 50,
               height: 50,
-              decoration: const BoxDecoration(shape: BoxShape.circle),
-              child: Image.asset('assets/images/onboarding/Btn_Naver LonIn.png',
-                  fit: BoxFit.contain),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle, // BoxDecoration 내에서 shape 사용
+              ),
+              child: Image.asset(
+                'assets/images/onboarding/Btn_Naver LonIn.png',
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ],
