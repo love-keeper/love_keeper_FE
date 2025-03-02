@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
+import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
-class DdayBox extends StatelessWidget {
+class DdayBox extends ConsumerWidget {
   final String dday; // 디데이 숫자
   final double width; // 아이콘 크기 조정을 위해 필요
 
@@ -12,7 +17,11 @@ class DdayBox extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final memberState = ref.watch(membersViewModelProvider); // 내 프로필 상태
+    // couplesViewModelProvider의 상태는 String? 반환, 별도로 getCoupleInfo 호출
+    final coupleState = ref.watch(couplesViewModelProvider);
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: const BoxDecoration(
@@ -25,26 +34,60 @@ class DdayBox extends StatelessWidget {
           ),
         ],
         color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // user1의 프로필 이미지, 실패 시 fallback 이미지 사용
-          const FallbackCircleAvatar(
-            imagePath: 'assets/images/main_page/user1.JPG',
-            fallbackPath: 'assets/images/main_page/Img_Profile.png',
-            radius: 18,
+          // user1: MemberInfo.profileImageUrl 사용
+          memberState.when(
+            data: (memberInfo) => memberInfo?.profileImageUrl != null &&
+                    memberInfo!.profileImageUrl!.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: memberInfo.profileImageUrl!,
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => _buildCircleImage(
+                          'assets/images/main_page/Img_Profile.png'),
+                    ),
+                  )
+                : _buildCircleImage('assets/images/main_page/Img_Profile.png'),
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stack) =>
+                _buildCircleImage('assets/images/main_page/Img_Profile.png'),
           ),
           const SizedBox(width: 12),
-          // user2의 프로필 이미지, 실패 시 fallback 이미지 사용
-          const FallbackCircleAvatar(
-            imagePath: 'assets/images/main_page/user2.JPG',
-            fallbackPath: 'assets/images/main_page/Img_Profile.png',
-            radius: 18,
+          // user2: CoupleInfo.partnerProfileImageUrl 사용
+          FutureBuilder(
+            future: ref.read(couplesViewModelProvider.notifier).getCoupleInfo(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final partnerImageUrl = snapshot.data!.partnerProfileImageUrl;
+                return ClipOval(
+                  child: partnerImageUrl != null && partnerImageUrl.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: partnerImageUrl,
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              _buildCircleImage(
+                                  'assets/images/main_page/Img_Profile.png'),
+                        )
+                      : _buildCircleImage(
+                          'assets/images/main_page/Img_Profile.png'),
+                );
+              }
+              return const CircularProgressIndicator(); // 로딩 중
+            },
           ),
+          const SizedBox(width: 12),
           Expanded(
             child: RichText(
               textAlign: TextAlign.end,
@@ -83,6 +126,14 @@ class DdayBox extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCircleImage(String imagePath) {
+    return FallbackCircleAvatar(
+      imagePath: imagePath,
+      fallbackPath: 'assets/images/main_page/Img_Profile.png',
+      radius: 18,
     );
   }
 }

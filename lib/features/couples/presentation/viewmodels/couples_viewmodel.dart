@@ -1,3 +1,4 @@
+import 'package:love_keeper_fe/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper_fe/features/couples/data/repositories/couples_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/invite_code.dart';
@@ -10,9 +11,24 @@ class CouplesViewModel extends _$CouplesViewModel {
   late final CouplesRepository _repository;
 
   @override
-  AsyncValue<dynamic> build() {
+  AsyncValue<CoupleInfo?> build() {
     _repository = ref.watch(couplesRepositoryProvider);
     return const AsyncValue.data(null);
+  }
+
+  Future<CoupleInfo> getCoupleInfo({bool updateState = true}) async {
+    try {
+      final coupleInfo = await _repository.getCoupleInfo();
+      if (updateState) {
+        state = AsyncValue.data(coupleInfo);
+      }
+      return coupleInfo;
+    } catch (e, stackTrace) {
+      if (updateState) {
+        state = AsyncValue.error(e, stackTrace);
+      }
+      rethrow;
+    }
   }
 
   Future<InviteCode> generateCode() async {
@@ -40,10 +56,11 @@ class CouplesViewModel extends _$CouplesViewModel {
   }
 
   Future<int> getDaysSinceStarted() async {
+    // 이름 변경
     state = const AsyncValue.loading();
     try {
       final days = await _repository.getDaysSinceStarted();
-      state = AsyncValue.data(days);
+      state = const AsyncValue.data(null); // 상태는 임시로 null
       return days;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -54,8 +71,8 @@ class CouplesViewModel extends _$CouplesViewModel {
   Future<String> getStartDate() async {
     state = const AsyncValue.loading();
     try {
-      final startDate = await _repository.getStartDate();
-      state = AsyncValue.data(startDate);
+      final startDate = await _repository.getStartDate(); // String 반환
+      state = const AsyncValue.data(null); // 상태는 임시로 null (CoupleInfo?와 맞지 않음)
       return startDate;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);

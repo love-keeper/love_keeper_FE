@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
 
 class DdayPage extends ConsumerStatefulWidget {
   const DdayPage({super.key});
@@ -14,25 +17,40 @@ class DdayPage extends ConsumerStatefulWidget {
 }
 
 class _DdayPageState extends ConsumerState<DdayPage> {
-  // 초기 날짜는 임시 값, 백엔드에서 받아온 값으로 업데이트
   DateTime _selectedDate = DateTime(2024, 12, 5);
+  String? _partnerProfileImageUrl;
+  final String _defaultImagePath = 'assets/images/main_page/Img_Profile.png';
 
   @override
   void initState() {
     super.initState();
-    // 백엔드에서 시작 날짜를 지연 호출로 가져옴
     Future(() {
       ref
           .read(couplesViewModelProvider.notifier)
           .getStartDate()
-          .then((startDateString) {
+          .then((startDate) {
         if (mounted) {
           setState(() {
-            _selectedDate = DateTime.parse(startDateString);
+            _selectedDate = DateTime.parse(startDate);
           });
         }
       }).catchError((e) {
         debugPrint('시작 날짜를 받아오지 못했습니다: $e');
+      });
+
+      ref
+          .read(couplesViewModelProvider.notifier)
+          .getCoupleInfo()
+          .then((coupleInfo) {
+        if (mounted) {
+          setState(() {
+            _partnerProfileImageUrl = coupleInfo.partnerProfileImageUrl;
+            _selectedDate =
+                DateTime.parse(coupleInfo.startedAt); // startDate와 동기화
+          });
+        }
+      }).catchError((e) {
+        debugPrint('커플 정보를 받아오지 못했습니다: $e');
       });
     });
   }
@@ -90,7 +108,9 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                       await ref
                           .read(couplesViewModelProvider.notifier)
                           .updateStartDate(newDateStr);
-                      // UI는 이미 setState로 업데이트됐으므로 추가 호출 불필요
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('날짜가 성공적으로 업데이트되었습니다')),
+                      );
                     } catch (e) {
                       debugPrint('시작 날짜 업데이트 실패: $e');
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -119,6 +139,8 @@ class _DdayPageState extends ConsumerState<DdayPage> {
 
   @override
   Widget build(BuildContext context) {
+    final memberState = ref.watch(membersViewModelProvider);
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -160,20 +182,28 @@ class _DdayPageState extends ConsumerState<DdayPage> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 154),
-              _buildAnniversaryCard(),
-              const SizedBox(height: 29),
-              _buildDdayList(),
-            ],
+          child: memberState.when(
+            data: (memberInfo) => Column(
+              children: [
+                const SizedBox(height: 154),
+                _buildAnniversaryCard(memberInfo),
+                const SizedBox(height: 29),
+                _buildDdayList(),
+              ],
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Error: $error')),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAnniversaryCard() {
+  Widget _buildAnniversaryCard(MemberInfo? memberInfo) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    const double baseWidth = 375.0;
+    final double scaleFactor = deviceWidth / baseWidth;
+
     return Container(
       height: 128,
       padding: const EdgeInsets.all(16),
@@ -194,12 +224,41 @@ class _DdayPageState extends ConsumerState<DdayPage> {
           Positioned(
             left: 20,
             top: 20,
-            child: _buildCircleImage('assets/images/main_page/user1.JPG'),
+            child: memberInfo?.profileImageUrl != null &&
+                    memberInfo!.profileImageUrl!.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: memberInfo.profileImageUrl!,
+                      width: 54 * scaleFactor,
+                      height: 54 * scaleFactor,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          _buildCircleImage(_defaultImagePath),
+                    ),
+                  )
+                : _buildCircleImage(_defaultImagePath),
           ),
           Positioned(
             right: 20,
             top: 20,
-            child: _buildCircleImage('assets/images/main_page/user2.JPG'),
+            child: _partnerProfileImageUrl != null &&
+                    _partnerProfileImageUrl!.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: _partnerProfileImageUrl!,
+                      width: 54 * scaleFactor,
+                      height: 54 * scaleFactor,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          _buildCircleImage(_defaultImagePath),
+                    ),
+                  )
+                : _buildCircleImage(
+                    _defaultImagePath), // 파트너 이미지가 null이면 기본 이미지
           ),
           Align(
             alignment: Alignment.center,

@@ -7,7 +7,7 @@ abstract class MembersRepository {
   Future<String> updateBirthday(String birthday);
   Future<String> updatePassword(
       String currentPassword, String newPassword, String newPasswordConfirm);
-  Future<String> updateProfileImage(File profileImage);
+  Future<String> updateProfileImage(File? profileImage); // File?로 변경
   Future<String> sendEmailCode(String email);
   Future<String> verifyEmailCode(String email, String code);
 }

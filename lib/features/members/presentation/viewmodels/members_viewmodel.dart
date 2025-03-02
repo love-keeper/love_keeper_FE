@@ -13,11 +13,11 @@ class MembersViewModel extends _$MembersViewModel {
   @override
   AsyncValue<MemberInfo?> build() {
     _repository = ref.watch(membersRepositoryProvider);
-    _fetchMemberInfo();
+    Future(() => fetchMemberInfo()); // 지연 호출로 초기 데이터 로드
     return const AsyncValue.data(null);
   }
 
-  Future<void> _fetchMemberInfo() async {
+  Future<void> fetchMemberInfo() async {
     state = const AsyncValue.loading();
     try {
       final memberInfo = await _repository.getMemberInfo();
@@ -31,7 +31,7 @@ class MembersViewModel extends _$MembersViewModel {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updateNickname(nickname);
-      await _fetchMemberInfo(); // 정보 갱신
+      await fetchMemberInfo(); // 정보 갱신
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -43,7 +43,7 @@ class MembersViewModel extends _$MembersViewModel {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updateBirthday(birthday);
-      await _fetchMemberInfo();
+      await fetchMemberInfo();
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -65,11 +65,12 @@ class MembersViewModel extends _$MembersViewModel {
     }
   }
 
-  Future<String> updateProfileImage(File profileImage) async {
+  Future<String> updateProfileImage(File? profileImage) async {
+    // File?로 수정
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updateProfileImage(profileImage);
-      await _fetchMemberInfo();
+      await fetchMemberInfo(); // 최신 데이터 가져오기
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -93,7 +94,7 @@ class MembersViewModel extends _$MembersViewModel {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.verifyEmailCode(email, code);
-      await _fetchMemberInfo();
+      await fetchMemberInfo();
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);

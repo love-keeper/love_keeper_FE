@@ -5,6 +5,7 @@ import 'package:love_keeper_fe/features/auth/data/models/request/email_duplicati
 import 'package:love_keeper_fe/features/auth/data/models/response/send_code_response.dart';
 import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_response.dart';
 import 'package:love_keeper_fe/features/couples/data/models/request/update_start_date_request.dart';
+import 'package:love_keeper_fe/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper_fe/features/drafts/data/models/request/create_draft_request.dart';
 import 'package:love_keeper_fe/features/drafts/data/models/response/draft_response.dart';
 import 'package:love_keeper_fe/features/letters/data/models/request/create_letter_request.dart';
@@ -82,6 +83,8 @@ abstract class ApiClient {
   Future<ApiResponse<String>> checkToken(@Header('Authorization') String token);
 
   // COUPLES
+  @GET('/api/couples/info')
+  Future<ApiResponse<CoupleInfo>> getCoupleInfo();
 
   @POST('/api/couples/generate-code')
   Future<ApiResponse<InviteCodeResponse>> generateCode();
