@@ -1,6 +1,11 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user.dart';
@@ -47,11 +52,11 @@ class AuthViewModel extends _$AuthViewModel {
       );
       await _saveTokens(user);
       state = AsyncValue.data(user);
-      return user; // User 객체 반환
+      return user;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
       print('Signup error: $e');
-      rethrow; // 예외를 호출자에게 전달
+      rethrow;
     }
   }
 
@@ -71,7 +76,7 @@ class AuthViewModel extends _$AuthViewModel {
       );
       await _saveTokens(user);
       state = AsyncValue.data(user);
-      return user; // User 객체 반환
+      return user;
     } catch (e) {
       String errorMessage;
       if (e is DioException && e.response?.statusCode == 401) {
@@ -82,6 +87,67 @@ class AuthViewModel extends _$AuthViewModel {
       print(errorMessage);
       state = AsyncValue.error(errorMessage, StackTrace.current);
       rethrow;
+    }
+  }
+
+  Future<void> handleSocialLogin({
+    required String email,
+    required String provider,
+    required String providerId,
+    required BuildContext context,
+  }) async {
+    state = const AsyncValue.loading();
+    try {
+      // 1. 이메일 중복 체크
+      try {
+        await _repository.emailDuplication(email);
+        // 중복이 아닌 경우 (200 응답) -> 프로필 등록으로 이동
+        ref.read(authStateNotifierProvider.notifier).updateEmail(email);
+        ref.read(authStateNotifierProvider.notifier).updateProvider(provider);
+        ref
+            .read(authStateNotifierProvider.notifier)
+            .updateProviderId(providerId);
+
+        context.pushNamed(
+          RouteNames.profileRegistrationPage,
+          extra: {
+            'email': email,
+            'provider': provider,
+            'providerId': providerId,
+          },
+        );
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 409) {
+          // 2. 409 Conflict: 이미 가입된 회원 -> 로그인 수행
+          final user = await login(
+            email: email,
+            provider: provider,
+            providerId: providerId,
+          );
+
+          // 3. 커플 정보 가져오기 시도
+          try {
+            final coupleInfo = await ref
+                .read(couplesViewModelProvider.notifier)
+                .getCoupleInfo();
+            // 커플 정보가 성공적으로 불러와졌으면 메인 화면으로 이동
+            context.go(RouteNames.mainPage);
+          } on DioException catch (e) {
+            // 커플 정보가 없는 경우 (예: COUPLE001, 404 등)
+            print('Couple info not found: ${e.response?.data}');
+            context.go(RouteNames.codeConnectPage);
+          }
+        } else {
+          // 기타 DioException 처리
+          rethrow;
+        }
+      }
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      print('Social login handling error: $e');
+      rethrow;
+    } finally {
+      state = AsyncValue.data(state.value); // 상태 복원
     }
   }
 

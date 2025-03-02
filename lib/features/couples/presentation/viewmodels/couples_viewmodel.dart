@@ -1,3 +1,4 @@
+import 'package:love_keeper_fe/features/couples/data/models/response/couple_info.dart';
 import 'package:love_keeper_fe/features/couples/data/repositories/couples_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/invite_code.dart';
@@ -81,6 +82,18 @@ class CouplesViewModel extends _$CouplesViewModel {
       final result = await _repository.deleteCouple();
       state = AsyncValue.data(result);
       return result;
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      rethrow;
+    }
+  }
+
+  Future<CoupleInfo> getCoupleInfo() async {
+    state = const AsyncValue.loading();
+    try {
+      final coupleInfo = await _repository.getCoupleInfo();
+      state = AsyncValue.data(coupleInfo);
+      return coupleInfo;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
       rethrow;

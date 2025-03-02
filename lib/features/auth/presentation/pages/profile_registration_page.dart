@@ -22,7 +22,7 @@ class _ProfileRegistrationPageState
     extends ConsumerState<ProfileRegistrationPage> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _birthdateController = TextEditingController();
-  late FocusNode _nicknameFocusNode; // FocusNode 추가
+  late FocusNode _nicknameFocusNode; // late 유지
   File? _profileImage;
   final String _cameraImagePath = 'assets/images/my_page/Ic_Gallery.png';
   final String _defaultProfilePath =
@@ -36,6 +36,7 @@ class _ProfileRegistrationPageState
   @override
   void initState() {
     super.initState();
+    _nicknameFocusNode = FocusNode(); // 여기서 초기화
     _nicknameController.addListener(() => setState(() {}));
     _birthdateController.addListener(() => setState(() {}));
   }
@@ -60,12 +61,11 @@ class _ProfileRegistrationPageState
   void dispose() {
     _nicknameController.dispose();
     _birthdateController.dispose();
-    _nicknameFocusNode.dispose();
+    _nicknameFocusNode.dispose(); // 초기화된 객체를 dispose
     super.dispose();
   }
 
   void _showProfileBottomSheet(BuildContext context, double scaleFactor) {
-    // 기존 코드 유지 (변경 없음)
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -334,7 +334,7 @@ class _ProfileRegistrationPageState
         hasNickname && hasBirthdate && guideMessage.isEmpty && !_isLoading;
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -434,7 +434,9 @@ class _ProfileRegistrationPageState
             ),
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 12 * scaleFactor),
+                padding: EdgeInsets.only(
+                    bottom:
+                        12 * scaleFactor), // 'custom'은 오타로 보임, 'bottom'으로 수정 권장
                 child: SaveButtonWidget(
                   scaleFactor: scaleFactor,
                   enabled: isSaveEnabled,
