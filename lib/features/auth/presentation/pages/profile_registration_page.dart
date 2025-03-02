@@ -22,34 +22,46 @@ class _ProfileRegistrationPageState
     extends ConsumerState<ProfileRegistrationPage> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _birthdateController = TextEditingController();
-  late FocusNode _nicknameFocusNode; // FocusNode 추가
+  late FocusNode _nicknameFocusNode; // late 유지
   File? _profileImage;
   final String _cameraImagePath = 'assets/images/my_page/Ic_Gallery.png';
   final String _defaultProfilePath =
       'assets/images/my_page/Ic_Default Profile.png';
   bool _useDefaultProfile = false;
   bool _isLoading = false;
+  String? _email;
+  String? _provider;
+  String? _providerId;
 
   @override
   void initState() {
     super.initState();
-    _nicknameFocusNode = FocusNode();
-    _nicknameController.addListener(() {
-      setState(() {});
-    });
-    _birthdateController.addListener(() {
-      setState(() {});
-    });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _nicknameFocusNode.requestFocus();
-    });
+    _nicknameFocusNode = FocusNode(); // 여기서 초기화
+    _nicknameController.addListener(() => setState(() {}));
+    _birthdateController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final extra =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (extra != null) {
+      _email = extra['email'] as String?;
+      _provider = extra['provider'] as String?;
+      _providerId = extra['providerId'] as String?;
+      debugPrint(
+          'Extra data received: email=$_email, provider=$_provider, providerId=$_providerId');
+    } else {
+      debugPrint('No extra data received');
+    }
   }
 
   @override
   void dispose() {
     _nicknameController.dispose();
     _birthdateController.dispose();
-    _nicknameFocusNode.dispose();
+    _nicknameFocusNode.dispose(); // 초기화된 객체를 dispose
     super.dispose();
   }
 
@@ -245,18 +257,28 @@ class _ProfileRegistrationPageState
     });
     try {
       final authState = ref.read(authStateNotifierProvider);
-      final email = authState.email ?? '';
+      final email = _email ?? authState.email;
+      final provider = _provider ?? authState.provider ?? 'LOCAL';
+      final providerId = _providerId ?? authState.providerId;
       final password = authState.password;
-      final provider = authState.provider ?? 'LOCAL';
-      final providerId = authState.providerId;
 
-      if (email.isEmpty) {
-        throw Exception('Email is not set in AuthStateProvider');
+      debugPrint(
+          'Registering with: email=$email, provider=$provider, providerId=$providerId, password=$password');
+
+      if (email == null || email.isEmpty) {
+        throw Exception('Email is missing or empty');
+      }
+      if (provider.isEmpty) {
+        throw Exception('Provider is missing or empty');
+      }
+      if (provider != 'LOCAL' && (providerId == null || providerId.isEmpty)) {
+        throw Exception('ProviderId is missing or empty for social login');
       }
 
       final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
 
-      await ref.read(authViewModelProvider.notifier).signup(
+      // 1. Signup 호출
+      final signupUser = await ref.read(authViewModelProvider.notifier).signup(
             email: email,
             nickname: _nicknameController.text,
             birthDate: formattedBirthdate,
@@ -265,15 +287,18 @@ class _ProfileRegistrationPageState
             providerId: provider != 'LOCAL' ? providerId : null,
             profileImage: _profileImage,
           );
+      debugPrint(
+          'Signup successful: memberId=${signupUser.memberId}, email=${signupUser.email}');
 
-      if (provider == 'LOCAL' && password != null) {
-        await ref.read(authViewModelProvider.notifier).login(
-              email: email,
-              provider: 'LOCAL',
-              password: password,
-              providerId: null,
-            );
-      }
+      // 2. Login 호출
+      final loginUser = await ref.read(authViewModelProvider.notifier).login(
+            email: email,
+            provider: provider,
+            password: provider == 'LOCAL' ? password : null,
+            providerId: provider != 'LOCAL' ? providerId : null,
+          );
+      debugPrint(
+          'Login successful: memberId=${loginUser.memberId}, email=${loginUser.email}');
 
       setState(() {
         _isLoading = false;
@@ -309,7 +334,7 @@ class _ProfileRegistrationPageState
         hasNickname && hasBirthdate && guideMessage.isEmpty && !_isLoading;
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -409,7 +434,9 @@ class _ProfileRegistrationPageState
             ),
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.only(bottom: 12 * scaleFactor),
+                padding: EdgeInsets.only(
+                    bottom:
+                        12 * scaleFactor), // 'custom'은 오타로 보임, 'bottom'으로 수정 권장
                 child: SaveButtonWidget(
                   scaleFactor: scaleFactor,
                   enabled: isSaveEnabled,
