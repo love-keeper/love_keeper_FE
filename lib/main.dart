@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/date_symbol_data_local.dart';
+import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'core/config/routes/app_router.dart'; // 앱라우터 파일 경로에 맞게 수정
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('ko_KR', null); // 로케일 데이터 초기화
+  KakaoSdk.init(
+      nativeAppKey: '4082411ebc9c7d9b7612cc9c7bee8da8'); // 네이티브 앱 키 입력
+
   runApp(const ProviderScope(child: MyApp()));
 }
 

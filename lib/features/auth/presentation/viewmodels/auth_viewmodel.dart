@@ -25,7 +25,7 @@ class AuthViewModel extends _$AuthViewModel {
     print('Initial access token: $token');
   }
 
-  Future<void> signup({
+  Future<User> signup({
     required String email,
     required String nickname,
     required String birthDate,
@@ -47,12 +47,15 @@ class AuthViewModel extends _$AuthViewModel {
       );
       await _saveTokens(user);
       state = AsyncValue.data(user);
+      return user; // User 객체 반환
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
+      print('Signup error: $e');
+      rethrow; // 예외를 호출자에게 전달
     }
   }
 
-  Future<void> login({
+  Future<User> login({
     required String email,
     required String provider,
     String? password,
@@ -68,6 +71,7 @@ class AuthViewModel extends _$AuthViewModel {
       );
       await _saveTokens(user);
       state = AsyncValue.data(user);
+      return user; // User 객체 반환
     } catch (e) {
       String errorMessage;
       if (e is DioException && e.response?.statusCode == 401) {
@@ -131,11 +135,9 @@ class AuthViewModel extends _$AuthViewModel {
       return response;
     } catch (e) {
       print('Check token error: $e');
-      // DioException은 인터셉터에서 처리하므로 여기서 재시도 결과 기다림
       final prefs = await SharedPreferences.getInstance();
       final newAccessToken = prefs.getString('access_token');
       if (newAccessToken != null && newAccessToken != token) {
-        // reissue로 새 토큰 발급된 경우 재시도
         return await _repository.checkToken(newAccessToken);
       }
       return false;
