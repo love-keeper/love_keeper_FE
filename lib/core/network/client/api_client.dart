@@ -33,9 +33,9 @@ import '../../../features/couples/data/models/response/invite_code_response.dart
 
 part 'api_client.g.dart';
 
-@RestApi()
+@RestApi(baseUrl: 'https://lovekeeper.site')
 abstract class ApiClient {
-  factory ApiClient(Dio dio, {String baseUrl}) = _ApiClient;
+  factory ApiClient(Dio dio) = _ApiClient;
 
   // AUTH
 
@@ -107,7 +107,7 @@ abstract class ApiClient {
   Future<ApiResponse<CoupleInfo>> getCoupleInfo();
 
   // MEMBERS
-  @GET('/api/members/me') // 추가
+  @GET('/api/members/me')
   Future<ApiResponse<MemberInfo>> getMemberInfo();
 
   @PATCH('/api/members/nickname')
@@ -129,11 +129,11 @@ abstract class ApiClient {
 
   @POST('/api/members/email/send-code')
   Future<ApiResponse<SendEmailCodeResponse>> sendEmailCode(
-      @Body() SendEmailCodeRequest request); // 추가
+      @Body() SendEmailCodeRequest request);
 
   @PATCH('/api/members/email/verify-code')
   Future<ApiResponse<String>> verifyEmailCode(
-      @Body() VerifyEmailCodeRequest request); // 추가
+      @Body() VerifyEmailCodeRequest request);
 
   // DRAFTS
 
@@ -142,6 +142,10 @@ abstract class ApiClient {
 
   @GET('/api/drafts/{order}')
   Future<ApiResponse<DraftResponse>> getDraft(@Path('order') int order);
+
+  // 드래프트 삭제
+  @DELETE('/api/drafts/{order}')
+  Future<void> deleteDraft(@Path('order') int order);
 
   // LETTERS
 

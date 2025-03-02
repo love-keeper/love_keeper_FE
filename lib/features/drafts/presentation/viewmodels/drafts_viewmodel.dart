@@ -38,4 +38,16 @@ class DraftsViewModel extends _$DraftsViewModel {
       rethrow;
     }
   }
+
+  // 새로 추가: 드래프트 삭제
+  Future<void> deleteDraft(int order) async {
+    state = const AsyncValue.loading();
+    try {
+      await _repository.deleteDraft(order);
+      state = const AsyncValue.data(null);
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      rethrow;
+    }
+  }
 }

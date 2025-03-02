@@ -27,7 +27,7 @@ import '../../../features/couples/presentation/pages/disconnect_page.dart';
 import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
-//import '../../../features/members/presentation/pages/email_edit_page.dart'; -> 사용 안함
+//import '../../../features/members/presentation/pages/email_edit_page.dart'; // 사용 안함
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
 import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
@@ -78,7 +78,6 @@ GoRouter appRouter(AppRouterRef ref) {
         name: RouteNames.signupPage,
         builder: (context, state) => const SignupPage(),
       ),
-
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
         name: RouteNames.emailPasswordInputPage,
@@ -173,7 +172,9 @@ GoRouter appRouter(AppRouterRef ref) {
 
       // Letter Routes
       GoRoute(
+        // SendLetterPage에서 전달받은 extra 값(예: draftContents)을 SendLetterPage 내부에서 GoRouterState.of(context).extra로 읽을 수 있도록 함
         path: RouteNames.sendLetter,
+
         name: RouteNames.sendLetter,
         builder: (context, state) => const SendLetterPage(),
       ),
@@ -254,11 +255,6 @@ GoRouter appRouter(AppRouterRef ref) {
         name: RouteNames.relationshipStartEditPage,
         builder: (context, state) => const RelationshipStartEditPage(),
       ),
-      // GoRoute(
-      //   path: RouteNames.emailEditPage,
-      //   name: RouteNames.emailEditPage,
-      //   builder: (context, state) => const EmailEditPage(),
-      // ),
       GoRoute(
         path: RouteNames.newEmailInputPage,
         name: RouteNames.newEmailInputPage,

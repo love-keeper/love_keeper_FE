@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:love_keeper_fe/core/network/client/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
@@ -28,6 +29,20 @@ class DraftsRepositoryImpl implements DraftsRepository {
     _handleResponse(response);
     return Draft(
         order: response.result!.order, content: response.result!.content);
+  }
+
+  // 드래프트 삭제 (void 반환 처리)
+  @override
+  Future<void> deleteDraft(int order) async {
+    try {
+      await apiClient.deleteDraft(order); // void 반환, 에러만 처리
+    } on DioException catch (e) {
+      if (e.response?.statusCode != 200) {
+        throw Exception('드래프트 삭제 실패: ${e.response?.statusCode} - ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('드래프트 삭제 실패: $e');
+    }
   }
 
   void _handleResponse(ApiResponse response) {
