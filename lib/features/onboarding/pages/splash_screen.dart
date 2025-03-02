@@ -26,33 +26,35 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Future<void> _checkInitialStatus() async {
     Timer(const Duration(seconds: 2), () async {
       setState(() {
-        _opacity = 0.0; // 페이드 아웃 시작
+        _opacity = 0.0;
       });
 
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('access_token');
 
       if (accessToken != null) {
-        // 1. 토큰 유효성 확인
         final isValid = await ref
             .read(authViewModelProvider.notifier)
             .checkToken(accessToken);
         if (isValid && mounted) {
-          // 2. 커플 정보 확인
           try {
-            await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
-            // 커플 연결이 되어 있으면 MainPage로 이동
+            final coupleInfo = await ref
+                .read(couplesViewModelProvider.notifier)
+                .getCoupleInfo();
+            print(
+                'Couple info loaded: coupleId=${coupleInfo.coupleId}, partnerNickname=${coupleInfo.partnerNickname}');
             _navigateTo(RouteNames.mainPage);
           } catch (e) {
-            // 커플 연결이 안 되어 있으면 CodeConnectPage로 이동
             print('Couple info not found: $e');
             _navigateTo(RouteNames.codeConnectPage);
           }
         } else if (mounted) {
-          _navigateToLogin(); // 토큰이 유효하지 않으면 로그인 화면으로
+          print('Token invalid or expired');
+          _navigateToLogin();
         }
       } else if (mounted) {
-        _navigateToLogin(); // 토큰이 없으면 로그인 화면으로
+        print('No access token found');
+        _navigateToLogin();
       }
     });
   }

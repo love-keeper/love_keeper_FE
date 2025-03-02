@@ -20,14 +20,12 @@ CoupleInfo _$CoupleInfoFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$CoupleInfo {
-  int get memberId => throw _privateConstructorUsedError;
-  String get nickname => throw _privateConstructorUsedError;
-  String get birthday => throw _privateConstructorUsedError;
-  String get relationshipStartDate => throw _privateConstructorUsedError;
-  String get email => throw _privateConstructorUsedError;
-  String? get profileImageUrl =>
-      throw _privateConstructorUsedError; // null을 기본값으로 설정
-  String get coupleNickname => throw _privateConstructorUsedError;
+  int get coupleId => throw _privateConstructorUsedError;
+  String get partnerNickname => throw _privateConstructorUsedError;
+  String? get myProfileImageUrl => throw _privateConstructorUsedError;
+  String? get partnerProfileImageUrl => throw _privateConstructorUsedError;
+  String get startedAt => throw _privateConstructorUsedError;
+  int get days => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -42,13 +40,12 @@ abstract class $CoupleInfoCopyWith<$Res> {
       _$CoupleInfoCopyWithImpl<$Res, CoupleInfo>;
   @useResult
   $Res call(
-      {int memberId,
-      String nickname,
-      String birthday,
-      String relationshipStartDate,
-      String email,
-      String? profileImageUrl,
-      String coupleNickname});
+      {int coupleId,
+      String partnerNickname,
+      String? myProfileImageUrl,
+      String? partnerProfileImageUrl,
+      String startedAt,
+      int days});
 }
 
 /// @nodoc
@@ -64,43 +61,38 @@ class _$CoupleInfoCopyWithImpl<$Res, $Val extends CoupleInfo>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? memberId = null,
-    Object? nickname = null,
-    Object? birthday = null,
-    Object? relationshipStartDate = null,
-    Object? email = null,
-    Object? profileImageUrl = freezed,
-    Object? coupleNickname = null,
+    Object? coupleId = null,
+    Object? partnerNickname = null,
+    Object? myProfileImageUrl = freezed,
+    Object? partnerProfileImageUrl = freezed,
+    Object? startedAt = null,
+    Object? days = null,
   }) {
     return _then(_value.copyWith(
-      memberId: null == memberId
-          ? _value.memberId
-          : memberId // ignore: cast_nullable_to_non_nullable
+      coupleId: null == coupleId
+          ? _value.coupleId
+          : coupleId // ignore: cast_nullable_to_non_nullable
               as int,
-      nickname: null == nickname
-          ? _value.nickname
-          : nickname // ignore: cast_nullable_to_non_nullable
+      partnerNickname: null == partnerNickname
+          ? _value.partnerNickname
+          : partnerNickname // ignore: cast_nullable_to_non_nullable
               as String,
-      birthday: null == birthday
-          ? _value.birthday
-          : birthday // ignore: cast_nullable_to_non_nullable
-              as String,
-      relationshipStartDate: null == relationshipStartDate
-          ? _value.relationshipStartDate
-          : relationshipStartDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      profileImageUrl: freezed == profileImageUrl
-          ? _value.profileImageUrl
-          : profileImageUrl // ignore: cast_nullable_to_non_nullable
+      myProfileImageUrl: freezed == myProfileImageUrl
+          ? _value.myProfileImageUrl
+          : myProfileImageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      coupleNickname: null == coupleNickname
-          ? _value.coupleNickname
-          : coupleNickname // ignore: cast_nullable_to_non_nullable
+      partnerProfileImageUrl: freezed == partnerProfileImageUrl
+          ? _value.partnerProfileImageUrl
+          : partnerProfileImageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startedAt: null == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
               as String,
+      days: null == days
+          ? _value.days
+          : days // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -114,13 +106,12 @@ abstract class _$$CoupleInfoImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int memberId,
-      String nickname,
-      String birthday,
-      String relationshipStartDate,
-      String email,
-      String? profileImageUrl,
-      String coupleNickname});
+      {int coupleId,
+      String partnerNickname,
+      String? myProfileImageUrl,
+      String? partnerProfileImageUrl,
+      String startedAt,
+      int days});
 }
 
 /// @nodoc
@@ -134,43 +125,38 @@ class __$$CoupleInfoImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? memberId = null,
-    Object? nickname = null,
-    Object? birthday = null,
-    Object? relationshipStartDate = null,
-    Object? email = null,
-    Object? profileImageUrl = freezed,
-    Object? coupleNickname = null,
+    Object? coupleId = null,
+    Object? partnerNickname = null,
+    Object? myProfileImageUrl = freezed,
+    Object? partnerProfileImageUrl = freezed,
+    Object? startedAt = null,
+    Object? days = null,
   }) {
     return _then(_$CoupleInfoImpl(
-      memberId: null == memberId
-          ? _value.memberId
-          : memberId // ignore: cast_nullable_to_non_nullable
+      coupleId: null == coupleId
+          ? _value.coupleId
+          : coupleId // ignore: cast_nullable_to_non_nullable
               as int,
-      nickname: null == nickname
-          ? _value.nickname
-          : nickname // ignore: cast_nullable_to_non_nullable
+      partnerNickname: null == partnerNickname
+          ? _value.partnerNickname
+          : partnerNickname // ignore: cast_nullable_to_non_nullable
               as String,
-      birthday: null == birthday
-          ? _value.birthday
-          : birthday // ignore: cast_nullable_to_non_nullable
-              as String,
-      relationshipStartDate: null == relationshipStartDate
-          ? _value.relationshipStartDate
-          : relationshipStartDate // ignore: cast_nullable_to_non_nullable
-              as String,
-      email: null == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String,
-      profileImageUrl: freezed == profileImageUrl
-          ? _value.profileImageUrl
-          : profileImageUrl // ignore: cast_nullable_to_non_nullable
+      myProfileImageUrl: freezed == myProfileImageUrl
+          ? _value.myProfileImageUrl
+          : myProfileImageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
-      coupleNickname: null == coupleNickname
-          ? _value.coupleNickname
-          : coupleNickname // ignore: cast_nullable_to_non_nullable
+      partnerProfileImageUrl: freezed == partnerProfileImageUrl
+          ? _value.partnerProfileImageUrl
+          : partnerProfileImageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      startedAt: null == startedAt
+          ? _value.startedAt
+          : startedAt // ignore: cast_nullable_to_non_nullable
               as String,
+      days: null == days
+          ? _value.days
+          : days // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -179,37 +165,34 @@ class __$$CoupleInfoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CoupleInfoImpl implements _CoupleInfo {
   const _$CoupleInfoImpl(
-      {required this.memberId,
-      required this.nickname,
-      required this.birthday,
-      required this.relationshipStartDate,
-      required this.email,
-      this.profileImageUrl = null,
-      required this.coupleNickname});
+      {required this.coupleId,
+      required this.partnerNickname,
+      this.myProfileImageUrl = null,
+      this.partnerProfileImageUrl = null,
+      required this.startedAt,
+      required this.days});
 
   factory _$CoupleInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$CoupleInfoImplFromJson(json);
 
   @override
-  final int memberId;
+  final int coupleId;
   @override
-  final String nickname;
-  @override
-  final String birthday;
-  @override
-  final String relationshipStartDate;
-  @override
-  final String email;
+  final String partnerNickname;
   @override
   @JsonKey()
-  final String? profileImageUrl;
-// null을 기본값으로 설정
+  final String? myProfileImageUrl;
   @override
-  final String coupleNickname;
+  @JsonKey()
+  final String? partnerProfileImageUrl;
+  @override
+  final String startedAt;
+  @override
+  final int days;
 
   @override
   String toString() {
-    return 'CoupleInfo(memberId: $memberId, nickname: $nickname, birthday: $birthday, relationshipStartDate: $relationshipStartDate, email: $email, profileImageUrl: $profileImageUrl, coupleNickname: $coupleNickname)';
+    return 'CoupleInfo(coupleId: $coupleId, partnerNickname: $partnerNickname, myProfileImageUrl: $myProfileImageUrl, partnerProfileImageUrl: $partnerProfileImageUrl, startedAt: $startedAt, days: $days)';
   }
 
   @override
@@ -217,25 +200,23 @@ class _$CoupleInfoImpl implements _CoupleInfo {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CoupleInfoImpl &&
-            (identical(other.memberId, memberId) ||
-                other.memberId == memberId) &&
-            (identical(other.nickname, nickname) ||
-                other.nickname == nickname) &&
-            (identical(other.birthday, birthday) ||
-                other.birthday == birthday) &&
-            (identical(other.relationshipStartDate, relationshipStartDate) ||
-                other.relationshipStartDate == relationshipStartDate) &&
-            (identical(other.email, email) || other.email == email) &&
-            (identical(other.profileImageUrl, profileImageUrl) ||
-                other.profileImageUrl == profileImageUrl) &&
-            (identical(other.coupleNickname, coupleNickname) ||
-                other.coupleNickname == coupleNickname));
+            (identical(other.coupleId, coupleId) ||
+                other.coupleId == coupleId) &&
+            (identical(other.partnerNickname, partnerNickname) ||
+                other.partnerNickname == partnerNickname) &&
+            (identical(other.myProfileImageUrl, myProfileImageUrl) ||
+                other.myProfileImageUrl == myProfileImageUrl) &&
+            (identical(other.partnerProfileImageUrl, partnerProfileImageUrl) ||
+                other.partnerProfileImageUrl == partnerProfileImageUrl) &&
+            (identical(other.startedAt, startedAt) ||
+                other.startedAt == startedAt) &&
+            (identical(other.days, days) || other.days == days));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, memberId, nickname, birthday,
-      relationshipStartDate, email, profileImageUrl, coupleNickname);
+  int get hashCode => Object.hash(runtimeType, coupleId, partnerNickname,
+      myProfileImageUrl, partnerProfileImageUrl, startedAt, days);
 
   @JsonKey(ignore: true)
   @override
@@ -253,31 +234,28 @@ class _$CoupleInfoImpl implements _CoupleInfo {
 
 abstract class _CoupleInfo implements CoupleInfo {
   const factory _CoupleInfo(
-      {required final int memberId,
-      required final String nickname,
-      required final String birthday,
-      required final String relationshipStartDate,
-      required final String email,
-      final String? profileImageUrl,
-      required final String coupleNickname}) = _$CoupleInfoImpl;
+      {required final int coupleId,
+      required final String partnerNickname,
+      final String? myProfileImageUrl,
+      final String? partnerProfileImageUrl,
+      required final String startedAt,
+      required final int days}) = _$CoupleInfoImpl;
 
   factory _CoupleInfo.fromJson(Map<String, dynamic> json) =
       _$CoupleInfoImpl.fromJson;
 
   @override
-  int get memberId;
+  int get coupleId;
   @override
-  String get nickname;
+  String get partnerNickname;
   @override
-  String get birthday;
+  String? get myProfileImageUrl;
   @override
-  String get relationshipStartDate;
+  String? get partnerProfileImageUrl;
   @override
-  String get email;
+  String get startedAt;
   @override
-  String? get profileImageUrl;
-  @override // null을 기본값으로 설정
-  String get coupleNickname;
+  int get days;
   @override
   @JsonKey(ignore: true)
   _$$CoupleInfoImplCopyWith<_$CoupleInfoImpl> get copyWith =>
