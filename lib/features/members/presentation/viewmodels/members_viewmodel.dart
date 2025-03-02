@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:love_keeper_fe/features/members/data/repositories/members_repository_impl.dart';
+import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart'; // 일반 class 임포트
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
 import '../../domain/repositories/members_repository.dart';
 
 part 'members_viewmodel.g.dart';

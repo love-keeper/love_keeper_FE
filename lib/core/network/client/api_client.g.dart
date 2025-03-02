@@ -13,7 +13,9 @@ class _ApiClient implements ApiClient {
     this._dio, {
     this.baseUrl,
     this.errorLogger,
-  });
+  }) {
+    baseUrl ??= 'https://lovekeeper.site';
+  }
 
   final Dio _dio;
 
@@ -985,6 +987,31 @@ class _ApiClient implements ApiClient {
       rethrow;
     }
     return _value;
+  }
+
+  @override
+  Future<void> deleteDraft(int order) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<void>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/drafts/${order}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    await _dio.fetch<void>(_options);
   }
 
   @override
