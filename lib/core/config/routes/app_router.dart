@@ -32,7 +32,7 @@ import '../../../features/couples/presentation/pages/disconnect_page.dart';
 import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
-//import '../../../features/members/presentation/pages/email_edit_page.dart'; -> 사용 안함
+//import '../../../features/members/presentation/pages/email_edit_page.dart'; // 사용 안함
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
 import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
@@ -82,14 +82,9 @@ GoRouter appRouter(AppRouterRef ref) {
         name: 'signupPage',
         builder: (context, state) => const SignupPage(),
       ),
-
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
-        name: ' emailPasswordInputPage',
-
-        //builder: (context, state) => EmailPasswordInputPage(email: ''),
-        //일단 오류나서 이렇게 수정해뒀어..
-
+        name: 'emailPasswordInputPage',
         builder: (context, state) => const EmailPasswordInputPage(),
       ),
       GoRoute(
@@ -110,8 +105,8 @@ GoRouter appRouter(AppRouterRef ref) {
           return NoTransitionPage(
             key: state.pageKey,
             child: Scaffold(
-              backgroundColor: Colors.transparent, // 기본 배경색을 투명하게
-              extendBody: true, // 하단 탭바 영역까지 확장
+              backgroundColor: Colors.transparent,
+              extendBody: true,
               body: child,
               bottomNavigationBar: TabBarWidget(
                 currentIndex: currentIndex,
@@ -154,7 +149,7 @@ GoRouter appRouter(AppRouterRef ref) {
       // 그 외 메인 관련 라우트들
       GoRoute(
         path: RouteNames.notificationPage,
-        name: ' notificationPage',
+        name: 'notificationPage',
         builder: (context, state) => const NotificationPage(),
       ),
       GoRoute(
@@ -184,9 +179,10 @@ GoRouter appRouter(AppRouterRef ref) {
 
       // Letter 관련 라우트들
       GoRoute(
+        // SendLetterPage에서 전달받은 extra 값(예: draftContents)을 SendLetterPage 내부에서 GoRouterState.of(context).extra로 읽을 수 있도록 함
         path: RouteNames.sendLetter,
         name: 'sendLetter',
-        builder: (context, state) => const SendLetterPage(),
+        builder: (context, state) => SendLetterPage(), // const 제거
       ),
       GoRoute(
         path: RouteNames.replyLetter,
@@ -265,11 +261,6 @@ GoRouter appRouter(AppRouterRef ref) {
         name: 'relationshipStartEditPage',
         builder: (context, state) => const RelationshipStartEditPage(),
       ),
-      // GoRoute(
-      //   path: RouteNames.emailEditPage,
-      //   name: 'emailEditPage',
-      //   builder: (context, state) => const EmailEditPage(),
-      // ),
       GoRoute(
         path: RouteNames.newEmailInputPage,
         name: 'newEmailInputPage',
