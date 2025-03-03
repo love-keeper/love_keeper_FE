@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:dio/dio.dart';
 import 'package:love_keeper_fe/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper_fe/features/couples/data/repositories/couples_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -28,11 +29,23 @@ class CouplesViewModel extends _$CouplesViewModel {
     try {
       final coupleInfo = await _repository.getCoupleInfo();
       state = AsyncValue.data(coupleInfo);
+      print('Fetched couple info: ${coupleInfo.startedAt}');
       return coupleInfo;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
+      print('Get couple info failed: $e');
       rethrow;
     }
+  }
+
+  String getDday() {
+    final coupleInfo = state.value;
+    if (coupleInfo == null || coupleInfo.startedAt.isEmpty) {
+      return '0'; // 기본값
+    }
+    final startedAt = DateTime.parse(coupleInfo.startedAt);
+    final days = DateTime.now().difference(startedAt).inDays + 1; // +1 추가
+    return '$days';
   }
 
   Future<InviteCode> generateCode() async {
@@ -66,23 +79,17 @@ class CouplesViewModel extends _$CouplesViewModel {
     }
   }
 
-  Future<String> getStartDate() async {
-    try {
-      final startDate = await _repository.getStartDate();
-      final currentCoupleInfo = state.value ?? await getCoupleInfo();
-      return startDate;
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-      rethrow;
-    }
-  }
-
   Future<String> updateStartDate(String newStartDate) async {
+    print('Updating start date: $newStartDate');
     try {
       final result = await _repository.updateStartDate(newStartDate);
-      await getCoupleInfo(forceRefresh: true);
+      // 강제로 최신 데이터 가져오기
+      final updatedCoupleInfo = await _repository.getCoupleInfo();
+      state = AsyncValue.data(updatedCoupleInfo);
+      print('Start date updated: ${updatedCoupleInfo.startedAt}');
       return result;
     } catch (e, stackTrace) {
+      print('Update failed: $e');
       state = AsyncValue.error(e, stackTrace);
       rethrow;
     }

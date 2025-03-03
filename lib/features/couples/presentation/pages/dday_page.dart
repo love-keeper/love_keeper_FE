@@ -25,7 +25,9 @@ class _DdayPageState extends ConsumerState<DdayPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
+      ref
+          .read(couplesViewModelProvider.notifier)
+          .getCoupleInfo(forceRefresh: true);
     });
   }
 
@@ -36,6 +38,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
       barrierColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext context) {
+        DateTime tempDate = _selectedDate;
         return Container(
           margin: const EdgeInsets.only(top: 100),
           decoration: const BoxDecoration(
@@ -57,9 +60,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                   minimumDate: DateTime(2000),
                   maximumDate: DateTime.now(),
                   onDateTimeChanged: (DateTime newDate) {
-                    setState(() {
-                      _selectedDate = newDate;
-                    });
+                    tempDate = newDate;
                   },
                 ),
               ),
@@ -77,11 +78,14 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                   ),
                   onPressed: () async {
                     final newDateStr =
-                        DateFormat('yyyy-MM-dd').format(_selectedDate);
+                        DateFormat('yyyy-MM-dd').format(tempDate);
                     try {
                       await ref
                           .read(couplesViewModelProvider.notifier)
                           .updateStartDate(newDateStr);
+                      setState(() {
+                        _selectedDate = tempDate;
+                      });
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('날짜가 성공적으로 업데이트되었습니다')),
                       );
@@ -115,6 +119,8 @@ class _DdayPageState extends ConsumerState<DdayPage> {
   Widget build(BuildContext context) {
     final memberState = ref.watch(membersViewModelProvider);
     final coupleState = ref.watch(couplesViewModelProvider);
+    final dday =
+        ref.watch(couplesViewModelProvider.notifier).getDday(); // 디데이 일수 가져오기
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -160,13 +166,13 @@ class _DdayPageState extends ConsumerState<DdayPage> {
           child: memberState.when(
             data: (memberInfo) => coupleState.when(
               data: (coupleInfo) {
-                if (coupleInfo != null) {
+                if (coupleInfo != null && coupleInfo.startedAt.isNotEmpty) {
                   _selectedDate = DateTime.parse(coupleInfo.startedAt);
                 }
                 return Column(
                   children: [
                     const SizedBox(height: 154),
-                    _buildAnniversaryCard(memberInfo, coupleInfo),
+                    _buildAnniversaryCard(memberInfo, coupleInfo, dday),
                     const SizedBox(height: 29),
                     _buildDdayList(),
                   ],
@@ -183,7 +189,8 @@ class _DdayPageState extends ConsumerState<DdayPage> {
     );
   }
 
-  Widget _buildAnniversaryCard(MemberInfo? memberInfo, CoupleInfo? coupleInfo) {
+  Widget _buildAnniversaryCard(
+      MemberInfo? memberInfo, CoupleInfo? coupleInfo, String dday) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
@@ -260,7 +267,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                 ),
                 const SizedBox(height: 0),
                 Text(
-                  '${DateTime.now().difference(_selectedDate).inDays} 일째',
+                  '$dday 일째', // ViewModel에서 계산된 dday 사용
                   style: const TextStyle(
                     fontSize: 24,
                     letterSpacing: -0.6,

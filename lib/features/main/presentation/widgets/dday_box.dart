@@ -7,12 +7,10 @@ import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_
 import 'package:cached_network_image/cached_network_image.dart';
 
 class DdayBox extends ConsumerWidget {
-  final String dday;
   final double width;
 
   const DdayBox({
     super.key,
-    required this.dday,
     required this.width,
   });
 
@@ -20,6 +18,8 @@ class DdayBox extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final memberState = ref.watch(membersViewModelProvider);
     final coupleState = ref.watch(couplesViewModelProvider);
+    final dday =
+        ref.watch(couplesViewModelProvider.notifier).getDday(); // 동일한 dday 계산
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -87,7 +87,7 @@ class DdayBox extends ConsumerWidget {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: dday,
+                    text: dday, // 동일한 dday 사용
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.w600,

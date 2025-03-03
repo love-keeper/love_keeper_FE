@@ -25,7 +25,6 @@ class MainPage extends StatelessWidget {
                   context.push('/dday');
                 },
                 child: DdayBox(
-                  dday: '1,626',
                   width: width,
                 ),
               ),

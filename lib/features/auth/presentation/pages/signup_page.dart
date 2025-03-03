@@ -95,7 +95,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         _isLoading = false;
       });
       if (result == '인증 성공') {
-        context.push('/emailPwInput');
+        context.push('/emailPasswordInput');
       }
     } catch (e) {
       debugPrint('Verify code error: $e');
