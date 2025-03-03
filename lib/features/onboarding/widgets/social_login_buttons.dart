@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart'; // Apple 로그인 추가
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
@@ -69,6 +70,44 @@ class SocialLoginButtons extends ConsumerWidget {
     }
   }
 
+  Future<void> _loginWithApple(BuildContext context, WidgetRef ref) async {
+    try {
+      print('Apple login button pressed');
+      print('Attempting SignInWithApple.getAppleIDCredential...');
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      print('Apple Login Success: ${credential.userIdentifier}');
+      print(
+          'User Info: email=${credential.email}, name=${credential.givenName} ${credential.familyName}');
+      print('Authorization Code: ${credential.authorizationCode}');
+      print('Identity Token: ${credential.identityToken}');
+
+      final email = credential.email ?? '';
+      final providerId = credential.userIdentifier ?? '';
+
+      if (providerId.isEmpty) {
+        throw Exception('Apple login failed: No user identifier returned');
+      }
+
+      await ref.read(authViewModelProvider.notifier).handleSocialLogin(
+            email: email.isNotEmpty ? email : 'apple_$providerId@example.com',
+            provider: 'APPLE',
+            providerId: providerId,
+            context: context,
+          );
+    } catch (e) {
+      print('Apple Login Failed: $e');
+      print('Stack Trace: ${StackTrace.current}');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Apple 로그인 실패: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Padding(
@@ -77,17 +116,15 @@ class SocialLoginButtons extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           GestureDetector(
-            onTap: () {
-              print('Apple login button pressed');
-            },
+            onTap: () => _loginWithApple(context, ref), // Apple 로그인 호출
             child: Container(
               width: 50,
               height: 50,
               decoration: const BoxDecoration(
-                shape: BoxShape.circle, // BoxDecoration 내에서 shape 사용
+                shape: BoxShape.circle,
               ),
               child: Image.asset(
-                'assets/images/onboarding/Btn_Apple LonIn.png',
+                'assets/images/onboarding/Btn_Apple LonIn.png', // 오타 확인 필요 (LonIn → Login)
                 fit: BoxFit.contain,
               ),
             ),
@@ -99,7 +136,7 @@ class SocialLoginButtons extends ConsumerWidget {
               width: 50,
               height: 50,
               decoration: const BoxDecoration(
-                shape: BoxShape.circle, // BoxDecoration 내에서 shape 사용
+                shape: BoxShape.circle,
               ),
               child: Image.asset(
                 'assets/images/onboarding/Btn_Kakao LonIn.png',
@@ -114,7 +151,7 @@ class SocialLoginButtons extends ConsumerWidget {
               width: 50,
               height: 50,
               decoration: const BoxDecoration(
-                shape: BoxShape.circle, // BoxDecoration 내에서 shape 사용
+                shape: BoxShape.circle,
               ),
               child: Image.asset(
                 'assets/images/onboarding/Btn_Naver LonIn.png',
