@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:love_keeper_fe/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
@@ -18,40 +19,13 @@ class DdayPage extends ConsumerStatefulWidget {
 
 class _DdayPageState extends ConsumerState<DdayPage> {
   DateTime _selectedDate = DateTime(2024, 12, 5);
-  String? _partnerProfileImageUrl;
   final String _defaultImagePath = 'assets/images/main_page/Img_Profile.png';
 
   @override
   void initState() {
     super.initState();
-    Future(() {
-      ref
-          .read(couplesViewModelProvider.notifier)
-          .getStartDate()
-          .then((startDate) {
-        if (mounted) {
-          setState(() {
-            _selectedDate = DateTime.parse(startDate);
-          });
-        }
-      }).catchError((e) {
-        debugPrint('시작 날짜를 받아오지 못했습니다: $e');
-      });
-
-      ref
-          .read(couplesViewModelProvider.notifier)
-          .getCoupleInfo()
-          .then((coupleInfo) {
-        if (mounted) {
-          setState(() {
-            _partnerProfileImageUrl = coupleInfo.partnerProfileImageUrl;
-            _selectedDate =
-                DateTime.parse(coupleInfo.startedAt); // startDate와 동기화
-          });
-        }
-      }).catchError((e) {
-        debugPrint('커플 정보를 받아오지 못했습니다: $e');
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
     });
   }
 
@@ -140,6 +114,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
   @override
   Widget build(BuildContext context) {
     final memberState = ref.watch(membersViewModelProvider);
+    final coupleState = ref.watch(couplesViewModelProvider);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -183,13 +158,22 @@ class _DdayPageState extends ConsumerState<DdayPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: memberState.when(
-            data: (memberInfo) => Column(
-              children: [
-                const SizedBox(height: 154),
-                _buildAnniversaryCard(memberInfo),
-                const SizedBox(height: 29),
-                _buildDdayList(),
-              ],
+            data: (memberInfo) => coupleState.when(
+              data: (coupleInfo) {
+                if (coupleInfo != null) {
+                  _selectedDate = DateTime.parse(coupleInfo.startedAt);
+                }
+                return Column(
+                  children: [
+                    const SizedBox(height: 154),
+                    _buildAnniversaryCard(memberInfo, coupleInfo),
+                    const SizedBox(height: 29),
+                    _buildDdayList(),
+                  ],
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(child: Text('Error: $error')),
@@ -199,7 +183,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
     );
   }
 
-  Widget _buildAnniversaryCard(MemberInfo? memberInfo) {
+  Widget _buildAnniversaryCard(MemberInfo? memberInfo, CoupleInfo? coupleInfo) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
@@ -243,11 +227,12 @@ class _DdayPageState extends ConsumerState<DdayPage> {
           Positioned(
             right: 20,
             top: 20,
-            child: _partnerProfileImageUrl != null &&
-                    _partnerProfileImageUrl!.isNotEmpty
+            child: coupleInfo != null &&
+                    coupleInfo.partnerProfileImageUrl != null &&
+                    coupleInfo.partnerProfileImageUrl!.isNotEmpty
                 ? ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl: _partnerProfileImageUrl!,
+                      imageUrl: coupleInfo.partnerProfileImageUrl!,
                       width: 54 * scaleFactor,
                       height: 54 * scaleFactor,
                       fit: BoxFit.cover,
@@ -257,8 +242,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                           _buildCircleImage(_defaultImagePath),
                     ),
                   )
-                : _buildCircleImage(
-                    _defaultImagePath), // 파트너 이미지가 null이면 기본 이미지
+                : _buildCircleImage(_defaultImagePath),
           ),
           Align(
             alignment: Alignment.center,
@@ -400,12 +384,12 @@ class _DdayPageState extends ConsumerState<DdayPage> {
       ),
     );
   }
-}
 
-Widget _buildCircleImage(String imagePath) {
-  return FallbackCircleAvatar(
-    imagePath: imagePath,
-    fallbackPath: 'assets/images/main_page/Img_Profile.png',
-    radius: 27,
-  );
+  Widget _buildCircleImage(String imagePath) {
+    return FallbackCircleAvatar(
+      imagePath: imagePath,
+      fallbackPath: 'assets/images/main_page/Img_Profile.png',
+      radius: 27,
+    );
+  }
 }

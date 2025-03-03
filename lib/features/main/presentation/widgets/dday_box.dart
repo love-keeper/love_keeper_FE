@@ -7,8 +7,8 @@ import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_
 import 'package:cached_network_image/cached_network_image.dart';
 
 class DdayBox extends ConsumerWidget {
-  final String dday; // 디데이 숫자
-  final double width; // 아이콘 크기 조정을 위해 필요
+  final String dday;
+  final double width;
 
   const DdayBox({
     super.key,
@@ -18,8 +18,7 @@ class DdayBox extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final memberState = ref.watch(membersViewModelProvider); // 내 프로필 상태
-    // couplesViewModelProvider의 상태는 String? 반환, 별도로 getCoupleInfo 호출
+    final memberState = ref.watch(membersViewModelProvider);
     final coupleState = ref.watch(couplesViewModelProvider);
 
     return Container(
@@ -39,7 +38,6 @@ class DdayBox extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          // user1: MemberInfo.profileImageUrl 사용
           memberState.when(
             data: (memberInfo) => memberInfo?.profileImageUrl != null &&
                     memberInfo!.profileImageUrl!.isNotEmpty
@@ -61,31 +59,26 @@ class DdayBox extends ConsumerWidget {
                 _buildCircleImage('assets/images/main_page/Img_Profile.png'),
           ),
           const SizedBox(width: 12),
-          // user2: CoupleInfo.partnerProfileImageUrl 사용
-          FutureBuilder(
-            future: ref.read(couplesViewModelProvider.notifier).getCoupleInfo(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final partnerImageUrl = snapshot.data!.partnerProfileImageUrl;
-                return ClipOval(
-                  child: partnerImageUrl != null && partnerImageUrl.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: partnerImageUrl,
-                          width: 36,
-                          height: 36,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              const CircularProgressIndicator(),
-                          errorWidget: (context, url, error) =>
-                              _buildCircleImage(
-                                  'assets/images/main_page/Img_Profile.png'),
-                        )
-                      : _buildCircleImage(
+          coupleState.when(
+            data: (coupleInfo) => coupleInfo != null &&
+                    coupleInfo.partnerProfileImageUrl != null &&
+                    coupleInfo.partnerProfileImageUrl!.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: coupleInfo.partnerProfileImageUrl!,
+                      width: 36,
+                      height: 36,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => _buildCircleImage(
                           'assets/images/main_page/Img_Profile.png'),
-                );
-              }
-              return const CircularProgressIndicator(); // 로딩 중
-            },
+                    ),
+                  )
+                : _buildCircleImage('assets/images/main_page/Img_Profile.png'),
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stack) =>
+                _buildCircleImage('assets/images/main_page/Img_Profile.png'),
           ),
           const SizedBox(width: 12),
           Expanded(
