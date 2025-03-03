@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
@@ -98,6 +99,18 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     }
   }
 
+  Future<void> _handleBackButton() async {
+    // 로그아웃 처리
+    try {
+      await ref.read(authViewModelProvider.notifier).logout();
+      print('Logged out successfully');
+    } catch (e) {
+      print('Logout error: $e');
+    }
+    // 온보딩 페이지로 이동
+    context.pushReplacement(RouteNames.onboarding);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -112,7 +125,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     final bool isButtonEnabled = hasText && !_isLoading;
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -129,6 +142,14 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
               letterSpacing: -0.025 * (18 * scaleFactor),
               color: const Color(0xFF27282C),
             ),
+          ),
+          leading: IconButton(
+            icon: Image.asset(
+              'assets/images/letter_page/Ic_Back.png',
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
+            ),
+            onPressed: () => context.pop(),
           ),
         ),
         body: Column(
