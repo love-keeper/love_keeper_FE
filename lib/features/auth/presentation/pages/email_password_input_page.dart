@@ -6,6 +6,7 @@ import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper_fe/features/members/presentation/widgets/agreementbox.dart';
 
 class EmailPasswordInputPage extends ConsumerStatefulWidget {
   const EmailPasswordInputPage({super.key});
@@ -91,31 +92,37 @@ class _EmailPasswordInputPageState
                                 BorderRadius.circular(26 * scaleFactor),
                           ),
                         ),
-                        SizedBox(height: 48 * scaleFactor),
+                        SizedBox(height: 18 * scaleFactor),
                         Center(
                           child: Text(
                             '약관동의',
                             style: TextStyle(
-                              fontSize: 20 * scaleFactor,
+                              fontSize: 18 * scaleFactor,
                               fontWeight: FontWeight.w600,
                               color: const Color(0xFF27282C),
+                              height: 26 /
+                                  (18 *
+                                      scaleFactor), // 18*scaleFactor 크기의 폰트에 대해 줄 높이를 26로 설정
+                              letterSpacing:
+                                  -0.4 * scaleFactor, // -2/5% (즉, -0.4)의 값을 적용
                             ),
                           ),
                         ),
-                        SizedBox(height: 40 * scaleFactor),
+                        SizedBox(height: 6 * scaleFactor),
                         Center(
-                          child: Text(
-                            '전체 동의 (선택 포함)',
-                            style: TextStyle(
-                              fontSize: 16 * scaleFactor,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFF27282C),
-                              height: 24 / (16 * scaleFactor),
-                              letterSpacing: -0.025 * (16 * scaleFactor),
-                            ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              buildAgreementRow('전체 동의 (선택 포함)', scaleFactor),
+                              buildAgreementRow(
+                                  '러브키퍼 이용약관 동의 (필수)', scaleFactor),
+                              buildAgreementRow(
+                                  '개인정보수집 및 이용에 대한 안내 (필수)', scaleFactor),
+                              buildAgreementRow('마케팅 정보 수신 (선택)', scaleFactor),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 40 * scaleFactor),
+                        SizedBox(height: 6 * scaleFactor),
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(dialogContext);
