@@ -34,6 +34,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true, // 바텀시트 위로 올라가게
       backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {

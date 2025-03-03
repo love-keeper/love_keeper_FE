@@ -18,6 +18,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
   late FocusNode _focusNode;
   String generatedInviteCode = '';
   bool _isLoading = false;
+  bool _connectionFailed = false; // 연결 실패 여부
 
   @override
   void initState() {
@@ -47,8 +48,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
       final inviteCode =
           await ref.read(couplesViewModelProvider.notifier).generateCode();
       setState(() {
-        generatedInviteCode =
-            inviteCode.inviteCode; // 백엔드에서 받은 초대 코드 (필드명 확인 필요)
+        generatedInviteCode = inviteCode.inviteCode; // 백엔드에서 받은 초대 코드
         _isLoading = false;
       });
     } catch (e) {
@@ -72,14 +72,25 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
           .connect(_inviteCodeController.text);
       setState(() {
         _isLoading = false;
+        // 연결이 성공하면 _connectionFailed를 false로 설정
+        _connectionFailed = false;
       });
       if (result == '커플 연결이 완료되었습니다.') {
         context.push(RouteNames.mainPage);
+      } else {
+        // 연결 결과가 실패하면 _connectionFailed를 true로 설정
+        setState(() {
+          _connectionFailed = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('연결 실패')),
+        );
       }
     } catch (e) {
       debugPrint('Connect error: $e');
       setState(() {
         _isLoading = false;
+        _connectionFailed = true;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('연결 실패: $e')),
@@ -94,13 +105,11 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     final double scaleFactor = deviceWidth / baseWidth;
 
     final bool hasText = _inviteCodeController.text.isNotEmpty;
+    // 가이드 메시지는 이제 연결 실패(_connectionFailed)가 true일 때만 표시됩니다.
     final String guideMessage =
-        hasText && _inviteCodeController.text != generatedInviteCode
-            ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.'
-            : '';
+        _connectionFailed ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.' : '';
 
-    final bool isButtonEnabled =
-        hasText && _inviteCodeController.text.isNotEmpty && !_isLoading;
+    final bool isButtonEnabled = hasText && !_isLoading;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
@@ -120,14 +129,6 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
               letterSpacing: -0.025 * (18 * scaleFactor),
               color: const Color(0xFF27282C),
             ),
-          ),
-          leading: IconButton(
-            icon: Image.asset(
-              'assets/images/letter_page/Ic_Back.png',
-              width: 24 * scaleFactor,
-              height: 24 * scaleFactor,
-            ),
-            onPressed: () => context.pop(),
           ),
         ),
         body: Column(
@@ -182,6 +183,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
                           ),
                         ),
                         SizedBox(height: 36 * scaleFactor),
+                        // EditFieldWidget는 guideMessage를 받아 가이드 메시지로 사용합니다.
                         EditFieldWidget(
                           label: '상대방 초대 코드',
                           hintText: '전달 받은 초대 코드를 입력해 주세요.',

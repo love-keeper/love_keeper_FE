@@ -92,7 +92,7 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
 
   // 메인 페이지로 이동 (나가기 선택 시 텍스트는 그대로 유지됨)
   void _exitToHome() {
-    context.go('/mainPage');
+    context.go('/main');
   }
 
   // 편지 전송 로직 (별도 API 사용; 임시저장과는 별개)
@@ -167,7 +167,7 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
       }
     }
     Navigator.pop(context);
-    context.go('/mainPage');
+    context.go('/main');
   }
 
   String getButtonText() {

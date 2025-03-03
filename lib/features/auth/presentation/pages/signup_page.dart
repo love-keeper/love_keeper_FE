@@ -19,6 +19,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   late FocusNode _focusNode;
   bool _isCodeSent = false;
   bool _isLoading = false;
+  String? _verificationCode;
 
   @override
   void initState() {
@@ -58,6 +59,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       setState(() {
         _isCodeSent = true;
         _isLoading = false;
+        _verificationCode = code.toString(); // 인증 코드를 저장
       });
       debugPrint('인증코드 전송됨: $code');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -240,7 +242,10 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       );
     }
 
-    final String guideMessage = hasText && _emailCodeController.text.length == 6
+    final String guideMessage = (hasText &&
+            _verificationCode != null &&
+            _emailCodeController.text.length == _verificationCode!.length &&
+            _emailCodeController.text != _verificationCode)
         ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.'
         : '';
 

@@ -109,7 +109,7 @@ class ReconciliationCard extends ConsumerWidget {
               if (hasDraft) {
                 _showDraftDialog(context, ref, draftContents);
               } else {
-                context.pushNamed('sendLetter', extra: {
+                context.pushNamed('/sendLetter', extra: {
                   'draftContents': List.filled(4, ''),
                 });
               }
@@ -139,6 +139,7 @@ class ReconciliationCard extends ConsumerWidget {
       showModalBottomSheet<void>(
         context: context,
         isScrollControlled: true,
+        useRootNavigator: true, // 이 옵션을 추가하면 탭바 위에 바텀시트 표시
         backgroundColor: Colors.transparent,
         builder: (context) {
           final scaleFactor = MediaQuery.of(context).size.width / 375.0;
@@ -173,13 +174,13 @@ class ReconciliationCard extends ConsumerWidget {
                 }
               }
               Navigator.pop(context);
-              context.pushNamed('sendLetter', extra: {
+              context.pushNamed('/sendLetter', extra: {
                 'draftContents': List.filled(4, ''),
               });
             },
             onSave: () async {
               Navigator.pop(context);
-              context.pushNamed('sendLetter', extra: {
+              context.pushNamed('/sendLetter', extra: {
                 'draftContents': draftContents,
               });
             },

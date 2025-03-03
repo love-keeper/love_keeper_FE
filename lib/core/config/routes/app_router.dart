@@ -115,7 +115,7 @@ GoRouter appRouter(AppRouterRef ref) {
                       context.go('/storage');
                       break;
                     case 2:
-                      context.go(RouteNames.myPage);
+                      context.go('/my');
                       break;
                   }
                 },
@@ -174,7 +174,6 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         // SendLetterPage에서 전달받은 extra 값(예: draftContents)을 SendLetterPage 내부에서 GoRouterState.of(context).extra로 읽을 수 있도록 함
         path: RouteNames.sendLetter,
-
         name: RouteNames.sendLetter,
         builder: (context, state) => const SendLetterPage(),
       ),
