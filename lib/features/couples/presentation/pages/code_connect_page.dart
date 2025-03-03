@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
+import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
@@ -47,8 +48,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
       final inviteCode =
           await ref.read(couplesViewModelProvider.notifier).generateCode();
       setState(() {
-        generatedInviteCode =
-            inviteCode.inviteCode; // 백엔드에서 받은 초대 코드 (필드명 확인 필요)
+        generatedInviteCode = inviteCode.inviteCode; // 백엔드에서 받은 초대 코드
         _isLoading = false;
       });
     } catch (e) {
@@ -87,6 +87,18 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     }
   }
 
+  Future<void> _handleBackButton() async {
+    // 로그아웃 처리
+    try {
+      await ref.read(authViewModelProvider.notifier).logout();
+      print('Logged out successfully');
+    } catch (e) {
+      print('Logout error: $e');
+    }
+    // 온보딩 페이지로 이동
+    context.pushReplacement(RouteNames.onboarding);
+  }
+
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -103,7 +115,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
         hasText && _inviteCodeController.text.isNotEmpty && !_isLoading;
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -127,7 +139,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
               width: 24 * scaleFactor,
               height: 24 * scaleFactor,
             ),
-            onPressed: () => context.pop(),
+            onPressed: _handleBackButton, // 뒤로가기 버튼에 로그아웃 추가
           ),
         ),
         body: Column(
