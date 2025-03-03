@@ -24,17 +24,56 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-  <key>CFBundleURLTypes</key>
-  <array>
-    <dict>
+  
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao4082411ebc9c7d9b7612cc9c7bee8da8</string> <!-- Kakao 설정 유지 -->
+			</array>
+		</dict>
+		<dict>
       <key>CFBundleTypeRole</key>
       <string>Editor</string>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>app</string>
+          <string>naverlogin</string> <!-- 개발자 센터에서 설정한 URL Scheme -->
       </array>
     </dict>
-  </array>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string> <!-- Kakao 설정 유지 -->
+		<string>kakaolink</string> <!-- Kakao 설정 유지 -->
+		<string>naversearchapp</string> <!-- 네이버 추가 -->
+		<string>naversearchthirdlogin</string> <!-- 네이버 추가 -->
+	</array>
+	<!-- 네이버 로그인 추가 설정 -->
+	<key>naverServiceAppUrlScheme</key>
+  <string>naverlogin</string> <!-- URL Scheme과 동일 -->
+  <key>naverConsumerKey</key>
+  <string>Uzdh2DDoaljhr3hYzxc_</string> <!-- Naver Client ID -->
+  <key>naverConsumerSecret</key>
+  <string>DxG5Q4cDdO</string> <!-- Naver Client Secret -->
+  <key>naverServiceAppName</key>
+  <string>LoveKeeper</string> <!-- 앱 이름 -->
+  <key>NSAppTransportSecurity</key>
+  <dict>
+      <key>NSAllowsArbitraryLoads</key>
+      <true/>
+  </dict>
+
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

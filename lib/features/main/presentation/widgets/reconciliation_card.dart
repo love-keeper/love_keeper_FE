@@ -1,30 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
+import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper_fe/features/drafts/domain/entities/draft.dart';
+import 'package:dio/dio.dart';
 
-class ReconciliationCard extends StatelessWidget {
+class ReconciliationCard extends ConsumerWidget {
   const ReconciliationCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-        height: 160, // 카드의 높이
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20), // 모서리 둥글게
-          image: const DecorationImage(
-            image: AssetImage('assets/images/main_page/img_main_Rectangle.png'),
-            fit: BoxFit.cover,
-          ),
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromRGBO(0, 0, 0, 0.05),
-              offset: Offset(0, 0), // 그림자 방향
-              blurRadius: 5, // 흐림 효과
-              spreadRadius: 0,
-            ),
-          ],
+      height: 160,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        image: const DecorationImage(
+          image: AssetImage('assets/images/main_page/img_main_Rectangle.png'),
+          fit: BoxFit.cover,
         ),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          // 텍스트 영역
+        boxShadow: const [
+          BoxShadow(
+            color: Color.fromRGBO(0, 0, 0, 0.05),
+            offset: Offset(0, 0),
+            blurRadius: 5,
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,27 +65,128 @@ class ReconciliationCard extends StatelessWidget {
               ],
             ),
           ),
-          // 이미지 영역
           GestureDetector(
-            onTap: () {
-              context.pushNamed('sendLetter');
-              // 또는 context.pushNamed('targetPage'); 라우트 이름으로 이동할 수도 있습니다.
+            onTap: () async {
+              bool hasDraft = false;
+              List<String?> draftContents = List.filled(4, '');
+              for (int step = 0; step <= 3; step++) {
+                final draftOrder = step + 1;
+                try {
+                  final draft = await ref
+                      .read(draftsViewModelProvider.notifier)
+                      .getDraft(draftOrder);
+                  debugPrint('Draft response for order $draftOrder: $draft');
+                  if (draft != null) {
+                    final content = draft.content ?? '';
+                    draftContents[step] = content;
+                    // hasDraft를 true로 설정하려면 내용이 비어있지 않아야 함.
+                    if (content.trim().isNotEmpty) {
+                      hasDraft = true;
+                    }
+                  } else {
+                    draftContents[step] = '';
+                    debugPrint('Null draft for order $draftOrder');
+                  }
+                } catch (e) {
+                  if (e is DioException) {
+                    if (e.response?.statusCode == 404) {
+                      debugPrint(
+                          '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 빈 문자열로 처리)');
+                      draftContents[step] = '';
+                      continue;
+                    } else {
+                      debugPrint(
+                          '드래프트 확인 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}');
+                    }
+                  } else {
+                    debugPrint('드래프트 확인 실패 - order: $draftOrder, Error: $e');
+                  }
+                  draftContents[step] = '';
+                }
+              }
+              debugPrint(
+                  'Has draft: $hasDraft, Draft contents: $draftContents');
+              if (hasDraft) {
+                _showDraftDialog(context, ref, draftContents);
+              } else {
+                context.pushNamed('sendLetter', extra: {
+                  'draftContents': List.filled(4, ''),
+                });
+              }
             },
             child: Padding(
-              padding: const EdgeInsets.only(
-                right: 20,
-              ),
+              padding: const EdgeInsets.only(right: 20),
               child: Align(
                 alignment: Alignment.centerRight,
                 child: Image.asset(
-                  'assets/images/main_page/letter.png', // 편지 이미지 경로
-                  width: 110, // 적절한 너비
-                  height: 130, // 적절한 높이
-                  fit: BoxFit.contain, // 이미지 비율 유지
+                  'assets/images/main_page/letter.png',
+                  width: 110,
+                  height: 130,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
-          )
-        ]));
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDraftDialog(
+      BuildContext context, WidgetRef ref, List<String?> draftContents) {
+    FocusScope.of(context).unfocus();
+    Future.delayed(const Duration(milliseconds: 200), () {
+      showModalBottomSheet<void>(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) {
+          final scaleFactor = MediaQuery.of(context).size.width / 375.0;
+          return CustomBottomSheetDialog(
+            scaleFactor: scaleFactor,
+            title: '작성하던 글이 있어요!',
+            content: '새로 쓰기 선택 시,\n이전 내용은 사라지게 됩니다.',
+            exitText: '새로쓰기',
+            saveText: '불러오기',
+            showSaveButton: true,
+            onExit: () async {
+              for (int step = 0; step <= 3; step++) {
+                final draftOrder = step + 1;
+                try {
+                  await ref
+                      .read(draftsViewModelProvider.notifier)
+                      .deleteDraft(draftOrder);
+                  debugPrint('드래프트 삭제 성공 - order: $draftOrder');
+                } catch (e) {
+                  if (e is DioException) {
+                    if (e.response?.statusCode == 404) {
+                      debugPrint(
+                          '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 무시)');
+                      continue;
+                    } else {
+                      debugPrint(
+                          '드래프트 삭제 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}');
+                    }
+                  } else {
+                    debugPrint('드래프트 삭제 실패 - order: $draftOrder, Error: $e');
+                  }
+                }
+              }
+              Navigator.pop(context);
+              context.pushNamed('sendLetter', extra: {
+                'draftContents': List.filled(4, ''),
+              });
+            },
+            onSave: () async {
+              Navigator.pop(context);
+              context.pushNamed('sendLetter', extra: {
+                'draftContents': draftContents,
+              });
+            },
+            onDismiss: () => Navigator.pop(context),
+          );
+        },
+      );
+    });
   }
 }

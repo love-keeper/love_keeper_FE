@@ -23,14 +23,8 @@ class OnboardingPage extends ConsumerStatefulWidget {
 }
 
 class _OnboardingPageState extends ConsumerState<OnboardingPage> {
-  @override
-  void initState() {
-    super.initState();
-    // Kakao SDK 초기화 (필요 시)
-    kakao.KakaoSdk.init(nativeAppKey: '4082411ebc9c7d9b7612cc9c7bee8da8');
-  }
-
   Future<void> _loginWithKakao() async {
+    print('Kakao login button pressed'); // 버튼 클릭 확인
     try {
       kakao.OAuthToken token =
           await kakao.UserApi.instance.loginWithKakaoAccount();
@@ -42,7 +36,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       ref
           .read(authStateNotifierProvider.notifier)
           .updateProviderId(user.id.toString());
-      context.push(RouteNames.profileRegistrationPage);
+      context.pushNamed(RouteNames.profileRegistrationPage, extra: {
+        'email': user.kakaoAccount?.email ?? '',
+        'provider': 'KAKAO',
+        'providerId': user.id.toString(),
+      });
     } catch (e) {
       debugPrint('Kakao login error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,7 +52,6 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   Future<void> _loginWithNaver() async {
     try {
       NaverLoginResult result = await FlutterNaverLogin.logIn();
-      NaverAccessToken token = await FlutterNaverLogin.currentAccessToken;
       ref
           .read(authStateNotifierProvider.notifier)
           .updateEmail(result.account.email);
@@ -62,7 +59,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       ref
           .read(authStateNotifierProvider.notifier)
           .updateProviderId(result.account.id);
-      context.push(RouteNames.profileRegistrationPage);
+
+      context.pushNamed(
+        RouteNames.profileRegistrationPage,
+        extra: {
+          'email': result.account.email,
+          'provider': 'NAVER',
+          'providerId': result.account.id,
+        },
+      );
     } catch (e) {
       debugPrint('Naver login error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,7 +81,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       final credential = await SignInWithApple.getAppleIDCredential(
         scopes: [
           AppleIDAuthorizationScopes.email,
-          AppleIDAuthorizationScopes.fullName
+          AppleIDAuthorizationScopes.fullName,
         ],
       );
       ref
@@ -86,7 +91,15 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       ref
           .read(authStateNotifierProvider.notifier)
           .updateProviderId(credential.userIdentifier ?? '');
-      context.push(RouteNames.profileRegistrationPage);
+
+      context.pushNamed(
+        RouteNames.profileRegistrationPage,
+        extra: {
+          'email': credential.email ?? '',
+          'provider': 'APPLE',
+          'providerId': credential.userIdentifier ?? '',
+        },
+      );
     } catch (e) {
       debugPrint('Apple login error: $e');
       ScaffoldMessenger.of(context).showSnackBar(

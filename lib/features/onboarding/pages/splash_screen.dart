@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -19,10 +20,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
+    _checkInitialStatus();
   }
 
-  Future<void> _checkLoginStatus() async {
+  Future<void> _checkInitialStatus() async {
     Timer(const Duration(seconds: 2), () async {
       setState(() {
         _opacity = 0.0;
@@ -36,22 +37,38 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             .read(authViewModelProvider.notifier)
             .checkToken(accessToken);
         if (isValid && mounted) {
-          Timer(const Duration(milliseconds: 500), () {
-            context.pushReplacement(RouteNames.mainPage);
-          });
+          try {
+            final coupleInfo = await ref
+                .read(couplesViewModelProvider.notifier)
+                .getCoupleInfo();
+            print(
+                'Couple info loaded: coupleId=${coupleInfo.coupleId}, partnerNickname=${coupleInfo.partnerNickname}');
+            _navigateTo(RouteNames.mainPage);
+          } catch (e) {
+            print('Couple info not found: $e');
+            _navigateTo(RouteNames.codeConnectPage);
+          }
         } else if (mounted) {
+          print('Token invalid or expired');
           _navigateToLogin();
         }
       } else if (mounted) {
+        print('No access token found');
         _navigateToLogin();
       }
     });
   }
 
-  void _navigateToLogin() {
+  void _navigateTo(String route) {
     Timer(const Duration(milliseconds: 500), () {
-      context.pushReplacement(RouteNames.onboarding);
+      if (mounted) {
+        context.pushReplacement(route);
+      }
     });
+  }
+
+  void _navigateToLogin() {
+    _navigateTo(RouteNames.onboarding);
   }
 
   @override
