@@ -61,9 +61,16 @@ class CouplesRepositoryImpl implements CouplesRepository {
 
   @override
   Future<CoupleInfo> getCoupleInfo() async {
-    final response = await apiClient.getCoupleInfo();
-    _handleResponse(response);
-    return response.result!;
+    try {
+      final response = await apiClient.getCoupleInfo();
+      print(
+          'API Response - Code: ${response.code}, Message: ${response.message}, Result: ${response.result}');
+      _handleResponse(response);
+      return response.result!;
+    } catch (e) {
+      print('getCoupleInfo API call failed: $e');
+      rethrow;
+    }
   }
 
   void _handleResponse(ApiResponse response) {

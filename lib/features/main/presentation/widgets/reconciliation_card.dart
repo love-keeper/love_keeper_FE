@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
 import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 import 'package:love_keeper_fe/features/drafts/domain/entities/draft.dart';
@@ -76,16 +77,11 @@ class ReconciliationCard extends ConsumerWidget {
                       .read(draftsViewModelProvider.notifier)
                       .getDraft(draftOrder);
                   debugPrint('Draft response for order $draftOrder: $draft');
-                  if (draft != null) {
-                    final content = draft.content ?? '';
-                    draftContents[step] = content;
-                    // hasDraft를 true로 설정하려면 내용이 비어있지 않아야 함.
-                    if (content.trim().isNotEmpty) {
-                      hasDraft = true;
-                    }
-                  } else {
-                    draftContents[step] = '';
-                    debugPrint('Null draft for order $draftOrder');
+                  final content = draft.content ?? '';
+                  draftContents[step] = content;
+                  // hasDraft를 true로 설정하려면 내용이 비어있지 않아야 함.
+                  if (content.trim().isNotEmpty) {
+                    hasDraft = true;
                   }
                 } catch (e) {
                   if (e is DioException) {
@@ -109,7 +105,7 @@ class ReconciliationCard extends ConsumerWidget {
               if (hasDraft) {
                 _showDraftDialog(context, ref, draftContents);
               } else {
-                context.pushNamed('sendLetter', extra: {
+                context.pushNamed(RouteNames.sendLetter, extra: {
                   'draftContents': List.filled(4, ''),
                 });
               }

@@ -92,9 +92,12 @@ class CouplesViewModel extends _$CouplesViewModel {
     state = const AsyncValue.loading();
     try {
       final coupleInfo = await _repository.getCoupleInfo();
+      print(
+          'Couple info retrieved successfully: ${coupleInfo.coupleId}, ${coupleInfo.partnerNickname}');
       state = AsyncValue.data(coupleInfo);
       return coupleInfo;
     } catch (e, stackTrace) {
+      print('Failed to get couple info: $e, StackTrace: $stackTrace');
       state = AsyncValue.error(e, stackTrace);
       rethrow;
     }

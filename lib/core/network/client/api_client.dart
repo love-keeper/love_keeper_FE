@@ -8,6 +8,7 @@ import 'package:love_keeper_fe/features/couples/data/models/request/update_start
 import 'package:love_keeper_fe/features/couples/data/models/response/couple_info.dart';
 import 'package:love_keeper_fe/features/drafts/data/models/request/create_draft_request.dart';
 import 'package:love_keeper_fe/features/drafts/data/models/response/draft_response.dart';
+import 'package:love_keeper_fe/features/fcm/data/models/fcm_models.dart';
 import 'package:love_keeper_fe/features/letters/data/models/request/create_letter_request.dart';
 import 'package:love_keeper_fe/features/letters/data/models/response/letter_list_response.dart';
 import 'package:love_keeper_fe/features/members/data/models/request/send_email_code_request.dart';
@@ -200,4 +201,16 @@ abstract class ApiClient {
     @Query('year') int year,
     @Query('month') int month,
   );
+
+  // FCM
+
+  // FCM 관련 엔드포인트
+  @POST('/api/fcm/token')
+  Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
+
+  @DELETE('/api/fcm/token')
+  Future<ApiResponse<String>> removeFCMToken(@Body() FCMTokenRequest request);
+
+  @GET('/api/fcm/notifications')
+  Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications();
 }

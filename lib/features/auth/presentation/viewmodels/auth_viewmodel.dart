@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart'; // FCM 추가
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper_fe/core/config/routes/route_names.dart';
 import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
 import 'package:love_keeper_fe/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper_fe/features/fcm/presentation/viewmodels/fcm_viewmodel.dart'; // FCMViewModel 추가
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user.dart';
@@ -76,14 +79,12 @@ class AuthViewModel extends _$AuthViewModel {
       );
       await _saveTokens(user);
       state = AsyncValue.data(user);
+      // FCM 토큰 업데이트를 별도로 호출하지 않음
       return user;
     } catch (e) {
-      String errorMessage;
-      if (e is DioException && e.response?.statusCode == 401) {
-        errorMessage = '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.';
-      } else {
-        errorMessage = '로그인 중 오류 발생: $e';
-      }
+      String errorMessage = e is DioException && e.response?.statusCode == 401
+          ? '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.'
+          : '로그인 중 오류 발생: $e';
       print(errorMessage);
       state = AsyncValue.error(errorMessage, StackTrace.current);
       rethrow;
@@ -98,10 +99,8 @@ class AuthViewModel extends _$AuthViewModel {
   }) async {
     state = const AsyncValue.loading();
     try {
-      // 1. 이메일 중복 체크
       try {
         await _repository.emailDuplication(email);
-        // 중복이 아닌 경우 (200 응답) -> 프로필 등록으로 이동
         ref.read(authStateNotifierProvider.notifier).updateEmail(email);
         ref.read(authStateNotifierProvider.notifier).updateProvider(provider);
         ref
@@ -113,32 +112,36 @@ class AuthViewModel extends _$AuthViewModel {
           extra: {
             'email': email,
             'provider': provider,
-            'providerId': providerId,
+            'providerId': providerId
           },
         );
       } on DioException catch (e) {
         if (e.response?.statusCode == 409) {
-          // 2. 409 Conflict: 이미 가입된 회원 -> 로그인 수행
           final user = await login(
             email: email,
             provider: provider,
             providerId: providerId,
           );
-
-          // 3. 커플 정보 가져오기 시도
+          print('Logged in user: ${user.memberId}, ${user.email}');
           try {
             final coupleInfo = await ref
                 .read(couplesViewModelProvider.notifier)
                 .getCoupleInfo();
-            // 커플 정보가 성공적으로 불러와졌으면 메인 화면으로 이동
+            print(
+                'Navigating to main page with couple info: ${coupleInfo.coupleId}');
             context.go(RouteNames.mainPage);
           } on DioException catch (e) {
-            // 커플 정보가 없는 경우 (예: COUPLE001, 404 등)
-            print('Couple info not found: ${e.response?.data}');
+            print(
+                'Couple info fetch failed - Status: ${e.response?.statusCode}, Data: ${e.response?.data}, Error: $e');
             context.go(RouteNames.codeConnectPage);
+            // FCM 오류와 분리하기 위해 별도 처리
+            rethrow;
           }
+          // FCM 토큰 업데이트를 별도로 호출
+          await _updateFCMToken();
         } else {
-          // 기타 DioException 처리
+          print(
+              'Email duplication check failed: ${e.response?.statusCode}, ${e.response?.data}');
           rethrow;
         }
       }
@@ -147,10 +150,26 @@ class AuthViewModel extends _$AuthViewModel {
       print('Social login handling error: $e');
       rethrow;
     } finally {
-      state = AsyncValue.data(state.value); // 상태 복원
+      state = AsyncValue.data(state.value);
     }
   }
 
+  Future<void> _updateFCMToken() async {
+    try {
+      final fcmViewModel = ref.read(fCMViewModelProvider.notifier);
+      final token = await FirebaseMessaging.instance.getToken();
+      if (token != null) {
+        await fcmViewModel.registerToken(token);
+        print('FCM token updated after login');
+      } else {
+        print('FCM token not available');
+      }
+    } catch (e) {
+      print('FCM token update failed: $e');
+    }
+  }
+
+  // 나머지 메서드 (sendCode, verifyCode, logout 등)는 변경 없음
   Future<String> sendCode(String email) async {
     try {
       return await _repository.sendCode(email);

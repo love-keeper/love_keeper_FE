@@ -1,6 +1,6 @@
 {
-    "name": "love_keeper_fe",
-    "short_name": "love_keeper_fe",
+    "name": "love_keeper",
+    "short_name": "love_keeper",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
