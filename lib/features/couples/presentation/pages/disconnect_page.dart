@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
 class DisconnectPage extends StatelessWidget {
   final String appBarTitle;
@@ -17,7 +17,7 @@ class DisconnectPage extends StatelessWidget {
   // 바텀 시트 관련 파라미터
   final String dialogTitle; // 예: "정말 연결을 끊으시겠어요?" 또는 "정말 회원 탈퇴하시겠어요?"
   final String
-      dialogContent; // 예: "연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다." 또는 탈퇴용 문구
+  dialogContent; // 예: "연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다." 또는 탈퇴용 문구
   final String dialogExitText; // 예: "연결 끊기" 또는 "회원 탈퇴"
   final String dialogSaveText; // 예: "돌아가기"
   final VoidCallback onDialogExit; // Exit 버튼 눌렀을 때 수행할 동작 (예: 다른 화면으로 이동)
@@ -232,9 +232,7 @@ class DisconnectPage extends StatelessWidget {
               child: Container(
                 width: 162 * scaleFactor,
                 height: 52 * scaleFactor,
-                decoration: const BoxDecoration(
-                  color: Colors.transparent,
-                ),
+                decoration: const BoxDecoration(color: Colors.transparent),
                 child: Center(
                   child: Text(
                     actionButtonText,

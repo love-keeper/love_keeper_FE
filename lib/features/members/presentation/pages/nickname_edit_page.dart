@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class NicknameEditPage extends ConsumerStatefulWidget {
   const NicknameEditPage({super.key});
@@ -59,9 +59,9 @@ class _NicknameEditPageState extends ConsumerState<NicknameEditPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('닉네임 변경 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('닉네임 변경 실패: $e')));
     }
   }
 
@@ -118,16 +118,15 @@ class _NicknameEditPageState extends ConsumerState<NicknameEditPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
             SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    vertical: 10 * scaleFactor), // 양옆 패딩 제거
+                  vertical: 10 * scaleFactor,
+                ), // 양옆 패딩 제거
                 child: SaveButtonWidget(
                   scaleFactor: scaleFactor,
                   enabled: hasText && !_isLoading,

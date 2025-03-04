@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/members/presentation/pages/birthdate_edit_page.dart';
+import 'package:love_keeper/features/members/presentation/pages/birthdate_edit_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../features/onboarding/pages/splash_screen.dart';
 import '../../../features/onboarding/pages/login_page.dart';
@@ -214,11 +214,13 @@ GoRouter appRouter(AppRouterRef ref) {
             richTextPrefix: extra['richTextPrefix'] as String? ?? '상대방',
             richTextSuffix:
                 extra['richTextSuffix'] as String? ?? ' 님과\n연결을 끊으시겠어요?',
-            imagePath: extra['imagePath'] as String? ??
+            imagePath:
+                extra['imagePath'] as String? ??
                 'assets/images/my_page/Img_Disconnect.png',
             imageWidth: extra['imageWidth'] as double? ?? 223.0,
             imageHeight: extra['imageHeight'] as double? ?? 176.0,
-            bottomText: extra['bottomText'] as String? ??
+            bottomText:
+                extra['bottomText'] as String? ??
                 '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
             actionButtonText: extra['actionButtonText'] as String? ?? '연결 끊기',
             gapBetweenImageAndText1:
@@ -226,7 +228,8 @@ GoRouter appRouter(AppRouterRef ref) {
             gapBetweenImageAndText2:
                 extra['gapBetweenImageAndText2'] as double? ?? 69,
             dialogTitle: extra['dialogTitle'] as String? ?? '정말 연결을 끊으시겠어요?',
-            dialogContent: extra['dialogContent'] as String? ??
+            dialogContent:
+                extra['dialogContent'] as String? ??
                 '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
             dialogExitText: extra['dialogExitText'] as String? ?? '연결 끊기',
             dialogSaveText: extra['dialogSaveText'] as String? ?? '돌아가기',
@@ -275,14 +278,13 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) => const MyPasswordEditPage(),
       ),
     ],
-    errorPageBuilder: (context, state) => MaterialPage<void>(
-      key: state.pageKey,
-      child: Scaffold(
-        body: Center(
-          child: Text('페이지를 찾을 수 없습니다: ${state.error}'),
+    errorPageBuilder:
+        (context, state) => MaterialPage<void>(
+          key: state.pageKey,
+          child: Scaffold(
+            body: Center(child: Text('페이지를 찾을 수 없습니다: ${state.error}')),
+          ),
         ),
-      ),
-    ),
   );
 }
 

@@ -2,10 +2,10 @@
 /*import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // jsonEncode 사용을 위해 추가!
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/line_painter.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/letter_preview.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/widgets/custom_exit_dialog.dart';
-import 'package:love_keeper_fe/features/auth/letter/presentation/pages/send_letter_screen.dart';
+import 'package:love_keeper/features/auth/letter/presentation/widgets/line_painter.dart';
+import 'package:love_keeper/features/auth/letter/presentation/widgets/letter_preview.dart';
+import 'package:love_keeper/features/auth/letter/presentation/widgets/custom_exit_dialog.dart';
+import 'package:love_keeper/features/auth/letter/presentation/pages/send_letter_screen.dart';
 
 class LetterPage extends StatefulWidget {
   const LetterPage({Key? key}) : super(key: key);

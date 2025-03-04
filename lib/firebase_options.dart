@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyB9s3KYpsHZXxuhXuehtMTNqRrFTaV3sd4',
-    appId: '1:377496628791:web:0b3a2a92bda924d4b7d9b2',
-    messagingSenderId: '377496628791',
-    projectId: 'love-keeper-b9bc9',
-    authDomain: 'love-keeper-b9bc9.firebaseapp.com',
-    storageBucket: 'love-keeper-b9bc9.firebasestorage.app',
-    measurementId: 'G-S0R91W678K',
+    apiKey: 'AIzaSyCnxnlfB6ujK9Ly-U6pHFMJ6kh4USVS2rI',
+    appId: '1:755912864251:web:bde724052057ca7bf99b5e',
+    messagingSenderId: '755912864251',
+    projectId: 'lovekeeper-c832d',
+    authDomain: 'lovekeeper-c832d.firebaseapp.com',
+    storageBucket: 'lovekeeper-c832d.firebasestorage.app',
+    measurementId: 'G-CRMG0QY9DC',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCqDBXU2oz__BD0REw0Z8w7mfASLCNE_J4',
-    appId: '1:377496628791:android:bee4d914102ee6dfb7d9b2',
-    messagingSenderId: '377496628791',
-    projectId: 'love-keeper-b9bc9',
-    storageBucket: 'love-keeper-b9bc9.firebasestorage.app',
+    apiKey: 'AIzaSyCO6_tibxo4E1M7fNRygj3losp2wcl4yKU',
+    appId: '1:755912864251:android:1f67de6f034930b8f99b5e',
+    messagingSenderId: '755912864251',
+    projectId: 'lovekeeper-c832d',
+    storageBucket: 'lovekeeper-c832d.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyB70QDln2f9HfxQG0oxGABERlW_8Nr5kFI',
-    appId: '1:377496628791:ios:58661096dc0c7e80b7d9b2',
-    messagingSenderId: '377496628791',
-    projectId: 'love-keeper-b9bc9',
-    storageBucket: 'love-keeper-b9bc9.firebasestorage.app',
-    iosBundleId: 'com.example.lovekeeper',
+    apiKey: 'AIzaSyBpoAv0Kg1wEGR3mRBkByw9rLtHg_jz82A',
+    appId: '1:755912864251:ios:eec282fab19f3766f99b5e',
+    messagingSenderId: '755912864251',
+    projectId: 'lovekeeper-c832d',
+    storageBucket: 'lovekeeper-c832d.firebasestorage.app',
+    iosBundleId: 'com.example.loveKeeper',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyB70QDln2f9HfxQG0oxGABERlW_8Nr5kFI',
-    appId: '1:377496628791:ios:aa5610a3c5d25adab7d9b2',
-    messagingSenderId: '377496628791',
-    projectId: 'love-keeper-b9bc9',
-    storageBucket: 'love-keeper-b9bc9.firebasestorage.app',
-    iosBundleId: 'com.example.loveKeeperFe',
+    apiKey: 'AIzaSyBpoAv0Kg1wEGR3mRBkByw9rLtHg_jz82A',
+    appId: '1:755912864251:ios:eec282fab19f3766f99b5e',
+    messagingSenderId: '755912864251',
+    projectId: 'lovekeeper-c832d',
+    storageBucket: 'lovekeeper-c832d.firebasestorage.app',
+    iosBundleId: 'com.example.loveKeeper',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyCirjpaOMp8Uk8JOUFVvG5-zJ5G7TaeYm8',
-    appId: '1:377496628791:web:381f3a42329f80b9b7d9b2',
-    messagingSenderId: '377496628791',
-    projectId: 'love-keeper-b9bc9',
-    authDomain: 'love-keeper-b9bc9.firebaseapp.com',
-    storageBucket: 'love-keeper-b9bc9.firebasestorage.app',
-    measurementId: 'G-XWQGPTG7T1',
+    apiKey: 'AIzaSyCnxnlfB6ujK9Ly-U6pHFMJ6kh4USVS2rI',
+    appId: '1:755912864251:web:02d85e3d12a5de84f99b5e',
+    messagingSenderId: '755912864251',
+    projectId: 'lovekeeper-c832d',
+    authDomain: 'lovekeeper-c832d.firebaseapp.com',
+    storageBucket: 'lovekeeper-c832d.firebasestorage.app',
+    measurementId: 'G-3PMMSY8Y7R',
   );
 }

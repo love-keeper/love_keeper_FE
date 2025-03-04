@@ -1,10 +1,10 @@
 //편지 작성 기본 공통 UI
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/step_indicator.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/step_indicator.dart';
 
 class BaseLetterPage extends StatelessWidget {
   final String
-      headerText; // 상단 헤더 텍스트 (예: "OO님에게 편지를 보내는 중이에요" 또는 "OO님에게 답장을 보내는 중이에요")
+  headerText; // 상단 헤더 텍스트 (예: "OO님에게 편지를 보내는 중이에요" 또는 "OO님에게 답장을 보내는 중이에요")
   final String questionText; // 현재 단계의 질문 텍스트
   final Widget textField; // 편지 작성용 텍스트 필드 위젯
   final Widget buttonArea; // 하단 버튼 영역 위젯 (다음/완료/전송하기)

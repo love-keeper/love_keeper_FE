@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -62,52 +62,71 @@ class SettingsPage extends ConsumerWidget {
           _buildDivider(deviceWidth, scaleFactor),
           _buildCategoryTitle('개인', scaleFactor),
           SizedBox(height: 16 * scaleFactor),
-          _buildNavigationOption('로그아웃', scaleFactor, onTap: () {
-            _showLogoutDialog(context, ref, scaleFactor);
-          }),
+          _buildNavigationOption(
+            '로그아웃',
+            scaleFactor,
+            onTap: () {
+              _showLogoutDialog(context, ref, scaleFactor);
+            },
+          ),
           SizedBox(height: 16 * scaleFactor),
-          _buildNavigationOption('연결 끊기', scaleFactor, onTap: () {
-            context.pushNamed('disconnectPage', extra: {
-              'appBarTitle': '연결끊기',
-              'richTextPrefix': '상대방',
-              'richTextSuffix': ' 님과\n연결을 끊으시겠어요?',
-              'imagePath': 'assets/images/my_page/Img_Disconnect.png',
-              'imageWidth': 223.0,
-              'imageHeight': 176.0,
-              'bottomText': '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
-              'actionButtonText': '연결 끊기',
-              'gapBetweenImageAndText1': 78.0,
-              'gapBetweenImageAndText2': 69.0,
-              'dialogTitle': '정말 연결을 끊으시겠어요?',
-              'dialogContent': '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
-              'dialogExitText': '연결 끊기',
-              'dialogSaveText': '돌아가기',
-              'onDialogExit': () => context.go('/disconnected_SC'),
-              'onDialogSave': () => context.pop(),
-            });
-          }),
+          _buildNavigationOption(
+            '연결 끊기',
+            scaleFactor,
+            onTap: () {
+              context.pushNamed(
+                'disconnectPage',
+                extra: {
+                  'appBarTitle': '연결끊기',
+                  'richTextPrefix': '상대방',
+                  'richTextSuffix': ' 님과\n연결을 끊으시겠어요?',
+                  'imagePath': 'assets/images/my_page/Img_Disconnect.png',
+                  'imageWidth': 223.0,
+                  'imageHeight': 176.0,
+                  'bottomText': '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+                  'actionButtonText': '연결 끊기',
+                  'gapBetweenImageAndText1': 78.0,
+                  'gapBetweenImageAndText2': 69.0,
+                  'dialogTitle': '정말 연결을 끊으시겠어요?',
+                  'dialogContent': '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
+                  'dialogExitText': '연결 끊기',
+                  'dialogSaveText': '돌아가기',
+                  'onDialogExit': () => context.go('/disconnected_SC'),
+                  'onDialogSave': () => context.pop(),
+                },
+              );
+            },
+          ),
           SizedBox(height: 16 * scaleFactor),
-          _buildNavigationOption('회원 탈퇴', scaleFactor, onTap: () {
-            context.pushNamed('disconnectPage', extra: {
-              'appBarTitle': '회원탈퇴',
-              'richTextPrefix': '러브키퍼',
-              'richTextSuffix': '를\n정말 떠나시겠어요?',
-              'imagePath': 'assets/images/my_page/Img_Withdraw.png',
-              'imageWidth': 138.0,
-              'imageHeight': 138.0,
-              'bottomText':
-                  '탈퇴 시, 상대방과의 연결이 끊어져요.\n기록된 데이터는 모두 삭제되며 복구할 수 없어요.',
-              'actionButtonText': '탈퇴하기',
-              'gapBetweenImageAndText1': 97.0,
-              'gapBetweenImageAndText2': 88.0,
-              'dialogTitle': '정말 탈퇴하시겠어요?',
-              'dialogContent': '탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.',
-              'dialogExitText': '탈퇴하기',
-              'dialogSaveText': '돌아가기',
-              'onDialogExit': () => context.go('/onboarding'),
-              'onDialogSave': () => context.pop(),
-            });
-          }),
+          _buildNavigationOption(
+            '회원 탈퇴',
+            scaleFactor,
+            onTap: () {
+              context.pushNamed(
+                'disconnectPage',
+                extra: {
+                  'appBarTitle': '회원탈퇴',
+                  'richTextPrefix': '러브키퍼',
+                  'richTextSuffix': '를\n정말 떠나시겠어요?',
+                  'imagePath': 'assets/images/my_page/Img_Withdraw.png',
+                  'imageWidth': 138.0,
+                  'imageHeight': 138.0,
+                  'bottomText':
+                      '탈퇴 시, 상대방과의 연결이 끊어져요.\n기록된 데이터는 모두 삭제되며 복구할 수 없어요.',
+                  'actionButtonText': '탈퇴하기',
+                  'gapBetweenImageAndText1': 97.0,
+                  'gapBetweenImageAndText2': 88.0,
+                  'dialogTitle': '정말 탈퇴하시겠어요?',
+                  'dialogContent':
+                      '탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.',
+                  'dialogExitText': '탈퇴하기',
+                  'dialogSaveText': '돌아가기',
+                  'onDialogExit': () => context.go('/onboarding'),
+                  'onDialogSave': () => context.pop(),
+                },
+              );
+            },
+          ),
           SizedBox(height: 16 * scaleFactor),
           _buildDivider(deviceWidth, scaleFactor),
           _buildCategoryTitle('기타', scaleFactor),
@@ -189,8 +208,11 @@ class SettingsPage extends ConsumerWidget {
 
   // 네비게이션 옵션 (로그아웃, 연결 끊기, 회원 탈퇴, 약관 및 정책)
   // onTap을 선택적으로 전달받아 터치 시 실행할 수 있게 함.
-  Widget _buildNavigationOption(String title, double scaleFactor,
-      {VoidCallback? onTap}) {
+  Widget _buildNavigationOption(
+    String title,
+    double scaleFactor, {
+    VoidCallback? onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -271,7 +293,10 @@ class SettingsPage extends ConsumerWidget {
   }
 
   void _showLogoutDialog(
-      BuildContext context, WidgetRef ref, double scaleFactor) {
+    BuildContext context,
+    WidgetRef ref,
+    double scaleFactor,
+  ) {
     FocusScope.of(context).unfocus();
     Future.delayed(const Duration(milliseconds: 200), () {
       showModalBottomSheet(
@@ -326,9 +351,9 @@ class SettingsPage extends ConsumerWidget {
       context.go(RouteNames.onboarding);
     } catch (e) {
       // 에러 처리: 사용자에게 알림
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('로그아웃 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('로그아웃 실패: $e')));
     }
   }
 }

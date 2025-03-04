@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/calendar/presentation/pages/detail_page.dart';
+import 'package:love_keeper/features/calendar/presentation/pages/detail_page.dart';
 
 class EventPopup extends StatelessWidget {
   final DateTime selectedDay;
@@ -39,9 +39,7 @@ class EventPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: const EdgeInsets.all(25),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         height: 363,
         padding: const EdgeInsets.all(20),
@@ -78,10 +76,11 @@ class EventPopup extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DetailPage(
-                      selectedDay: selectedDay,
-                      type: 'letter',
-                    ),
+                    builder:
+                        (context) => DetailPage(
+                          selectedDay: selectedDay,
+                          type: 'letter',
+                        ),
                   ),
                 );
               },
@@ -157,10 +156,11 @@ class EventPopup extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DetailPage(
-                      selectedDay: selectedDay,
-                      type: 'promise',
-                    ),
+                    builder:
+                        (context) => DetailPage(
+                          selectedDay: selectedDay,
+                          type: 'promise',
+                        ),
                   ),
                 );
               },

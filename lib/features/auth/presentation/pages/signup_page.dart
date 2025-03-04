@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/email_edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/email_edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
@@ -43,9 +43,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   Future<void> _sendVerificationCode() async {
     final email = ref.read(authStateNotifierProvider).email ?? '';
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('이메일이 설정되지 않았습니다.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('이메일이 설정되지 않았습니다.')));
       return;
     }
 
@@ -53,33 +53,34 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       _isLoading = true;
     });
     try {
-      final code =
-          await ref.read(authViewModelProvider.notifier).sendCode(email);
+      final code = await ref
+          .read(authViewModelProvider.notifier)
+          .sendCode(email);
       setState(() {
         _isCodeSent = true;
         _isLoading = false;
       });
       debugPrint('인증코드 전송됨: $code');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('인증코드가 전송되었습니다.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('인증코드가 전송되었습니다.')));
     } catch (e) {
       debugPrint('Send code error: $e');
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('인증코드 전송 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('인증코드 전송 실패: $e')));
     }
   }
 
   Future<void> _verifyCode() async {
     final email = ref.read(authStateNotifierProvider).email ?? '';
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('이메일이 설정되지 않았습니다.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('이메일이 설정되지 않았습니다.')));
       return;
     }
 
@@ -87,10 +88,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       _isLoading = true;
     });
     try {
-      final result = await ref.read(authViewModelProvider.notifier).verifyCode(
-            email,
-            int.tryParse(_emailCodeController.text) ?? 0,
-          );
+      final result = await ref
+          .read(authViewModelProvider.notifier)
+          .verifyCode(email, int.tryParse(_emailCodeController.text) ?? 0);
       setState(() {
         _isLoading = false;
       });
@@ -103,9 +103,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         _emailCodeController.clear();
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('인증 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('인증 실패: $e')));
     }
   }
 
@@ -157,8 +157,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                             height: 5 * scaleFactor,
                             decoration: BoxDecoration(
                               color: const Color(0xFFC3C6CF),
-                              borderRadius:
-                                  BorderRadius.circular(26 * scaleFactor),
+                              borderRadius: BorderRadius.circular(
+                                26 * scaleFactor,
+                              ),
                             ),
                           ),
                           SizedBox(height: 44 * scaleFactor),
@@ -207,8 +208,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                 height: 52 * scaleFactor,
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFFF859B),
-                                  borderRadius:
-                                      BorderRadius.circular(55 * scaleFactor),
+                                  borderRadius: BorderRadius.circular(
+                                    55 * scaleFactor,
+                                  ),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -240,9 +242,10 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       );
     }
 
-    final String guideMessage = hasText && _emailCodeController.text.length == 6
-        ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.'
-        : '';
+    final String guideMessage =
+        hasText && _emailCodeController.text.length == 6
+            ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -326,9 +329,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
@@ -347,8 +348,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        onPressed: () =>
-                            showResendBottomSheet(context, scaleFactor),
+                        onPressed:
+                            () => showResendBottomSheet(context, scaleFactor),
                         child: Text(
                           '메일을 받지 못하셨나요?',
                           textAlign: TextAlign.center,

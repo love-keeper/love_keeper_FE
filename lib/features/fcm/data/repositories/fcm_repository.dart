@@ -1,6 +1,6 @@
-import 'package:love_keeper_fe/core/config/di/dio_module.dart';
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/core/models/api_response.dart';
+import 'package:love_keeper/core/config/di/dio_module.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
+import 'package:love_keeper/core/models/api_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/fcm_models.dart'; // 모델 파일 경로 확인 필요
 

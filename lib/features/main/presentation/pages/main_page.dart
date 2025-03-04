@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/dday_box.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/reconciliation_card.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/custom_info_card.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/storage_section.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/ad_section.dart';
+import 'package:love_keeper/features/main/presentation/widgets/dday_box.dart';
+import 'package:love_keeper/features/main/presentation/widgets/reconciliation_card.dart';
+import 'package:love_keeper/features/main/presentation/widgets/custom_info_card.dart';
+import 'package:love_keeper/features/main/presentation/widgets/storage_section.dart';
+import 'package:love_keeper/features/main/presentation/widgets/ad_section.dart';
 
 class MainPage extends StatelessWidget {
   // initialIndex 관련 코드는 ShellRoute에서 관리하므로 제거합니다.
@@ -24,10 +24,7 @@ class MainPage extends StatelessWidget {
                   // DdayPage로 이동 (GoRouter 사용)
                   context.push('/dday');
                 },
-                child: DdayBox(
-                  dday: '1,626',
-                  width: width,
-                ),
+                child: DdayBox(dday: '1,626', width: width),
               ),
               const SizedBox(height: 12),
               const ReconciliationCard(),

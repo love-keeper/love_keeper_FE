@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class PwFindingPage extends ConsumerStatefulWidget {
   const PwFindingPage({super.key});
@@ -75,8 +75,9 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
                           height: 5 * scaleFactor,
                           decoration: BoxDecoration(
                             color: const Color(0xFFC3C6CF),
-                            borderRadius:
-                                BorderRadius.circular(26 * scaleFactor),
+                            borderRadius: BorderRadius.circular(
+                              26 * scaleFactor,
+                            ),
                           ),
                         ),
                         SizedBox(height: 48 * scaleFactor),
@@ -125,8 +126,9 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
                               height: 52 * scaleFactor,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFF859B),
-                                borderRadius:
-                                    BorderRadius.circular(55 * scaleFactor),
+                                borderRadius: BorderRadius.circular(
+                                  55 * scaleFactor,
+                                ),
                               ),
                               child: Center(
                                 child: Text(
@@ -178,9 +180,9 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('비밀번호 재설정 요청 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('비밀번호 재설정 요청 실패: $e')));
     }
   }
 
@@ -293,9 +295,7 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),

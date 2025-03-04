@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
+import 'package:love_keeper/features/main/presentation/widgets/fallback_circle_avatar.dart';
 
 class DdayBox extends StatelessWidget {
   final String dday; // 디데이 숫자
   final double width; // 아이콘 크기 조정을 위해 필요
 
-  const DdayBox({
-    super.key,
-    required this.dday,
-    required this.width,
-  });
+  const DdayBox({super.key, required this.dday, required this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +21,7 @@ class DdayBox extends StatelessWidget {
           ),
         ],
         color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,

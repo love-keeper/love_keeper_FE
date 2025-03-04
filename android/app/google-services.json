@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "755912864251",
+    "project_id": "lovekeeper-c832d",
+    "storage_bucket": "lovekeeper-c832d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755912864251:android:1f67de6f034930b8f99b5e",
+        "android_client_info": {
+          "package_name": "com.example.love_keeper"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCO6_tibxo4E1M7fNRygj3losp2wcl4yKU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/features/auth/data/models/request/email_duplication_request.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
+import 'package:love_keeper/features/auth/data/models/request/email_duplication_request.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -102,7 +102,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<String> resetPassword(
-      String email, String password, String passwordConfirm) async {
+    String email,
+    String password,
+    String passwordConfirm,
+  ) async {
     final request = PasswordResetRequest(
       email: email,
       password: password,
