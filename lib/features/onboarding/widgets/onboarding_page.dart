@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import '../models/onboarding_page_model.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -36,16 +36,19 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       ref
           .read(authStateNotifierProvider.notifier)
           .updateProviderId(user.id.toString());
-      context.pushNamed(RouteNames.profileRegistrationPage, extra: {
-        'email': user.kakaoAccount?.email ?? '',
-        'provider': 'KAKAO',
-        'providerId': user.id.toString(),
-      });
+      context.pushNamed(
+        RouteNames.profileRegistrationPage,
+        extra: {
+          'email': user.kakaoAccount?.email ?? '',
+          'provider': 'KAKAO',
+          'providerId': user.id.toString(),
+        },
+      );
     } catch (e) {
       debugPrint('Kakao login error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('카카오 로그인 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('카카오 로그인 실패: $e')));
     }
   }
 
@@ -70,9 +73,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       );
     } catch (e) {
       debugPrint('Naver login error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('네이버 로그인 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('네이버 로그인 실패: $e')));
     }
   }
 
@@ -102,9 +105,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       );
     } catch (e) {
       debugPrint('Apple login error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Apple 로그인 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Apple 로그인 실패: $e')));
     }
   }
 
@@ -126,10 +129,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
         Text(
           widget.page.title,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                letterSpacing: -0.55,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            letterSpacing: -0.55,
+          ),
           textAlign: TextAlign.center,
         ),
         if (widget.page.subtitle != null) ...[
@@ -137,9 +140,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           Text(
             widget.page.subtitle!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                  letterSpacing: -0.35,
-                ),
+              color: Colors.white,
+              letterSpacing: -0.35,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 42),
@@ -152,8 +155,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               backgroundColor: Colors.yellow,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
-            child:
-                const Text('카카오로 로그인', style: TextStyle(color: Colors.black)),
+            child: const Text(
+              '카카오로 로그인',
+              style: TextStyle(color: Colors.black),
+            ),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
@@ -162,8 +167,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               backgroundColor: Colors.green,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
-            child:
-                const Text('네이버로 로그인', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              '네이버로 로그인',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
@@ -172,8 +179,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               backgroundColor: Colors.black,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             ),
-            child:
-                const Text('Apple로 로그인', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Apple로 로그인',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
         const Spacer(),

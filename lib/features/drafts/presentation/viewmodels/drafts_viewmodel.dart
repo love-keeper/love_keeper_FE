@@ -1,4 +1,4 @@
-import 'package:love_keeper_fe/features/drafts/data/repositories/drafts_repository_impl.dart';
+import 'package:love_keeper/features/drafts/data/repositories/drafts_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/draft.dart';
 import '../../domain/repositories/drafts_repository.dart';

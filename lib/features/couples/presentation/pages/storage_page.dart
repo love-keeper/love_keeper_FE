@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_box_widget.dart';
-import 'package:love_keeper_fe/features/promises/presentation/widgets/promise_box_widget.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/letter_box_widget.dart';
+import 'package:love_keeper/features/promises/presentation/widgets/promise_box_widget.dart';
 import 'package:intl/intl.dart';
 
 class StoragePage extends StatefulWidget {
@@ -20,17 +20,17 @@ class _StoragePageState extends State<StoragePage> {
     {
       'title': '첫 번째 약속',
       'content': '약속 내용이 이곳에 표시됩니다. 자세한 내용은 생략될 수 있습니다.',
-      'date': '2025. 02. 01.'
+      'date': '2025. 02. 01.',
     },
     {
       'title': '두 번째 약속',
       'content': '또 다른 약속의 내용이 여기에 표시됩니다. 내용이 길 경우 ... 처리됩니다.',
-      'date': '2025. 02. 05.'
+      'date': '2025. 02. 05.',
     },
     {
       'title': '세 번째 약속',
       'content': '세 번째 약속 내용 예시입니다.',
-      'date': '2025. 02. 10.'
+      'date': '2025. 02. 10.',
     },
     {'title': '네 번째 약속', 'content': '네 번째 약속 내용입니다.', 'date': '2025. 02. 15.'},
   ];
@@ -40,17 +40,17 @@ class _StoragePageState extends State<StoragePage> {
     {
       'user': '돌돌',
       'content': '내가 너무 심했던 것 같아 용서해 줄 수 있어? 다시해와 엊꺼ㅜ우',
-      'date': '2025. 02. 01.'
+      'date': '2025. 02. 01.',
     },
     {
       'user': '미미',
       'content': '예시 내용입니다. 이것은 긴 내용일 경우 생략됩니다. 어쩌라고',
-      'date': '2025. 02. 02.'
+      'date': '2025. 02. 02.',
     },
     {
       'user': '돌돌',
       'content': '세 번째 편지 내용이 이렇게 길게 들어갈 경우 테스트 합니다.',
-      'date': '2025. 02. 03.'
+      'date': '2025. 02. 03.',
     },
     {'user': '돌돌', 'content': '네 번째 편지 내용입니다.', 'date': '2025. 02. 04.'},
     {'user': '미미', 'content': '다섯 번째 편지 내용입니다.', 'date': '2025. 02. 05.'},
@@ -128,10 +128,12 @@ class _StoragePageState extends State<StoragePage> {
   Widget _buildPromiseStorage() {
     List<Map<String, String>> sortedPromises = List.from(promises);
     sortedPromises.sort((a, b) {
-      DateTime dateA =
-          DateFormat('yyyy. MM. dd.').parse(a['date'] ?? '1900. 01. 01.');
-      DateTime dateB =
-          DateFormat('yyyy. MM. dd.').parse(b['date'] ?? '1900. 01. 01.');
+      DateTime dateA = DateFormat(
+        'yyyy. MM. dd.',
+      ).parse(a['date'] ?? '1900. 01. 01.');
+      DateTime dateB = DateFormat(
+        'yyyy. MM. dd.',
+      ).parse(b['date'] ?? '1900. 01. 01.');
       return dateB.compareTo(dateA);
     });
     int itemCount = sortedPromises.length + (_isEditingPromise ? 1 : 0);
@@ -154,10 +156,7 @@ class _StoragePageState extends State<StoragePage> {
               color: const Color(0xFFC3C6CF),
               alignment: Alignment.centerRight,
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(
-                Icons.delete,
-                color: Colors.white,
-              ),
+              child: const Icon(Icons.delete, color: Colors.white),
             ),
             onDismissed: (direction) {
               setState(() {
@@ -180,10 +179,12 @@ class _StoragePageState extends State<StoragePage> {
     final double boxHeight = boxWidth * (160 / 156);
     List<Map<String, String>> sortedLetters = List.from(letters);
     sortedLetters.sort((a, b) {
-      DateTime dateA =
-          DateFormat('yyyy. MM. dd.').parse(a['date'] ?? '1900. 01. 01.');
-      DateTime dateB =
-          DateFormat('yyyy. MM. dd.').parse(b['date'] ?? '1900. 01. 01.');
+      DateTime dateA = DateFormat(
+        'yyyy. MM. dd.',
+      ).parse(a['date'] ?? '1900. 01. 01.');
+      DateTime dateB = DateFormat(
+        'yyyy. MM. dd.',
+      ).parse(b['date'] ?? '1900. 01. 01.');
       return dateB.compareTo(dateA);
     });
     return Padding(
@@ -281,9 +282,10 @@ class _StoragePageState extends State<StoragePage> {
                             fontSize: 14,
                             height: 22 / 14,
                             fontWeight: FontWeight.w400,
-                            color: selectedIndex == 0
-                                ? const Color(0xFFFF859B)
-                                : const Color(0xFFAFB2BF),
+                            color:
+                                selectedIndex == 0
+                                    ? const Color(0xFFFF859B)
+                                    : const Color(0xFFAFB2BF),
                           ),
                         ),
                       ),
@@ -310,9 +312,10 @@ class _StoragePageState extends State<StoragePage> {
                             fontSize: 14,
                             height: 22 / 14,
                             fontWeight: FontWeight.w400,
-                            color: selectedIndex == 1
-                                ? const Color(0xFFFF859B)
-                                : const Color(0xFFAFB2BF),
+                            color:
+                                selectedIndex == 1
+                                    ? const Color(0xFFFF859B)
+                                    : const Color(0xFFAFB2BF),
                           ),
                         ),
                       ),
@@ -340,27 +343,28 @@ class _StoragePageState extends State<StoragePage> {
       extendBodyBehindAppBar: true,
       extendBody: true,
       backgroundColor: Colors.white,
-      floatingActionButton: (selectedIndex == 1 && !_isEditingPromise)
-          ? SizedBox(
-              width: 56,
-              height: 56,
-              child: FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    _isEditingPromise = true;
-                  });
-                },
-                backgroundColor: const Color(0xFFFF859B),
-                elevation: 0,
-                shape: const CircleBorder(),
-                child: const Icon(
-                  Icons.add_rounded,
-                  color: Colors.white,
-                  size: 35,
+      floatingActionButton:
+          (selectedIndex == 1 && !_isEditingPromise)
+              ? SizedBox(
+                width: 56,
+                height: 56,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditingPromise = true;
+                    });
+                  },
+                  backgroundColor: const Color(0xFFFF859B),
+                  elevation: 0,
+                  shape: const CircleBorder(),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: Colors.white,
+                    size: 35,
+                  ),
                 ),
-              ),
-            )
-          : null,
+              )
+              : null,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
@@ -402,9 +406,10 @@ class _StoragePageState extends State<StoragePage> {
             _buildCustomTabBar(),
             const SizedBox(height: 30),
             Expanded(
-              child: selectedIndex == 0
-                  ? _buildLetterStorage()
-                  : _buildPromiseStorage(),
+              child:
+                  selectedIndex == 0
+                      ? _buildLetterStorage()
+                      : _buildPromiseStorage(),
             ),
           ],
         ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/email_edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/email_edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class NewEmailCertification extends ConsumerStatefulWidget {
   final String email;
@@ -53,17 +53,17 @@ class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
         _isLoading = false;
       });
       debugPrint('인증코드 전송됨: $code');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('인증코드가 전송되었습니다.')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('인증코드가 전송되었습니다.')));
     } catch (e) {
       debugPrint('Send code error: $e');
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('인증코드 전송 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('인증코드 전송 실패: $e')));
     }
   }
 
@@ -72,11 +72,9 @@ class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
       _isLoading = true;
     });
     try {
-      final result =
-          await ref.read(membersViewModelProvider.notifier).verifyEmailCode(
-                widget.email,
-                _newEmailCerController.text,
-              );
+      final result = await ref
+          .read(membersViewModelProvider.notifier)
+          .verifyEmailCode(widget.email, _newEmailCerController.text);
       setState(() {
         _isLoading = false;
       });
@@ -89,9 +87,9 @@ class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
         _newEmailCerController.clear();
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('인증 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('인증 실패: $e')));
     }
   }
 
@@ -141,8 +139,9 @@ class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
                             height: 5 * scaleFactor,
                             decoration: BoxDecoration(
                               color: const Color(0xFFC3C6CF),
-                              borderRadius:
-                                  BorderRadius.circular(26 * scaleFactor),
+                              borderRadius: BorderRadius.circular(
+                                26 * scaleFactor,
+                              ),
                             ),
                           ),
                           SizedBox(height: 44 * scaleFactor),
@@ -191,8 +190,9 @@ class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
                                 height: 52 * scaleFactor,
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFFF859B),
-                                  borderRadius:
-                                      BorderRadius.circular(55 * scaleFactor),
+                                  borderRadius: BorderRadius.circular(
+                                    55 * scaleFactor,
+                                  ),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -312,9 +312,7 @@ class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
@@ -333,8 +331,8 @@ class _NewEmailCertificationState extends ConsumerState<NewEmailCertification> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        onPressed: () =>
-                            showResendBottomSheet(context, scaleFactor),
+                        onPressed:
+                            () => showResendBottomSheet(context, scaleFactor),
                         child: Text(
                           '메일을 받지 못하셨나요?',
                           textAlign: TextAlign.center,

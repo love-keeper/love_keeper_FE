@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 
 class MyPage extends ConsumerStatefulWidget {
   const MyPage({super.key});
@@ -34,6 +34,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true, // 바텀시트 위로 올라가게
       backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {
@@ -69,8 +70,9 @@ class _MyPageState extends ConsumerState<MyPage> {
                           height: 5 * scaleFactor,
                           decoration: BoxDecoration(
                             color: const Color(0xFFC3C6CF),
-                            borderRadius:
-                                BorderRadius.circular(26 * scaleFactor),
+                            borderRadius: BorderRadius.circular(
+                              26 * scaleFactor,
+                            ),
                           ),
                         ),
                         SizedBox(height: 21 * scaleFactor),
@@ -134,7 +136,8 @@ class _MyPageState extends ConsumerState<MyPage> {
                                   ref
                                       .read(membersViewModelProvider.notifier)
                                       .updateProfileImage(
-                                          File(_defaultImagePath));
+                                        File(_defaultImagePath),
+                                      );
                                 },
                                 child: Container(
                                   width: 168 * scaleFactor,
@@ -177,8 +180,9 @@ class _MyPageState extends ConsumerState<MyPage> {
                               height: 52 * scaleFactor,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFF859B),
-                                borderRadius:
-                                    BorderRadius.circular(55 * scaleFactor),
+                                borderRadius: BorderRadius.circular(
+                                  55 * scaleFactor,
+                                ),
                               ),
                               child: Center(
                                 child: Text(
@@ -209,8 +213,9 @@ class _MyPageState extends ConsumerState<MyPage> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -224,24 +229,44 @@ class _MyPageState extends ConsumerState<MyPage> {
   Widget _buildInfoSection(double scaleFactor, MemberInfo? memberInfo) {
     return Column(
       children: [
-        _buildBoxedRow('닉네임', memberInfo?.nickname ?? '', scaleFactor,
-            onTap: () => context.push('/nickname')),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow('생년월일', memberInfo?.birthday ?? '', scaleFactor,
-            onTap: () => context.push('/birthdate')),
+        _buildBoxedRow(
+          '닉네임',
+          memberInfo?.nickname ?? '',
+          scaleFactor,
+          onTap: () => context.push('/nickname'),
+        ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
-            '연애 시작일', memberInfo?.relationshipStartDate ?? '', scaleFactor,
-            onTap: () => context.push('/relationship')),
+          '생년월일',
+          memberInfo?.birthday ?? '',
+          scaleFactor,
+          onTap: () => context.push('/birthdate'),
+        ),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow('이메일', memberInfo?.email ?? '', scaleFactor,
-            onTap: () => context.push('/emailEdit')),
+        _buildBoxedRow(
+          '연애 시작일',
+          memberInfo?.relationshipStartDate ?? '',
+          scaleFactor,
+          onTap: () => context.push('/relationship'),
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
+          '이메일',
+          memberInfo?.email ?? '',
+          scaleFactor,
+          onTap: () => context.push('/emailEdit'),
+        ),
         // SizedBox(height: 18 * scaleFactor),
         // _buildBoxedRow(
         //     '커플 닉네임', memberInfo?.coupleNickname ?? '', scaleFactor), // 추가
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow('비밀번호 변경', '', scaleFactor,
-            hasArrow: true, onTap: () => context.push('/myPasswordEdit')),
+        _buildBoxedRow(
+          '비밀번호 변경',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () => context.push('/myPasswordEdit'),
+        ),
       ],
     );
   }
@@ -249,24 +274,46 @@ class _MyPageState extends ConsumerState<MyPage> {
   Widget _buildMenuSection(double scaleFactor) {
     return Column(
       children: [
-        _buildBoxedRow('공지', '', scaleFactor, hasArrow: true, onTap: () {
-          debugPrint('공지 클릭');
-        }),
+        _buildBoxedRow(
+          '공지',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () {
+            debugPrint('공지 클릭');
+          },
+        ),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow('자주 묻는 질문', '', scaleFactor, hasArrow: true, onTap: () {
-          debugPrint('자주 묻는 질문 클릭');
-        }),
+        _buildBoxedRow(
+          '자주 묻는 질문',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () {
+            debugPrint('자주 묻는 질문 클릭');
+          },
+        ),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow('1:1 카카오톡 문의', '', scaleFactor, hasArrow: true,
-            onTap: () {
-          debugPrint('1:1 카카오톡 문의 클릭');
-        }),
+        _buildBoxedRow(
+          '1:1 카카오톡 문의',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () {
+            debugPrint('1:1 카카오톡 문의 클릭');
+          },
+        ),
       ],
     );
   }
 
-  Widget _buildBoxedRow(String title, String value, double scaleFactor,
-      {bool hasArrow = false, VoidCallback? onTap}) {
+  Widget _buildBoxedRow(
+    String title,
+    String value,
+    double scaleFactor, {
+    bool hasArrow = false,
+    VoidCallback? onTap,
+  }) {
     bool showArrow = hasArrow;
     if (!hasArrow &&
         (title == '닉네임' ||
@@ -317,7 +364,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                     height: 14 * scaleFactor,
                   ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -372,47 +419,51 @@ class _MyPageState extends ConsumerState<MyPage> {
             child: SingleChildScrollView(
               padding: EdgeInsets.only(top: 16 * scaleFactor),
               child: memberState.when(
-                data: (memberInfo) => Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: ClipOval(
-                        child: _profileImage != null
-                            ? Image.file(
-                                _profileImage!,
-                                width: 84 * scaleFactor,
-                                height: 84 * scaleFactor,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.asset(
-                                _defaultImagePath,
-                                width: 84 * scaleFactor,
-                                height: 84 * scaleFactor,
-                                fit: BoxFit.cover,
-                              ),
-                      ),
+                data:
+                    (memberInfo) => Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: ClipOval(
+                            child:
+                                _profileImage != null
+                                    ? Image.file(
+                                      _profileImage!,
+                                      width: 84 * scaleFactor,
+                                      height: 84 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                    )
+                                    : Image.asset(
+                                      _defaultImagePath,
+                                      width: 84 * scaleFactor,
+                                      height: 84 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                    ),
+                          ),
+                        ),
+                        SizedBox(height: 30 * scaleFactor),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20 * scaleFactor,
+                          ),
+                          child: _buildInfoSection(scaleFactor, memberInfo),
+                        ),
+                        SizedBox(height: 16 * scaleFactor),
+                        Container(
+                          width: deviceWidth,
+                          height: 16 * scaleFactor,
+                          color: const Color(0xFFF7F8FB),
+                        ),
+                        SizedBox(height: 16 * scaleFactor),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20 * scaleFactor,
+                          ),
+                          child: _buildMenuSection(scaleFactor),
+                        ),
+                        SizedBox(height: 16 * scaleFactor),
+                      ],
                     ),
-                    SizedBox(height: 30 * scaleFactor),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-                      child: _buildInfoSection(scaleFactor, memberInfo),
-                    ),
-                    SizedBox(height: 16 * scaleFactor),
-                    Container(
-                      width: deviceWidth,
-                      height: 16 * scaleFactor,
-                      color: const Color(0xFFF7F8FB),
-                    ),
-                    SizedBox(height: 16 * scaleFactor),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-                      child: _buildMenuSection(scaleFactor),
-                    ),
-                    SizedBox(height: 16 * scaleFactor),
-                  ],
-                ),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),

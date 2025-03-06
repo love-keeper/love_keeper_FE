@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -38,11 +38,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             .checkToken(accessToken);
         if (isValid && mounted) {
           try {
-            final coupleInfo = await ref
-                .read(couplesViewModelProvider.notifier)
-                .getCoupleInfo();
+            final coupleInfo =
+                await ref
+                    .read(couplesViewModelProvider.notifier)
+                    .getCoupleInfo();
             print(
-                'Couple info loaded: coupleId=${coupleInfo.coupleId}, partnerNickname=${coupleInfo.partnerNickname}');
+              'Couple info loaded: coupleId=${coupleInfo.coupleId}, partnerNickname=${coupleInfo.partnerNickname}',
+            );
             _navigateTo(RouteNames.mainPage);
           } catch (e) {
             print('Couple info not found: $e');

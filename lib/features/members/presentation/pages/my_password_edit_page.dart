@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class MyPasswordEditPage extends ConsumerStatefulWidget {
   const MyPasswordEditPage({super.key});
@@ -54,12 +54,9 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
     });
 
     try {
-      final result =
-          await ref.read(membersViewModelProvider.notifier).updatePassword(
-                currentPw,
-                newPw,
-                confirmPw,
-              );
+      final result = await ref
+          .read(membersViewModelProvider.notifier)
+          .updatePassword(currentPw, newPw, confirmPw);
       setState(() {
         _isLoading = false;
       });
@@ -71,9 +68,9 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('비밀번호 변경 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('비밀번호 변경 실패: $e')));
     }
   }
 
@@ -102,7 +99,8 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
       confirmPwGuideMessage = '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.';
     }
 
-    final bool isSaveEnabled = currentPw.isNotEmpty &&
+    final bool isSaveEnabled =
+        currentPw.isNotEmpty &&
         newPw.isNotEmpty &&
         confirmPw.isNotEmpty &&
         currentPwGuideMessage.isEmpty &&
@@ -183,9 +181,7 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),

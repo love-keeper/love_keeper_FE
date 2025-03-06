@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class CodeConnectPage extends ConsumerStatefulWidget {
   const CodeConnectPage({super.key});
@@ -18,6 +19,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
   late FocusNode _focusNode;
   String generatedInviteCode = '';
   bool _isLoading = false;
+  bool _connectionFailed = false; // 연결 실패 여부
 
   @override
   void initState() {
@@ -47,8 +49,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
       final inviteCode =
           await ref.read(couplesViewModelProvider.notifier).generateCode();
       setState(() {
-        generatedInviteCode =
-            inviteCode.inviteCode; // 백엔드에서 받은 초대 코드 (필드명 확인 필요)
+        generatedInviteCode = inviteCode.inviteCode; // 백엔드에서 받은 초대 코드
         _isLoading = false;
       });
     } catch (e) {
@@ -56,9 +57,9 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('초대 코드 생성 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('초대 코드 생성 실패: $e')));
     }
   }
 
@@ -72,19 +73,42 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
           .connect(_inviteCodeController.text);
       setState(() {
         _isLoading = false;
+        // 연결이 성공하면 _connectionFailed를 false로 설정
+        _connectionFailed = false;
       });
       if (result == '커플 연결이 완료되었습니다.') {
         context.push(RouteNames.mainPage);
+      } else {
+        // 연결 결과가 실패하면 _connectionFailed를 true로 설정
+        setState(() {
+          _connectionFailed = true;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('연결 실패')),
+        );
       }
     } catch (e) {
       debugPrint('Connect error: $e');
       setState(() {
         _isLoading = false;
+        _connectionFailed = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('연결 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('연결 실패: $e')));
     }
+  }
+
+  Future<void> _handleBackButton() async {
+    // 로그아웃 처리
+    try {
+      await ref.read(authViewModelProvider.notifier).logout();
+      print('Logged out successfully');
+    } catch (e) {
+      print('Logout error: $e');
+    }
+    // 온보딩 페이지로 이동
+    context.pushReplacement(RouteNames.onboarding);
   }
 
   @override
@@ -94,16 +118,14 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     final double scaleFactor = deviceWidth / baseWidth;
 
     final bool hasText = _inviteCodeController.text.isNotEmpty;
+    // 가이드 메시지는 이제 연결 실패(_connectionFailed)가 true일 때만 표시됩니다.
     final String guideMessage =
-        hasText && _inviteCodeController.text != generatedInviteCode
-            ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.'
-            : '';
+        _connectionFailed ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.' : '';
 
-    final bool isButtonEnabled =
-        hasText && _inviteCodeController.text.isNotEmpty && !_isLoading;
+    final bool isButtonEnabled = hasText && !_isLoading;
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -182,6 +204,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
                           ),
                         ),
                         SizedBox(height: 36 * scaleFactor),
+                        // EditFieldWidget는 guideMessage를 받아 가이드 메시지로 사용합니다.
                         EditFieldWidget(
                           label: '상대방 초대 코드',
                           hintText: '전달 받은 초대 코드를 입력해 주세요.',
@@ -195,9 +218,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),

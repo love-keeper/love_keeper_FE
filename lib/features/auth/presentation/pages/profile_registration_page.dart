@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/date_text_input_formatter.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/date_text_input_formatter.dart';
 
 class ProfileRegistrationPage extends ConsumerStatefulWidget {
   const ProfileRegistrationPage({super.key});
@@ -51,7 +51,8 @@ class _ProfileRegistrationPageState
       _provider = extra['provider'] as String?;
       _providerId = extra['providerId'] as String?;
       debugPrint(
-          'Extra data received: email=$_email, provider=$_provider, providerId=$_providerId');
+        'Extra data received: email=$_email, provider=$_provider, providerId=$_providerId',
+      );
     } else {
       debugPrint('No extra data received');
     }
@@ -104,8 +105,9 @@ class _ProfileRegistrationPageState
                           height: 5 * scaleFactor,
                           decoration: BoxDecoration(
                             color: const Color(0xFFC3C6CF),
-                            borderRadius:
-                                BorderRadius.circular(26 * scaleFactor),
+                            borderRadius: BorderRadius.circular(
+                              26 * scaleFactor,
+                            ),
                           ),
                         ),
                         SizedBox(height: 20 * scaleFactor),
@@ -209,8 +211,9 @@ class _ProfileRegistrationPageState
                               height: 52 * scaleFactor,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFFF859B),
-                                borderRadius:
-                                    BorderRadius.circular(55 * scaleFactor),
+                                borderRadius: BorderRadius.circular(
+                                  55 * scaleFactor,
+                                ),
                               ),
                               child: Center(
                                 child: Text(
@@ -241,8 +244,9 @@ class _ProfileRegistrationPageState
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+    );
     if (pickedFile != null) {
       setState(() {
         _profileImage = File(pickedFile.path);
@@ -263,7 +267,8 @@ class _ProfileRegistrationPageState
       final password = authState.password;
 
       debugPrint(
-          'Registering with: email=$email, provider=$provider, providerId=$providerId, password=$password');
+        'Registering with: email=$email, provider=$provider, providerId=$providerId, password=$password',
+      );
 
       if (email == null || email.isEmpty) {
         throw Exception('Email is missing or empty');
@@ -278,7 +283,9 @@ class _ProfileRegistrationPageState
       final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
 
       // 1. Signup 호출
-      final signupUser = await ref.read(authViewModelProvider.notifier).signup(
+      final signupUser = await ref
+          .read(authViewModelProvider.notifier)
+          .signup(
             email: email,
             nickname: _nicknameController.text,
             birthDate: formattedBirthdate,
@@ -288,17 +295,21 @@ class _ProfileRegistrationPageState
             profileImage: _profileImage,
           );
       debugPrint(
-          'Signup successful: memberId=${signupUser.memberId}, email=${signupUser.email}');
+        'Signup successful: memberId=${signupUser.memberId}, email=${signupUser.email}',
+      );
 
       // 2. Login 호출
-      final loginUser = await ref.read(authViewModelProvider.notifier).login(
+      final loginUser = await ref
+          .read(authViewModelProvider.notifier)
+          .login(
             email: email,
             provider: provider,
             password: provider == 'LOCAL' ? password : null,
             providerId: provider != 'LOCAL' ? providerId : null,
           );
       debugPrint(
-          'Login successful: memberId=${loginUser.memberId}, email=${loginUser.email}');
+        'Login successful: memberId=${loginUser.memberId}, email=${loginUser.email}',
+      );
 
       setState(() {
         _isLoading = false;
@@ -309,9 +320,9 @@ class _ProfileRegistrationPageState
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('프로필 등록 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('프로필 등록 실패: $e')));
     }
   }
 
@@ -323,8 +334,9 @@ class _ProfileRegistrationPageState
     final bool hasNickname = _nicknameController.text.isNotEmpty;
     final bool hasBirthdate = _birthdateController.text.isNotEmpty;
 
-    final RegExp birthdateRegex =
-        RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$');
+    final RegExp birthdateRegex = RegExp(
+      r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$',
+    );
     final String guideMessage =
         hasBirthdate && !birthdateRegex.hasMatch(_birthdateController.text)
             ? '유효한 날짜 형식(YYYY.MM.DD)을 입력해 주세요'
@@ -373,34 +385,36 @@ class _ProfileRegistrationPageState
                       children: [
                         SizedBox(height: 16 * scaleFactor),
                         GestureDetector(
-                          onTap: () =>
-                              _showProfileBottomSheet(context, scaleFactor),
-                          child: _profileImage != null
-                              ? ClipOval(
-                                  child: Image.file(
-                                    _profileImage!,
-                                    width: 80 * scaleFactor,
-                                    height: 80 * scaleFactor,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : _useDefaultProfile
+                          onTap:
+                              () =>
+                                  _showProfileBottomSheet(context, scaleFactor),
+                          child:
+                              _profileImage != null
                                   ? ClipOval(
-                                      child: Image.asset(
-                                        _defaultProfilePath,
-                                        width: 80 * scaleFactor,
-                                        height: 80 * scaleFactor,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : ClipOval(
-                                      child: Image.asset(
-                                        _cameraImagePath,
-                                        width: 80 * scaleFactor,
-                                        height: 80 * scaleFactor,
-                                        fit: BoxFit.cover,
-                                      ),
+                                    child: Image.file(
+                                      _profileImage!,
+                                      width: 80 * scaleFactor,
+                                      height: 80 * scaleFactor,
+                                      fit: BoxFit.cover,
                                     ),
+                                  )
+                                  : _useDefaultProfile
+                                  ? ClipOval(
+                                    child: Image.asset(
+                                      _defaultProfilePath,
+                                      width: 80 * scaleFactor,
+                                      height: 80 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                  : ClipOval(
+                                    child: Image.asset(
+                                      _cameraImagePath,
+                                      width: 80 * scaleFactor,
+                                      height: 80 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                         ),
                         SizedBox(height: 36 * scaleFactor),
                         EditFieldWidget(
@@ -426,17 +440,15 @@ class _ProfileRegistrationPageState
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
             SafeArea(
               child: Padding(
                 padding: EdgeInsets.only(
-                    bottom:
-                        12 * scaleFactor), // 'custom'은 오타로 보임, 'bottom'으로 수정 권장
+                  bottom: 12 * scaleFactor,
+                ), // 'custom'은 오타로 보임, 'bottom'으로 수정 권장
                 child: SaveButtonWidget(
                   scaleFactor: scaleFactor,
                   enabled: isSaveEnabled,

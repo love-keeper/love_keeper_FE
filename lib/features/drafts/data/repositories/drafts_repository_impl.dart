@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -16,8 +16,10 @@ class DraftsRepositoryImpl implements DraftsRepository {
 
   @override
   Future<String> createDraft(int draftOrder, String content) async {
-    final request =
-        CreateDraftRequest(draftOrder: draftOrder, content: content);
+    final request = CreateDraftRequest(
+      draftOrder: draftOrder,
+      content: content,
+    );
     final response = await apiClient.createDraft(request);
     _handleResponse(response);
     return response.result!;
@@ -28,7 +30,9 @@ class DraftsRepositoryImpl implements DraftsRepository {
     final response = await apiClient.getDraft(order);
     _handleResponse(response);
     return Draft(
-        order: response.result!.order, content: response.result!.content);
+      order: response.result!.order,
+      content: response.result!.content,
+    );
   }
 
   // 드래프트 삭제 (void 반환 처리)

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/line_painter.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_preview.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
-import 'package:love_keeper_fe/features/letters/data/letter_texts.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/line_painter.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/letter_preview.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/letters/data/letter_texts.dart';
 
 class ReplyLetterPage extends StatefulWidget {
   const ReplyLetterPage({super.key});
@@ -98,7 +98,7 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
     return questionTexts[step];
   }
 
-// 백엔드에 임시 저장 요청을 보내는 함수
+  // 백엔드에 임시 저장 요청을 보내는 함수
   Future<void> _saveTemporaryLetter() async {
     Map<String, dynamic> tempLetterData = {
       'sender': userName,
@@ -121,11 +121,13 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
         _exitToHome();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('임시저장 실패: ${response.statusCode}')));
+          SnackBar(content: Text('임시저장 실패: ${response.statusCode}')),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('임시저장 중 오류 발생: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('임시저장 중 오류 발생: $e')));
     }
   }
 
@@ -150,16 +152,19 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
       if (response.statusCode == 200) {
         // 백엔드 전송 성공 조건 넣기
         // 백엔드 전송이 성공하면 sendLetterScreen 페이지로 이동합니다.
-        context.pushNamed('sendLetterScreen', extra: {
-          'letterData': letterData,
-        });
+        context.pushNamed(
+          'sendLetterScreen',
+          extra: {'letterData': letterData},
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('전송 실패: ${response.statusCode}')));
+          SnackBar(content: Text('전송 실패: ${response.statusCode}')),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('전송 중 오류 발생: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('전송 중 오류 발생: $e')));
     }
   }
 
@@ -169,8 +174,9 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
     final List<double> lineLengths = getLineLengths(currentStep);
-    final String previewContent =
-        stepTexts.where((text) => text.isNotEmpty).join(' '); //미리보기 모드
+    final String previewContent = stepTexts
+        .where((text) => text.isNotEmpty)
+        .join(' '); //미리보기 모드
 
     void displayExitDialog() {
       // 키보드를 먼저 닫음
@@ -221,7 +227,7 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
       });
     }
 
-//뒤로가기 버튼
+    //뒤로가기 버튼
     void handleBackButton() {
       if (currentStep == 0) {
         if (_textController.text.isEmpty) {
@@ -237,7 +243,7 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
       }
     }
 
-//미리보기 모드
+    //미리보기 모드
     if (isPreview) {
       return Scaffold(
         body: LetterPreview(
@@ -315,8 +321,9 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                         Expanded(
                           child: SafeArea(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -330,59 +337,76 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                         return Row(
                                           children: [
                                             Container(
-                                              width: index == currentStep
-                                                  ? 20.0 * scaleFactor
-                                                  : 10.0 * scaleFactor,
-                                              height: index == currentStep
-                                                  ? 20.0 * scaleFactor
-                                                  : 10.0 * scaleFactor,
+                                              width:
+                                                  index == currentStep
+                                                      ? 20.0 * scaleFactor
+                                                      : 10.0 * scaleFactor,
+                                              height:
+                                                  index == currentStep
+                                                      ? 20.0 * scaleFactor
+                                                      : 10.0 * scaleFactor,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                color: index < currentStep
-                                                    ? const Color(0xFFCCCCCC)
-                                                    : index == currentStep
+                                                color:
+                                                    index < currentStep
                                                         ? const Color(
-                                                            0xFFFF859B)
+                                                          0xFFCCCCCC,
+                                                        )
+                                                        : index == currentStep
+                                                        ? const Color(
+                                                          0xFFFF859B,
+                                                        )
                                                         : Colors.transparent,
                                                 border: Border.all(
-                                                  color: index == currentStep
-                                                      ? const Color(0xFFFF859B)
-                                                      : const Color(0xFFC3C6CF),
+                                                  color:
+                                                      index == currentStep
+                                                          ? const Color(
+                                                            0xFFFF859B,
+                                                          )
+                                                          : const Color(
+                                                            0xFFC3C6CF,
+                                                          ),
                                                   width: 2.0 * scaleFactor,
                                                 ),
                                               ),
                                               child: Center(
-                                                child: index == currentStep
-                                                    ? Text(
-                                                        '${index + 1}',
-                                                        style: TextStyle(
-                                                          fontSize: 12.0 *
-                                                              scaleFactor,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: Colors.white,
-                                                          height: 12 /
-                                                              (12 *
-                                                                  scaleFactor),
-                                                          letterSpacing: -0.025 *
-                                                              (12 *
-                                                                  scaleFactor),
-                                                        ),
-                                                      )
-                                                    : const SizedBox.shrink(),
+                                                child:
+                                                    index == currentStep
+                                                        ? Text(
+                                                          '${index + 1}',
+                                                          style: TextStyle(
+                                                            fontSize:
+                                                                12.0 *
+                                                                scaleFactor,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors.white,
+                                                            height:
+                                                                12 /
+                                                                (12 *
+                                                                    scaleFactor),
+                                                            letterSpacing:
+                                                                -0.025 *
+                                                                (12 *
+                                                                    scaleFactor),
+                                                          ),
+                                                        )
+                                                        : const SizedBox.shrink(),
                                               ),
                                             ),
                                             if (index < 3)
                                               SizedBox(
-                                                width: lineLengths[index] *
+                                                width:
+                                                    lineLengths[index] *
                                                     scaleFactor,
                                                 height: 2.0 * scaleFactor,
                                                 child: CustomPaint(
                                                   painter: LinePainter(
                                                     isDashed:
                                                         index >= currentStep,
-                                                    color:
-                                                        const Color(0xFFC3C6CF),
+                                                    color: const Color(
+                                                      0xFFC3C6CF,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -422,7 +446,8 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                         decoration: InputDecoration(
                                           border: OutlineInputBorder(
                                             borderRadius: BorderRadius.circular(
-                                                12.0 * scaleFactor),
+                                              12.0 * scaleFactor,
+                                            ),
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderSide: const BorderSide(
@@ -430,7 +455,8 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                               width: 0.0,
                                             ),
                                             borderRadius: BorderRadius.circular(
-                                                12.0 * scaleFactor),
+                                              12.0 * scaleFactor,
+                                            ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderSide: const BorderSide(
@@ -438,10 +464,12 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                               width: 0.0,
                                             ),
                                             borderRadius: BorderRadius.circular(
-                                                12.0 * scaleFactor),
+                                              12.0 * scaleFactor,
+                                            ),
                                           ),
-                                          contentPadding:
-                                              const EdgeInsets.all(0.0),
+                                          contentPadding: const EdgeInsets.all(
+                                            0.0,
+                                          ),
                                           hintText: '이곳을 눌러 답변을 입력해주세요.',
                                           hintStyle: TextStyle(
                                             fontSize: 16.0 * scaleFactor,
@@ -466,18 +494,25 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                             width: 335.0 * scaleFactor,
                                             height: 52.0 * scaleFactor,
                                             child: ElevatedButton(
-                                              onPressed: _isButtonActive
-                                                  ? _nextStep
-                                                  : null,
+                                              onPressed:
+                                                  _isButtonActive
+                                                      ? _nextStep
+                                                      : null,
                                               style: ElevatedButton.styleFrom(
                                                 padding: EdgeInsets.zero,
-                                                backgroundColor: _isButtonActive
-                                                    ? const Color(0xFFFF859B)
-                                                    : const Color(0xFFC3C6CF),
+                                                backgroundColor:
+                                                    _isButtonActive
+                                                        ? const Color(
+                                                          0xFFFF859B,
+                                                        )
+                                                        : const Color(
+                                                          0xFFC3C6CF,
+                                                        ),
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
                                                       BorderRadius.circular(
-                                                          26.0 * scaleFactor),
+                                                        26.0 * scaleFactor,
+                                                      ),
                                                 ),
                                               ),
                                               child: Text(
@@ -488,7 +523,8 @@ class _ReplyLetterPageState extends State<ReplyLetterPage> {
                                                   color: Colors.white,
                                                   height:
                                                       24 / (16 * scaleFactor),
-                                                  letterSpacing: -0.025 *
+                                                  letterSpacing:
+                                                      -0.025 *
                                                       (16 * scaleFactor),
                                                 ),
                                               ),

@@ -1,5 +1,5 @@
-import 'package:love_keeper_fe/features/couples/data/models/response/couple_info.dart';
-import 'package:love_keeper_fe/features/couples/data/repositories/couples_repository_impl.dart';
+import 'package:love_keeper/features/couples/data/models/response/couple_info.dart';
+import 'package:love_keeper/features/couples/data/repositories/couples_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/invite_code.dart';
 import '../../domain/repositories/couples_repository.dart';
@@ -92,9 +92,13 @@ class CouplesViewModel extends _$CouplesViewModel {
     state = const AsyncValue.loading();
     try {
       final coupleInfo = await _repository.getCoupleInfo();
+      print(
+        'Couple info retrieved successfully: ${coupleInfo.coupleId}, ${coupleInfo.partnerNickname}',
+      );
       state = AsyncValue.data(coupleInfo);
       return coupleInfo;
     } catch (e, stackTrace) {
+      print('Failed to get couple info: $e, StackTrace: $stackTrace');
       state = AsyncValue.error(e, stackTrace);
       rethrow;
     }

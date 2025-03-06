@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class EmailLoginPage extends ConsumerStatefulWidget {
   const EmailLoginPage({super.key});
@@ -60,8 +60,9 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
     try {
       final authViewModel = ref.read(authViewModelProvider.notifier);
       if (!showPasswordField) {
-        final result =
-            await authViewModel.emailDuplication(_emailController.text);
+        final result = await authViewModel.emailDuplication(
+          _emailController.text,
+        );
         ref
             .read(authStateNotifierProvider.notifier)
             .updateEmail(_emailController.text);
@@ -103,8 +104,8 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text(showPasswordField ? '로그인 실패: $e' : '이메일 확인 실패: $e')),
+            content: Text(showPasswordField ? '로그인 실패: $e' : '이메일 확인 실패: $e'),
+          ),
         );
       }
     }
@@ -185,9 +186,10 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                               controller: _passwordController,
                               scaleFactor: scaleFactor,
                               autofocus: false,
-                              guideMessage: showPasswordGuide
-                                  ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
-                                  : '',
+                              guideMessage:
+                                  showPasswordGuide
+                                      ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
+                                      : '',
                               obscureText: true,
                             ),
                           ],
@@ -196,9 +198,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
@@ -240,9 +240,10 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                     padding: EdgeInsets.only(bottom: 12 * scaleFactor),
                     child: SaveButtonWidget(
                       scaleFactor: scaleFactor,
-                      enabled: showPasswordField
-                          ? (hasEmail && hasPassword && !_isLoading)
-                          : (hasEmail && !_isLoading),
+                      enabled:
+                          showPasswordField
+                              ? (hasEmail && hasPassword && !_isLoading)
+                              : (hasEmail && !_isLoading),
                       buttonText: showPasswordField ? '로그인' : '다음',
                       onPressed: _isLoading ? null : _handleNextOrLogin,
                     ),

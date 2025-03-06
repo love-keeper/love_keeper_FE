@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/features/main/presentation/widgets/fallback_circle_avatar.dart';
 
 class DdayPage extends ConsumerStatefulWidget {
   const DdayPage({super.key});
@@ -26,14 +26,15 @@ class _DdayPageState extends ConsumerState<DdayPage> {
           .read(couplesViewModelProvider.notifier)
           .getStartDate()
           .then((startDateString) {
-        if (mounted) {
-          setState(() {
-            _selectedDate = DateTime.parse(startDateString);
+            if (mounted) {
+              setState(() {
+                _selectedDate = DateTime.parse(startDateString);
+              });
+            }
+          })
+          .catchError((e) {
+            debugPrint('시작 날짜를 받아오지 못했습니다: $e');
           });
-        }
-      }).catchError((e) {
-        debugPrint('시작 날짜를 받아오지 못했습니다: $e');
-      });
     });
   }
 
@@ -84,8 +85,9 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                     ),
                   ),
                   onPressed: () async {
-                    final newDateStr =
-                        DateFormat('yyyy-MM-dd').format(_selectedDate);
+                    final newDateStr = DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(_selectedDate);
                     try {
                       await ref
                           .read(couplesViewModelProvider.notifier)
@@ -93,9 +95,9 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                       // UI는 이미 setState로 업데이트됐으므로 추가 호출 불필요
                     } catch (e) {
                       debugPrint('시작 날짜 업데이트 실패: $e');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('날짜 업데이트 실패: $e')),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('날짜 업데이트 실패: $e')));
                     }
                     context.pop();
                   },
@@ -259,11 +261,15 @@ class _DdayPageState extends ConsumerState<DdayPage> {
 
     List<int> ddayIntervals = ddaySet.toList()..sort();
 
-    List<int> futureIntervals = ddayIntervals
-        .where((days) =>
-            _selectedDate.add(Duration(days: days)).isAfter(DateTime.now()))
-        .take(10)
-        .toList();
+    List<int> futureIntervals =
+        ddayIntervals
+            .where(
+              (days) => _selectedDate
+                  .add(Duration(days: days))
+                  .isAfter(DateTime.now()),
+            )
+            .take(10)
+            .toList();
 
     return Container(
       height: 385,
@@ -282,61 +288,65 @@ class _DdayPageState extends ConsumerState<DdayPage> {
       ),
       child: SingleChildScrollView(
         child: Column(
-          children: futureIntervals.map((days) {
-            final DateTime anniversaryDate =
-                _selectedDate.add(Duration(days: days));
-            final int remainingDays =
-                anniversaryDate.difference(DateTime.now()).inDays;
-            final bool isAnniversary = days % 365 == 0;
+          children:
+              futureIntervals.map((days) {
+                final DateTime anniversaryDate = _selectedDate.add(
+                  Duration(days: days),
+                );
+                final int remainingDays =
+                    anniversaryDate.difference(DateTime.now()).inDays;
+                final bool isAnniversary = days % 365 == 0;
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 9.5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isAnniversary ? '${days ~/ 365}주년' : '$days일',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: isAnniversary
-                          ? const Color(0xFFFC6383)
-                          : const Color(0xFF27282C),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 9.5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        remainingDays == 0 ? '오늘' : 'D-$remainingDays',
+                        isAnniversary ? '${days ~/ 365}주년' : '$days일',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: -0.4,
-                          height: 1.143,
-                          color: isAnniversary
-                              ? const Color(0xFFFC6383)
-                              : const Color(0xFF27282C),
+                          color:
+                              isAnniversary
+                                  ? const Color(0xFFFC6383)
+                                  : const Color(0xFF27282C),
                         ),
                       ),
-                      const SizedBox(height: 0),
-                      Text(
-                        DateFormat('yyyy. MM. dd.').format(anniversaryDate),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          height: 1.167,
-                          letterSpacing: -0.3,
-                          color: Color(0xFF27282C),
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            remainingDays == 0 ? '오늘' : 'D-$remainingDays',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.4,
+                              height: 1.143,
+                              color:
+                                  isAnniversary
+                                      ? const Color(0xFFFC6383)
+                                      : const Color(0xFF27282C),
+                            ),
+                          ),
+                          const SizedBox(height: 0),
+                          Text(
+                            DateFormat('yyyy. MM. dd.').format(anniversaryDate),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              height: 1.167,
+                              letterSpacing: -0.3,
+                              color: Color(0xFF27282C),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         ),
       ),
     );

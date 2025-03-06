@@ -1,6 +1,6 @@
-import 'package:love_keeper_fe/features/calendar/damain/entities/calendar.dart';
-import 'package:love_keeper_fe/features/calendar/damain/repositories/calendar_repository.dart';
-import 'package:love_keeper_fe/features/calendar/data/repositories/calendar_repository_impl.dart';
+import 'package:love_keeper/features/calendar/damain/entities/calendar.dart';
+import 'package:love_keeper/features/calendar/damain/repositories/calendar_repository.dart';
+import 'package:love_keeper/features/calendar/data/repositories/calendar_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'calendar_viewmodel.g.dart';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/date_text_input_formatter.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/date_text_input_formatter.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class BirthdateEditPage extends ConsumerStatefulWidget {
   const BirthdateEditPage({super.key});
@@ -61,14 +61,15 @@ class _BirthdateEditPageState extends ConsumerState<BirthdateEditPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('생일 업데이트 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('생일 업데이트 실패: $e')));
     }
   }
 
-  final RegExp birthdateRegex =
-      RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$');
+  final RegExp birthdateRegex = RegExp(
+    r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -129,9 +130,7 @@ class _BirthdateEditPageState extends ConsumerState<BirthdateEditPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
