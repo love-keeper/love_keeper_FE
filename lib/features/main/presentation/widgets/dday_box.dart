@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/fallback_circle_avatar.dart';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
-import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/features/main/presentation/widgets/fallback_circle_avatar.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class DdayBox extends ConsumerWidget {

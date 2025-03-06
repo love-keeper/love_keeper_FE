@@ -1,4 +1,4 @@
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';

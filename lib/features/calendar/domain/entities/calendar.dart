@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_item_response.dart';
-import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_response.dart';
+import 'package:love_keeper/features/calendar/data/models/response/calendar_item_response.dart';
+import 'package:love_keeper/features/calendar/data/models/response/calendar_response.dart';
 
 part 'calendar.freezed.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/members/presentation/pages/birthdate_edit_page.dart';
+import 'package:love_keeper/features/members/presentation/pages/birthdate_edit_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../features/onboarding/pages/splash_screen.dart';
 import '../../../features/onboarding/pages/login_page.dart';
@@ -75,8 +75,11 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.signupPage,
-        name: RouteNames.signupPage,
-        builder: (context, state) => const SignupPage(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return SignupPage(extraEmail: extra?['email'] as String?);
+        },
       ),
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
@@ -85,8 +88,15 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,
-        name: RouteNames.profileRegistrationPage,
-        builder: (context, state) => const ProfileRegistrationPage(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return ProfileRegistrationPage(
+            email: extra?['email'] as String?,
+            provider: extra?['provider'] as String?,
+            providerId: extra?['providerId'] as String?,
+          );
+        },
       ),
       GoRoute(
         path: RouteNames.codeConnectPage,

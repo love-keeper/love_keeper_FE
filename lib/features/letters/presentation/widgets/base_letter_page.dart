@@ -1,6 +1,6 @@
 //편지 작성 기본 공통 UI
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/step_indicator.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/step_indicator.dart';
 
 class BaseLetterPage extends StatelessWidget {
   final String

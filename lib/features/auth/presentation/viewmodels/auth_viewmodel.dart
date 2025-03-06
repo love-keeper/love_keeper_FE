@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/entities/user.dart';
@@ -35,6 +35,9 @@ class AuthViewModel extends _$AuthViewModel {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed, // 필수
+    bool? marketingAgreed, // 필수 아님
+    required bool termsOfServiceAgreed, // 필수
     String? password,
     String? providerId,
     File? profileImage,
@@ -46,6 +49,9 @@ class AuthViewModel extends _$AuthViewModel {
         nickname: nickname,
         birthDate: birthDate,
         provider: provider,
+        privacyPolicyAgreed: privacyPolicyAgreed,
+        marketingAgreed: marketingAgreed, // nullable로 전달
+        termsOfServiceAgreed: termsOfServiceAgreed,
         password: password,
         providerId: providerId,
         profileImage: profileImage,
@@ -212,7 +218,8 @@ class AuthViewModel extends _$AuthViewModel {
 
   Future<String> emailDuplication(String email) async {
     try {
-      return await _repository.emailDuplication(email);
+      final result = await _repository.emailDuplication(email);
+      return result;
     } catch (e) {
       print('Email duplication check error: $e');
       rethrow;

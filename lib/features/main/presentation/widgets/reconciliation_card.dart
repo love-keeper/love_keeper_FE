@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
-import 'package:love_keeper_fe/features/drafts/domain/entities/draft.dart';
+import 'package:love_keeper/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/drafts/domain/entities/draft.dart';
 import 'package:dio/dio.dart';
 
 class ReconciliationCard extends ConsumerWidget {

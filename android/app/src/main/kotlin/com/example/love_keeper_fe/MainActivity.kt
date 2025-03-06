@@ -1,4 +1,4 @@
-package com.example.love_keeper_fe
+package com.example.love_keeper
 
 import io.flutter.embedding.android.FlutterActivity
 

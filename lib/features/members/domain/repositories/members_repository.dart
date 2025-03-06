@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart'; // MemberInfo 임포트
+import 'package:love_keeper/features/members/domain/entities/member_info.dart'; // MemberInfo 임포트
 
 abstract class MembersRepository {
   Future<MemberInfo> getMemberInfo(); // 추가

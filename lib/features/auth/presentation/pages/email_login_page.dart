@@ -2,11 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class EmailLoginPage extends ConsumerStatefulWidget {
   const EmailLoginPage({super.key});
@@ -70,7 +70,12 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           _isLoading = false;
         });
         if (result == '사용 가능한 이메일입니다.') {
-          context.push(RouteNames.signupPage);
+          ref
+              .read(authStateNotifierProvider.notifier)
+              .updateEmail(_emailController.text);
+          debugPrint('Pushing to signup with email: ${_emailController.text}');
+          context.push(RouteNames.signupPage,
+              extra: {'email': _emailController.text});
         } else {
           setState(() {
             showPasswordField = true;

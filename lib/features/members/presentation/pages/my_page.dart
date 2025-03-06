@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 
 class MyPage extends ConsumerStatefulWidget {
   const MyPage({super.key});

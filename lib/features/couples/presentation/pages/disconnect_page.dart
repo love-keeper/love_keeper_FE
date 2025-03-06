@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
 class DisconnectPage extends StatelessWidget {
   final String appBarTitle;

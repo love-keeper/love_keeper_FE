@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/calendar/presentation/pages/detail_page.dart';
+import 'package:love_keeper/features/calendar/presentation/pages/detail_page.dart';
 
 class EventPopup extends StatelessWidget {
   final DateTime selectedDay;

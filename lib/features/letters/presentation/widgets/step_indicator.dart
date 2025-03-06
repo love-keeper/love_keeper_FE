@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/line_painter.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/line_painter.dart';
 
 class StepIndicator extends StatelessWidget {
   final int currentStep;

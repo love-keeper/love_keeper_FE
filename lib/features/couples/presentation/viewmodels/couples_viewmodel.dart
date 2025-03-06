@@ -1,8 +1,8 @@
 import 'dart:core';
 
 import 'package:dio/dio.dart';
-import 'package:love_keeper_fe/features/couples/data/models/response/couples_response.dart';
-import 'package:love_keeper_fe/features/couples/data/repositories/couples_repository_impl.dart';
+import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
+import 'package:love_keeper/features/couples/data/repositories/couples_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/invite_code.dart';
 import '../../domain/repositories/couples_repository.dart';

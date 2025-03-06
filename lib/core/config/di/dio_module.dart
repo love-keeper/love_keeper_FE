@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
 
 part 'dio_module.g.dart';
 

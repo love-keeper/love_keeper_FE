@@ -2,10 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/agreementbox.dart';
 
 class EmailPasswordInputPage extends ConsumerStatefulWidget {
   const EmailPasswordInputPage({super.key});
@@ -19,16 +20,28 @@ class _EmailPasswordInputPageState
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmController = TextEditingController();
   late FocusNode _passwordFocusNode;
+  late FocusNode _confirmFocusNode;
+
+  // 체크박스 상태 (필수 항목)
+  bool required1 = false; // 마스터: "전체 동의 (선택 포함)"
+  bool required2 = false; // 필수: "러브키퍼 이용약관 동의 (필수)"
+  bool required3 = false; // 필수: "개인정보수집 및 이용에 대한 안내 (필수)"
+  bool optional = false; // 선택: "마케팅 정보 수신 (선택)"
+
+  // 하단 버튼 활성화 조건은 필수 항목인 required2와 required3가 모두 체크되어 있어야 함
+  bool get allRequiredChecked => required2 && required3;
+
   final RegExp passwordRegex = RegExp(
     r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]).{8,}$',
   );
   bool showConfirmField = false;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _passwordFocusNode = FocusNode();
+    _confirmFocusNode = FocusNode();
     _passwordController.addListener(() {
       setState(() {});
     });
@@ -45,9 +58,12 @@ class _EmailPasswordInputPageState
     _passwordController.dispose();
     _confirmController.dispose();
     _passwordFocusNode.dispose();
+    _confirmFocusNode.dispose();
     super.dispose();
   }
 
+  // 약관 동의 바텀시트: "전체 동의 (선택 포함)" 체크박스가 눌리면 나머지 세 체크박스(필수 및 선택)가 모두 같은 상태로 전환된다.
+  // 또한, 개별 체크박스가 변경될 때 필수 항목(required2, required3)이 모두 체크되어야만 마스터가 체크되도록 한다.
   void _showTermsBottomSheet(BuildContext context, double scaleFactor) {
     showModalBottomSheet(
       context: context,
@@ -55,106 +71,182 @@ class _EmailPasswordInputPageState
       backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {
-        return GestureDetector(
-          onTap: () => Navigator.pop(dialogContext),
-          behavior: HitTestBehavior.opaque,
-          child: Stack(
-            children: [
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.transparent,
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    width: 375 * scaleFactor,
-                    height: 288 * scaleFactor,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16 * scaleFactor),
-                        topRight: Radius.circular(16 * scaleFactor),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(height: 7 * scaleFactor),
-                        Container(
-                          width: 50 * scaleFactor,
-                          height: 5 * scaleFactor,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFC3C6CF),
-                            borderRadius:
-                                BorderRadius.circular(26 * scaleFactor),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return GestureDetector(
+              onTap: () => Navigator.pop(dialogContext),
+              behavior: HitTestBehavior.opaque,
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.transparent,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: 375 * scaleFactor,
+                        height: 354 * scaleFactor,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16 * scaleFactor),
+                            topRight: Radius.circular(16 * scaleFactor),
                           ),
                         ),
-                        SizedBox(height: 48 * scaleFactor),
-                        Center(
-                          child: Text(
-                            '약관동의',
-                            style: TextStyle(
-                              fontSize: 20 * scaleFactor,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF27282C),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 6 * scaleFactor),
+                            Container(
+                              width: 50 * scaleFactor,
+                              height: 5 * scaleFactor,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFC3C6CF),
+                                borderRadius:
+                                    BorderRadius.circular(26 * scaleFactor),
+                              ),
                             ),
-                          ),
-                        ),
-                        SizedBox(height: 40 * scaleFactor),
-                        Center(
-                          child: Text(
-                            '전체 동의 (선택 포함)',
-                            style: TextStyle(
-                              fontSize: 16 * scaleFactor,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xFF27282C),
-                              height: 24 / (16 * scaleFactor),
-                              letterSpacing: -0.025 * (16 * scaleFactor),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 40 * scaleFactor),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(dialogContext);
-                            ref
-                                .read(authStateNotifierProvider.notifier)
-                                .updatePassword(_passwordController.text);
-                            context.push('/profileRegistration');
-                          },
-                          child: Container(
-                            width: 334 * scaleFactor,
-                            height: 52 * scaleFactor,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFF859B),
-                              borderRadius:
-                                  BorderRadius.circular(55 * scaleFactor),
-                            ),
-                            child: Center(
+                            SizedBox(height: 33 * scaleFactor),
+                            Center(
                               child: Text(
-                                '동의하고 계속하기',
-                                textAlign: TextAlign.center,
+                                '약관동의',
                                 style: TextStyle(
-                                  fontSize: 16 * scaleFactor,
+                                  fontSize: 18 * scaleFactor,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                  height: 24 / (16 * scaleFactor),
-                                  letterSpacing: -0.025 * (16 * scaleFactor),
+                                  color: const Color(0xFF27282C),
+                                  height: 26 / (18 * scaleFactor),
+                                  letterSpacing: -0.4 * scaleFactor,
                                 ),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 29 * scaleFactor),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                buildAgreementRow(
+                                  '전체 동의 (선택 포함)',
+                                  scaleFactor,
+                                  isChecked: required1,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      required1 = value;
+                                      required2 = value;
+                                      required3 = value;
+                                      optional = value;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                                SizedBox(height: 10 * scaleFactor),
+                                buildAgreementRow(
+                                  '러브키퍼 이용약관 동의 (필수)',
+                                  scaleFactor,
+                                  isChecked: required2,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      required2 = value;
+                                      required1 =
+                                          required2 && required3 && optional;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                                SizedBox(height: 10 * scaleFactor),
+                                buildAgreementRow(
+                                  '개인정보수집 및 이용에 대한 안내 (필수)',
+                                  scaleFactor,
+                                  isChecked: required3,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      required3 = value;
+                                      required1 =
+                                          required2 && required3 && optional;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                                SizedBox(height: 10 * scaleFactor),
+                                buildAgreementRow(
+                                  '마케팅 정보 수신 (선택)',
+                                  scaleFactor,
+                                  required: false,
+                                  isChecked: optional,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      optional = value;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 27 * scaleFactor),
+                            GestureDetector(
+                              onTap: () {
+                                if (required2 && required3) {
+                                  // 동의 값 저장
+                                  ref
+                                      .read(authStateNotifierProvider.notifier)
+                                      .updatePassword(_passwordController.text);
+                                  ref
+                                      .read(authStateNotifierProvider.notifier)
+                                      .updateAgreements(
+                                        privacyPolicyAgreed: required3,
+                                        marketingAgreed: optional,
+                                        termsOfServiceAgreed: required2,
+                                      );
+                                  Navigator.pop(dialogContext);
+                                  context.pushNamed(
+                                    RouteNames.profileRegistrationPage,
+                                    extra: {
+                                      'email': ref
+                                          .read(authStateNotifierProvider)
+                                          .email,
+                                      'provider': 'LOCAL',
+                                      'providerId': null,
+                                    },
+                                  );
+                                }
+                              },
+                              child: Container(
+                                width: 334 * scaleFactor,
+                                height: 52 * scaleFactor,
+                                decoration: BoxDecoration(
+                                  color: (required2 && required3)
+                                      ? const Color(0xFFFF859B)
+                                      : const Color(0xFFC3C6CF),
+                                  borderRadius:
+                                      BorderRadius.circular(55 * scaleFactor),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '동의하고 계속하기',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16 * scaleFactor,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      height: 24 / (16 * scaleFactor),
+                                      letterSpacing:
+                                          -0.025 * (16 * scaleFactor),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 16 * scaleFactor),
+                          ],
                         ),
-                        SizedBox(height: 16 * scaleFactor),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
@@ -191,7 +283,7 @@ class _EmailPasswordInputPageState
             !_isLoading);
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -250,6 +342,7 @@ class _EmailPasswordInputPageState
                               autofocus: false,
                               guideMessage: confirmGuideMessage,
                               obscureText: true,
+                              focusNode: _confirmFocusNode,
                             ),
                           ],
                         ],
@@ -257,9 +350,7 @@ class _EmailPasswordInputPageState
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
@@ -275,10 +366,16 @@ class _EmailPasswordInputPageState
                       : () async {
                           if (!showConfirmField) {
                             if (hasPassword &&
-                                passwordRegex
-                                    .hasMatch(_passwordController.text)) {
+                                passwordRegex.hasMatch(
+                                  _passwordController.text,
+                                )) {
                               setState(() {
                                 showConfirmField = true;
+                              });
+                              WidgetsBinding.instance.addPostFrameCallback((
+                                _,
+                              ) {
+                                _confirmFocusNode.requestFocus();
                               });
                             }
                           } else {

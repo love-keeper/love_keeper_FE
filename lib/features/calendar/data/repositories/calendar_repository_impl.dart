@@ -1,7 +1,7 @@
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/features/calendar/domain/entities/calendar.dart';
-import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_response.dart';
-import 'package:love_keeper_fe/features/calendar/domain/repositories/calendar_repository.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
+import 'package:love_keeper/features/calendar/domain/entities/calendar.dart';
+import 'package:love_keeper/features/calendar/data/models/response/calendar_response.dart';
+import 'package:love_keeper/features/calendar/domain/repositories/calendar_repository.dart';
 
 class CalendarRepositoryImpl implements CalendarRepository {
   final ApiClient _apiClient;

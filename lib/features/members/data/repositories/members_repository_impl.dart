@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/features/members/data/models/request/send_email_code_request.dart';
-import 'package:love_keeper_fe/features/members/data/models/request/verify_email_code_request.dart';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
+import 'package:love_keeper/features/members/data/models/request/send_email_code_request.dart';
+import 'package:love_keeper/features/members/data/models/request/verify_email_code_request.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/services.dart';

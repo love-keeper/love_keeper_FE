@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 
 class SocialLoginButtons extends ConsumerWidget {
   const SocialLoginButtons({super.key});

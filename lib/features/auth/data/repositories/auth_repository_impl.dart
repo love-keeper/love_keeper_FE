@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/features/auth/data/models/request/email_duplication_request.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
+import 'package:love_keeper/features/auth/data/models/request/email_duplication_request.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -24,6 +24,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed, // 필수 아님
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage,
@@ -33,6 +36,9 @@ class AuthRepositoryImpl implements AuthRepository {
       nickname: nickname,
       birthDate: birthDate,
       provider: provider,
+      privacyPolicyAgreed: privacyPolicyAgreed, // 추가
+      marketingAgreed: marketingAgreed, // 추가
+      termsOfServiceAgreed: termsOfServiceAgreed, // 추가
       password: password,
       providerId: providerId,
       profileImage: profileImage,

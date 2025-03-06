@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_item_response.dart';
-import 'package:love_keeper_fe/features/calendar/domain/entities/calendar.dart';
+import 'package:love_keeper/features/calendar/data/models/response/calendar_item_response.dart';
+import 'package:love_keeper/features/calendar/domain/entities/calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:love_keeper_fe/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
-import 'package:love_keeper_fe/features/calendar/presentation/widgets/event_popup.dart';
+import 'package:love_keeper/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
+import 'package:love_keeper/features/calendar/presentation/widgets/event_popup.dart';
 
 class CalendarPage extends ConsumerStatefulWidget {
   const CalendarPage({super.key});

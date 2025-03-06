@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_box_widget.dart';
-import 'package:love_keeper_fe/features/promises/presentation/widgets/promise_box_widget.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/letter_box_widget.dart';
+import 'package:love_keeper/features/promises/presentation/widgets/promise_box_widget.dart';
 
 class DetailPage extends StatelessWidget {
   final DateTime selectedDay;

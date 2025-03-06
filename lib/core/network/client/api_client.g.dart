@@ -103,6 +103,9 @@ class _ApiClient implements ApiClient {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed,
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage,
@@ -127,6 +130,20 @@ class _ApiClient implements ApiClient {
     _data.fields.add(MapEntry(
       'provider',
       provider,
+    ));
+    _data.fields.add(MapEntry(
+      'privacyPolicyAgreed',
+      privacyPolicyAgreed.toString(),
+    ));
+    if (marketingAgreed != null) {
+      _data.fields.add(MapEntry(
+        'marketingAgreed',
+        marketingAgreed.toString(),
+      ));
+    }
+    _data.fields.add(MapEntry(
+      'termsOfServiceAgreed',
+      termsOfServiceAgreed.toString(),
     ));
     if (password != null) {
       _data.fields.add(MapEntry(
