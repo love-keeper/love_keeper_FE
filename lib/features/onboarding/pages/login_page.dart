@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/onboarding/widgets/onboarding_page.dart';
-import 'package:love_keeper_fe/features/onboarding/widgets/page_indicators.dart';
-import 'package:love_keeper_fe/features/onboarding/widgets/social_login_buttons.dart';
+import 'package:love_keeper/features/onboarding/widgets/onboarding_page.dart';
+import 'package:love_keeper/features/onboarding/widgets/page_indicators.dart';
+import 'package:love_keeper/features/onboarding/widgets/social_login_buttons.dart';
 import '../models/onboarding_page_model.dart';
 
 class LoginPage extends ConsumerStatefulWidget {

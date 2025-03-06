@@ -1,38 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_box_widget.dart';
-import 'package:love_keeper_fe/features/promises/presentation/widgets/promise_box_widget.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/letter_box_widget.dart';
+import 'package:love_keeper/features/promises/presentation/widgets/promise_box_widget.dart';
 
 class DetailPage extends StatelessWidget {
   final DateTime selectedDay;
   final String type; // "letter" 또는 "promise"
 
-  DetailPage({
-    super.key,
-    required this.selectedDay,
-    required this.type,
-  });
+  DetailPage({super.key, required this.selectedDay, required this.type});
 
   // 샘플 데이터 (실제 프로젝트에서는 백엔드 데이터를 사용)
   final List<Map<String, String>> sampleLetters = [
     {
       'user': '돌돌',
       'content': '내가 너무 심했던 것 같아 용서해 줄 수 있어? 다시해와 엊꺼ㅜ우',
-      'date': '2025. 02. 01.'
+      'date': '2025. 02. 01.',
     },
     {
       'user': '미미',
       'content': '예시 내용입니다. 이것은 긴 내용일 경우 생략됩니다. 어쩌라고',
-      'date': '2025. 02. 02.'
+      'date': '2025. 02. 02.',
     },
     {
       'user': '돌돌',
       'content': '내가 너무 심했던 것 같아 용서해 줄 수 있어? 다시해와 엊꺼ㅜ우',
-      'date': '2025. 02. 01.'
+      'date': '2025. 02. 01.',
     },
     {
       'user': '미미',
       'content': '예시 내용입니다. 이것은 긴 내용일 경우 생략됩니다. 어쩌라고',
-      'date': '2025. 02. 02.'
+      'date': '2025. 02. 02.',
     },
     // 추가 데이터...
   ];
@@ -41,12 +37,12 @@ class DetailPage extends StatelessWidget {
     {
       'title': '첫 번째 약속',
       'content': '약속 내용이 이곳에 표시됩니다. 자세한 내용은 생략될 수 있습니다.',
-      'date': '2025. 03. 01.'
+      'date': '2025. 03. 01.',
     },
     {
       'title': '두 번째 약속',
       'content': '또 다른 약속의 내용이 여기에 표시됩니다. 내용이 길 경우 ... 처리됩니다.',
-      'date': '2025. 03. 05.'
+      'date': '2025. 03. 05.',
     },
     // 추가 데이터...
   ];
@@ -77,13 +73,15 @@ class DetailPage extends StatelessWidget {
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-                'assets/images/storage_page/Img_ArchivedCalender_BG.png'),
+              'assets/images/storage_page/Img_ArchivedCalender_BG.png',
+            ),
             fit: BoxFit.cover,
           ),
         ),
-        child: type == 'letter'
-            ? _buildLetterGrid(context)
-            : _buildPromiseList(context),
+        child:
+            type == 'letter'
+                ? _buildLetterGrid(context)
+                : _buildPromiseList(context),
       ),
     );
   }
@@ -122,9 +120,7 @@ class DetailPage extends StatelessWidget {
       itemBuilder: (context, index) {
         final promise = samplePromises[index];
         return Padding(
-          padding: const EdgeInsets.only(
-            bottom: 15,
-          ),
+          padding: const EdgeInsets.only(bottom: 15),
           child: PromiseBoxWidget(
             content: promise['content'] ?? '',
             date: promise['date'] ?? '',

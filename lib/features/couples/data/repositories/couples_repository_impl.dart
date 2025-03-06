@@ -1,5 +1,5 @@
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/features/couples/data/models/response/couple_info.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
+import 'package:love_keeper/features/couples/data/models/response/couple_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -61,9 +61,17 @@ class CouplesRepositoryImpl implements CouplesRepository {
 
   @override
   Future<CoupleInfo> getCoupleInfo() async {
-    final response = await apiClient.getCoupleInfo();
-    _handleResponse(response);
-    return response.result!;
+    try {
+      final response = await apiClient.getCoupleInfo();
+      print(
+        'API Response - Code: ${response.code}, Message: ${response.message}, Result: ${response.result}',
+      );
+      _handleResponse(response);
+      return response.result!;
+    } catch (e) {
+      print('getCoupleInfo API call failed: $e');
+      rethrow;
+    }
   }
 
   void _handleResponse(ApiResponse response) {

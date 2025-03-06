@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
 class NewEmailInputPage extends ConsumerStatefulWidget {
   const NewEmailInputPage({super.key});
@@ -58,9 +58,9 @@ class _NewEmailInputPageState extends ConsumerState<NewEmailInputPage> {
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('오류 발생: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('오류 발생: $e')));
     }
   }
 
@@ -133,17 +133,13 @@ class _NewEmailInputPageState extends ConsumerState<NewEmailInputPage> {
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                  vertical: 10 * scaleFactor,
-                ),
+                padding: EdgeInsets.symmetric(vertical: 10 * scaleFactor),
                 child: SaveButtonWidget(
                   scaleFactor: scaleFactor,
                   enabled: hasText && guideMessage.isEmpty && !_isLoading,

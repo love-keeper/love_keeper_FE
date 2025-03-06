@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/main/presentation/widgets/tab_bar.dart';
+import 'package:love_keeper/features/main/presentation/widgets/tab_bar.dart';
 
 //미리보기 화면 만들기.
 class NotificationPage extends StatefulWidget {
@@ -82,83 +82,87 @@ class _NotificationPageState extends State<NotificationPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: notifications.isEmpty
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Image.asset(
-                      'assets/images/main_page/grey_logo.png',
-                      width: 127,
-                      height: 102,
-                    ),
-                    const SizedBox(height: 31),
-                    const Text(
-                      '새로운 알림이 없어요.',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Color(0xFFAFB2BF),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 50),
-                  ],
-                ),
-              )
-            : ListView.builder(
-                padding: const EdgeInsets.only(top: 16),
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  final notification = notifications[index];
-                  final isRead = notification['isRead'] as bool;
-
-                  return Column(
+        child:
+            notifications.isEmpty
+                ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.only(top: 7, left: 16),
-                        height: 57,
-                        decoration: BoxDecoration(
-                          color: isRead
-                              ? Colors.white
-                              : const Color.fromRGBO(255, 157, 175, 1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              notification['message'] as String,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: -0.4,
-                                color: isRead
-                                    ? const Color(0xFF27282C)
-                                    : Colors.white,
-                                height: 1.5,
-                              ),
-                            ),
-                            Text(
-                              notification['time'] as String,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: -0.45,
-                                color: isRead
-                                    ? const Color(0xFF9E9E9E)
-                                    : Colors.white,
-                              ),
-                            ),
-                          ],
+                      Image.asset(
+                        'assets/images/main_page/grey_logo.png',
+                        width: 127,
+                        height: 102,
+                      ),
+                      const SizedBox(height: 31),
+                      const Text(
+                        '새로운 알림이 없어요.',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Color(0xFFAFB2BF),
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 50),
                     ],
-                  );
-                },
-              ),
+                  ),
+                )
+                : ListView.builder(
+                  padding: const EdgeInsets.only(top: 16),
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    final notification = notifications[index];
+                    final isRead = notification['isRead'] as bool;
+
+                    return Column(
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.only(top: 7, left: 16),
+                          height: 57,
+                          decoration: BoxDecoration(
+                            color:
+                                isRead
+                                    ? Colors.white
+                                    : const Color.fromRGBO(255, 157, 175, 1),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                notification['message'] as String,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: -0.4,
+                                  color:
+                                      isRead
+                                          ? const Color(0xFF27282C)
+                                          : Colors.white,
+                                  height: 1.5,
+                                ),
+                              ),
+                              Text(
+                                notification['time'] as String,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  letterSpacing: -0.45,
+                                  color:
+                                      isRead
+                                          ? const Color(0xFF9E9E9E)
+                                          : Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                      ],
+                    );
+                  },
+                ),
       ),
       bottomNavigationBar: TabBarWidget(
         currentIndex: _currentIndex,

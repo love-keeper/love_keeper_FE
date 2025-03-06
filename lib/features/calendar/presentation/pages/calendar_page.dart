@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/calendar/damain/entities/calendar.dart';
+import 'package:love_keeper/features/calendar/damain/entities/calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:love_keeper_fe/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
-import 'package:love_keeper_fe/features/calendar/presentation/widgets/event_popup.dart';
+import 'package:love_keeper/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
+import 'package:love_keeper/features/calendar/presentation/widgets/event_popup.dart';
 
 class CalendarPage extends ConsumerStatefulWidget {
   const CalendarPage({super.key});
@@ -28,9 +28,11 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
     super.didChangeDependencies();
     if (_isFirstLoad) {
       // 첫 로드 시에만 getCalendar 호출
-      Future.microtask(() => ref
-          .read(calendarViewModelProvider.notifier)
-          .getCalendar(_focusedDay.year, _focusedDay.month));
+      Future.microtask(
+        () => ref
+            .read(calendarViewModelProvider.notifier)
+            .getCalendar(_focusedDay.year, _focusedDay.month),
+      );
       _isFirstLoad = false;
     }
   }
@@ -74,7 +76,8 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage(
-                'assets/images/storage_page/Img_ArchivedCalender_BG.png'),
+              'assets/images/storage_page/Img_ArchivedCalender_BG.png',
+            ),
             fit: BoxFit.cover,
           ),
         ),
@@ -183,8 +186,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                     lastDay: DateTime(2030, 12, 31),
                     focusedDay: _focusedDay,
                     headerVisible: false,
-                    eventLoader: (day) =>
-                        eventDates.where((d) => isSameDay(d, day)).toList(),
+                    eventLoader:
+                        (day) =>
+                            eventDates.where((d) => isSameDay(d, day)).toList(),
                     daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(fontSize: 14, color: Colors.grey),
                       weekendStyle: TextStyle(fontSize: 14, color: Colors.grey),
@@ -211,7 +215,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                               width: 38,
                               height: 38,
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: 3.5, vertical: 8),
+                                horizontal: 3.5,
+                                vertical: 8,
+                              ),
                               clipBehavior: Clip.none,
                               decoration: BoxDecoration(
                                 color: const Color(0xffFF859B),
@@ -236,7 +242,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                             width: 38,
                             height: 38,
                             margin: const EdgeInsets.symmetric(
-                                horizontal: 3.5, vertical: 8),
+                              horizontal: 3.5,
+                              vertical: 8,
+                            ),
                             clipBehavior: Clip.none,
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -278,7 +286,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                               width: 38,
                               height: 38,
                               margin: const EdgeInsets.symmetric(
-                                  horizontal: 3.5, vertical: 8),
+                                horizontal: 3.5,
+                                vertical: 8,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xffFF859B),
                                 borderRadius: BorderRadius.circular(8),
@@ -301,7 +311,9 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                             width: 38,
                             height: 38,
                             margin: const EdgeInsets.symmetric(
-                                horizontal: 3.5, vertical: 8),
+                              horizontal: 3.5,
+                              vertical: 8,
+                            ),
                             alignment: Alignment.center,
                             child: Text(
                               '${day.day}',

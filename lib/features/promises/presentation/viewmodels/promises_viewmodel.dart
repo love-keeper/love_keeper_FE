@@ -1,4 +1,4 @@
-import 'package:love_keeper_fe/features/promises/data/repositories/promises_repository_impl.dart';
+import 'package:love_keeper/features/promises/data/repositories/promises_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/promise_list.dart';
 import '../../domain/repositories/promises_repository.dart';

@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/core/config/routes/route_names.dart';
-import 'package:love_keeper_fe/core/providers/auth_state_provider.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/agreementbox.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/agreementbox.dart';
 
 class EmailPasswordInputPage extends ConsumerStatefulWidget {
   const EmailPasswordInputPage({super.key});
@@ -105,8 +105,9 @@ class _EmailPasswordInputPageState
                               height: 5 * scaleFactor,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFC3C6CF),
-                                borderRadius:
-                                    BorderRadius.circular(26 * scaleFactor),
+                                borderRadius: BorderRadius.circular(
+                                  26 * scaleFactor,
+                                ),
                               ),
                             ),
                             SizedBox(height: 33 * scaleFactor),
@@ -203,11 +204,13 @@ class _EmailPasswordInputPageState
                                 width: 334 * scaleFactor,
                                 height: 52 * scaleFactor,
                                 decoration: BoxDecoration(
-                                  color: (required2 && required3)
-                                      ? const Color(0xFFFF859B)
-                                      : const Color(0xFFC3C6CF),
-                                  borderRadius:
-                                      BorderRadius.circular(55 * scaleFactor),
+                                  color:
+                                      (required2 && required3)
+                                          ? const Color(0xFFFF859B)
+                                          : const Color(0xFFC3C6CF),
+                                  borderRadius: BorderRadius.circular(
+                                    55 * scaleFactor,
+                                  ),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -254,21 +257,23 @@ class _EmailPasswordInputPageState
             ? '비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요.'
             : '';
 
-    final String confirmGuideMessage = showConfirmField &&
-            hasConfirm &&
-            (_confirmController.text != _passwordController.text)
-        ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
-        : '';
+    final String confirmGuideMessage =
+        showConfirmField &&
+                hasConfirm &&
+                (_confirmController.text != _passwordController.text)
+            ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
-    final bool isButtonEnabled = showConfirmField
-        ? (hasPassword &&
-            hasConfirm &&
-            passwordRegex.hasMatch(_passwordController.text) &&
-            (_passwordController.text == _confirmController.text) &&
-            !_isLoading)
-        : (hasPassword &&
-            passwordRegex.hasMatch(_passwordController.text) &&
-            !_isLoading);
+    final bool isButtonEnabled =
+        showConfirmField
+            ? (hasPassword &&
+                hasConfirm &&
+                passwordRegex.hasMatch(_passwordController.text) &&
+                (_passwordController.text == _confirmController.text) &&
+                !_isLoading)
+            : (hasPassword &&
+                passwordRegex.hasMatch(_passwordController.text) &&
+                !_isLoading);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -338,9 +343,7 @@ class _EmailPasswordInputPageState
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),
@@ -351,29 +354,33 @@ class _EmailPasswordInputPageState
                   scaleFactor: scaleFactor,
                   enabled: isButtonEnabled,
                   buttonText: '다음',
-                  onPressed: _isLoading
-                      ? null
-                      : () async {
-                          if (!showConfirmField) {
-                            if (hasPassword &&
-                                passwordRegex
-                                    .hasMatch(_passwordController.text)) {
-                              setState(() {
-                                showConfirmField = true;
-                              });
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                _confirmFocusNode.requestFocus();
-                              });
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () async {
+                            if (!showConfirmField) {
+                              if (hasPassword &&
+                                  passwordRegex.hasMatch(
+                                    _passwordController.text,
+                                  )) {
+                                setState(() {
+                                  showConfirmField = true;
+                                });
+                                WidgetsBinding.instance.addPostFrameCallback((
+                                  _,
+                                ) {
+                                  _confirmFocusNode.requestFocus();
+                                });
+                              }
+                            } else {
+                              if (hasPassword &&
+                                  hasConfirm &&
+                                  _passwordController.text ==
+                                      _confirmController.text) {
+                                _showTermsBottomSheet(context, scaleFactor);
+                              }
                             }
-                          } else {
-                            if (hasPassword &&
-                                hasConfirm &&
-                                _passwordController.text ==
-                                    _confirmController.text) {
-                              _showTermsBottomSheet(context, scaleFactor);
-                            }
-                          }
-                        },
+                          },
                 ),
               ),
             ),

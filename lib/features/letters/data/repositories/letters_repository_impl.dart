@@ -1,4 +1,4 @@
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -27,13 +27,16 @@ class LettersRepositoryImpl implements LettersRepository {
     final response = await apiClient.getLetterList(page, size);
     _handleResponse(response);
     return LetterList(
-      letterList: response.result!.letterList
-          .map((e) => Letter(
-                senderNickname: e.senderNickname,
-                receiverNickname: e.receiverNickname,
-                content: e.content,
-              ))
-          .toList(),
+      letterList:
+          response.result!.letterList
+              .map(
+                (e) => Letter(
+                  senderNickname: e.senderNickname,
+                  receiverNickname: e.receiverNickname,
+                  content: e.content,
+                ),
+              )
+              .toList(),
       isFirst: response.result!.isFirst,
       isLast: response.result!.isLast,
       hasNext: response.result!.hasNext,
@@ -52,13 +55,16 @@ class LettersRepositoryImpl implements LettersRepository {
     final response = await apiClient.getLettersByDate(date, page, size);
     _handleResponse(response);
     return LetterList(
-      letterList: response.result!.letterList
-          .map((e) => Letter(
-                senderNickname: e.senderNickname,
-                receiverNickname: e.receiverNickname,
-                content: e.content,
-              ))
-          .toList(),
+      letterList:
+          response.result!.letterList
+              .map(
+                (e) => Letter(
+                  senderNickname: e.senderNickname,
+                  receiverNickname: e.receiverNickname,
+                  content: e.content,
+                ),
+              )
+              .toList(),
       isFirst: response.result!.isFirst,
       isLast: response.result!.isLast,
       hasNext: response.result!.hasNext,

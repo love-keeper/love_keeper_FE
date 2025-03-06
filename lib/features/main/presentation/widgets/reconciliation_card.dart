@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
-import 'package:love_keeper_fe/features/drafts/domain/entities/draft.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/drafts/domain/entities/draft.dart';
 import 'package:dio/dio.dart';
 
 class ReconciliationCard extends ConsumerWidget {
@@ -76,27 +77,24 @@ class ReconciliationCard extends ConsumerWidget {
                       .read(draftsViewModelProvider.notifier)
                       .getDraft(draftOrder);
                   debugPrint('Draft response for order $draftOrder: $draft');
-                  if (draft != null) {
-                    final content = draft.content ?? '';
-                    draftContents[step] = content;
-                    // hasDraft를 true로 설정하려면 내용이 비어있지 않아야 함.
-                    if (content.trim().isNotEmpty) {
-                      hasDraft = true;
-                    }
-                  } else {
-                    draftContents[step] = '';
-                    debugPrint('Null draft for order $draftOrder');
+                  final content = draft.content ?? '';
+                  draftContents[step] = content;
+                  // hasDraft를 true로 설정하려면 내용이 비어있지 않아야 함.
+                  if (content.trim().isNotEmpty) {
+                    hasDraft = true;
                   }
                 } catch (e) {
                   if (e is DioException) {
                     if (e.response?.statusCode == 404) {
                       debugPrint(
-                          '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 빈 문자열로 처리)');
+                        '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 빈 문자열로 처리)',
+                      );
                       draftContents[step] = '';
                       continue;
                     } else {
                       debugPrint(
-                          '드래프트 확인 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}');
+                        '드래프트 확인 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}',
+                      );
                     }
                   } else {
                     debugPrint('드래프트 확인 실패 - order: $draftOrder, Error: $e');
@@ -105,13 +103,15 @@ class ReconciliationCard extends ConsumerWidget {
                 }
               }
               debugPrint(
-                  'Has draft: $hasDraft, Draft contents: $draftContents');
+                'Has draft: $hasDraft, Draft contents: $draftContents',
+              );
               if (hasDraft) {
                 _showDraftDialog(context, ref, draftContents);
               } else {
-                context.pushNamed('/sendLetter', extra: {
-                  'draftContents': List.filled(4, ''),
-                });
+                context.pushNamed(
+                  RouteNames.sendLetter,
+                  extra: {'draftContents': List.filled(4, '')},
+                );
               }
             },
             child: Padding(
@@ -133,7 +133,10 @@ class ReconciliationCard extends ConsumerWidget {
   }
 
   void _showDraftDialog(
-      BuildContext context, WidgetRef ref, List<String?> draftContents) {
+    BuildContext context,
+    WidgetRef ref,
+    List<String?> draftContents,
+  ) {
     FocusScope.of(context).unfocus();
     Future.delayed(const Duration(milliseconds: 200), () {
       showModalBottomSheet<void>(
@@ -162,11 +165,13 @@ class ReconciliationCard extends ConsumerWidget {
                   if (e is DioException) {
                     if (e.response?.statusCode == 404) {
                       debugPrint(
-                          '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 무시)');
+                        '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 무시)',
+                      );
                       continue;
                     } else {
                       debugPrint(
-                          '드래프트 삭제 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}');
+                        '드래프트 삭제 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}',
+                      );
                     }
                   } else {
                     debugPrint('드래프트 삭제 실패 - order: $draftOrder, Error: $e');
@@ -174,15 +179,18 @@ class ReconciliationCard extends ConsumerWidget {
                 }
               }
               Navigator.pop(context);
-              context.pushNamed('/sendLetter', extra: {
-                'draftContents': List.filled(4, ''),
-              });
+
+              context.pushNamed(
+                'sendLetter',
+                extra: {'draftContents': List.filled(4, '')},
+              );
             },
             onSave: () async {
               Navigator.pop(context);
-              context.pushNamed('/sendLetter', extra: {
-                'draftContents': draftContents,
-              });
+              context.pushNamed(
+                'sendLetter',
+                extra: {'draftContents': draftContents},
+              );
             },
             onDismiss: () => Navigator.pop(context),
           );

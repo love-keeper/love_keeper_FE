@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:love_keeper_fe/features/members/data/repositories/members_repository_impl.dart';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart'; // 일반 class 임포트
+import 'package:love_keeper/features/members/data/repositories/members_repository_impl.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart'; // 일반 class 임포트
 
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/repositories/members_repository.dart';
@@ -52,12 +52,18 @@ class MembersViewModel extends _$MembersViewModel {
     }
   }
 
-  Future<String> updatePassword(String currentPassword, String newPassword,
-      String newPasswordConfirm) async {
+  Future<String> updatePassword(
+    String currentPassword,
+    String newPassword,
+    String newPasswordConfirm,
+  ) async {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.updatePassword(
-          currentPassword, newPassword, newPasswordConfirm);
+        currentPassword,
+        newPassword,
+        newPasswordConfirm,
+      );
       state = AsyncValue.data(state.value);
       return result;
     } catch (e, stackTrace) {

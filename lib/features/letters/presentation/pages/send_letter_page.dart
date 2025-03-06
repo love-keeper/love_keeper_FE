@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/letters/presentation/viewmodels/letters_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/viewmodels/members_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/line_painter.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/letter_preview.dart';
-import 'package:love_keeper_fe/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
-import 'package:love_keeper_fe/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
-import 'package:love_keeper_fe/features/letters/data/letter_texts.dart';
+import 'package:love_keeper/features/letters/presentation/viewmodels/letters_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/line_painter.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/letter_preview.dart';
+import 'package:love_keeper/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
+import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/letters/data/letter_texts.dart';
 import 'package:dio/dio.dart';
 
 class SendLetterPage extends ConsumerStatefulWidget {
@@ -98,19 +98,22 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
   Future<void> _sendLetter() async {
     final memberInfoState = ref.watch(membersViewModelProvider);
     if (memberInfoState is AsyncLoading) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('사용자 정보를 불러오는 중입니다.')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('사용자 정보를 불러오는 중입니다.')));
       return;
     }
     if (memberInfoState is AsyncError) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('사용자 정보를 불러오지 못했습니다.')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('사용자 정보를 불러오지 못했습니다.')));
       return;
     }
     final memberInfo = (memberInfoState as AsyncData<MemberInfo?>).value;
     if (memberInfo == null) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('사용자 정보를 찾을 수 없습니다.')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('사용자 정보를 찾을 수 없습니다.')));
       return;
     }
     final userName = memberInfo.nickname;
@@ -121,17 +124,21 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
           .read(lettersViewModelProvider.notifier)
           .createLetter(letterContent);
       if (result.contains("성공")) {
-        context.pushNamed('sendLetterScreen', extra: {
-          'letterData': {
-            'sender': userName,
-            'receiver': partnerName,
-            'content': letterContent,
+        context.pushNamed(
+          'sendLetterScreen',
+          extra: {
+            'letterData': {
+              'sender': userName,
+              'receiver': partnerName,
+              'content': letterContent,
+            },
           },
-        });
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('편지 전송 실패: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('편지 전송 실패: $e')));
     }
   }
 
@@ -152,16 +159,24 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
       } catch (e) {
         if (e is DioException) {
           if (e.response?.statusCode == 400) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('드래프트 저장 실패: draftOrder는 1 이상이어야 합니다.')));
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('드래프트 저장 실패: draftOrder는 1 이상이어야 합니다.'),
+              ),
+            );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
                 content: Text(
-                    '임시저장 실패 (step $step): ${e.response?.statusCode} - ${e.message}')));
+                  '임시저장 실패 (step $step): ${e.response?.statusCode} - ${e.message}',
+                ),
+              ),
+            );
           }
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('임시저장 실패 (step $step): $e')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('임시저장 실패 (step $step): $e')));
         }
       }
     }
@@ -265,18 +280,21 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
   Widget build(BuildContext context) {
     final double scaleFactor = MediaQuery.of(context).size.width / 375.0;
     final List<double> lineLengths = getLineLengths(currentStep);
-    final String previewContent =
-        stepTexts.where((text) => text.isNotEmpty).join(' ');
+    final String previewContent = stepTexts
+        .where((text) => text.isNotEmpty)
+        .join(' ');
     final state = ref.watch(lettersViewModelProvider);
     final memberInfoState = ref.watch(membersViewModelProvider);
 
     if (isPreview) {
-      final userName = memberInfoState is AsyncData<MemberInfo?>
-          ? memberInfoState.value?.nickname ?? '나'
-          : '나';
-      final partnerName = memberInfoState is AsyncData<MemberInfo?>
-          ? memberInfoState.value?.coupleNickname ?? '상대방'
-          : '상대방';
+      final userName =
+          memberInfoState is AsyncData<MemberInfo?>
+              ? memberInfoState.value?.nickname ?? '나'
+              : '나';
+      final partnerName =
+          memberInfoState is AsyncData<MemberInfo?>
+              ? memberInfoState.value?.coupleNickname ?? '상대방'
+              : '상대방';
       return Scaffold(
         body: LetterPreview(
           partnerName: partnerName,
@@ -363,40 +381,47 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
                               return Row(
                                 children: [
                                   Container(
-                                    width: index == currentStep
-                                        ? 20.0 * scaleFactor
-                                        : 10.0 * scaleFactor,
-                                    height: index == currentStep
-                                        ? 20.0 * scaleFactor
-                                        : 10.0 * scaleFactor,
+                                    width:
+                                        index == currentStep
+                                            ? 20.0 * scaleFactor
+                                            : 10.0 * scaleFactor,
+                                    height:
+                                        index == currentStep
+                                            ? 20.0 * scaleFactor
+                                            : 10.0 * scaleFactor,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: index < currentStep
-                                          ? const Color(0xFFCCCCCC)
-                                          : index == currentStep
+                                      color:
+                                          index < currentStep
+                                              ? const Color(0xFFCCCCCC)
+                                              : index == currentStep
                                               ? const Color(0xFFFF859B)
                                               : Colors.transparent,
                                       border: Border.all(
-                                        color: index == currentStep
-                                            ? const Color(0xFFFF859B)
-                                            : const Color(0xFFC3C6CF),
+                                        color:
+                                            index == currentStep
+                                                ? const Color(0xFFFF859B)
+                                                : const Color(0xFFC3C6CF),
                                         width: 2.0 * scaleFactor,
                                       ),
                                     ),
                                     child: Center(
-                                      child: index == currentStep
-                                          ? Text(
-                                              '${index + 1}',
-                                              style: TextStyle(
-                                                fontSize: 12.0 * scaleFactor,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white,
-                                                height: 12 / (12 * scaleFactor),
-                                                letterSpacing:
-                                                    -0.025 * (12 * scaleFactor),
-                                              ),
-                                            )
-                                          : const SizedBox.shrink(),
+                                      child:
+                                          index == currentStep
+                                              ? Text(
+                                                '${index + 1}',
+                                                style: TextStyle(
+                                                  fontSize: 12.0 * scaleFactor,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                  height:
+                                                      12 / (12 * scaleFactor),
+                                                  letterSpacing:
+                                                      -0.025 *
+                                                      (12 * scaleFactor),
+                                                ),
+                                              )
+                                              : const SizedBox.shrink(),
                                     ),
                                   ),
                                   if (index < 3)
@@ -443,24 +468,27 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
                               ),
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(12.0 * scaleFactor),
+                                  borderRadius: BorderRadius.circular(
+                                    12.0 * scaleFactor,
+                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                     color: Colors.transparent,
                                     width: 0.0,
                                   ),
-                                  borderRadius:
-                                      BorderRadius.circular(12.0 * scaleFactor),
+                                  borderRadius: BorderRadius.circular(
+                                    12.0 * scaleFactor,
+                                  ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
                                     color: Colors.transparent,
                                     width: 0.0,
                                   ),
-                                  borderRadius:
-                                      BorderRadius.circular(12.0 * scaleFactor),
+                                  borderRadius: BorderRadius.circular(
+                                    12.0 * scaleFactor,
+                                  ),
                                 ),
                                 contentPadding: const EdgeInsets.all(0.0),
                                 hintText: '이곳을 눌러 답변을 입력해주세요.',
@@ -483,32 +511,37 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
                               width: 335.0 * scaleFactor,
                               height: 52.0 * scaleFactor,
                               child: ElevatedButton(
-                                onPressed: state.isLoading || !_isButtonActive
-                                    ? null
-                                    : _nextStep,
+                                onPressed:
+                                    state.isLoading || !_isButtonActive
+                                        ? null
+                                        : _nextStep,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _isButtonActive
-                                      ? const Color(0xFFFF859B)
-                                      : const Color(0xFFC3C6CF),
+                                  backgroundColor:
+                                      _isButtonActive
+                                          ? const Color(0xFFFF859B)
+                                          : const Color(0xFFC3C6CF),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
-                                        26.0 * scaleFactor),
+                                      26.0 * scaleFactor,
+                                    ),
                                   ),
                                 ),
-                                child: state.isLoading
-                                    ? const CircularProgressIndicator(
-                                        color: Colors.white)
-                                    : Text(
-                                        getButtonText(),
-                                        style: TextStyle(
-                                          fontSize: 16.0 * scaleFactor,
-                                          fontWeight: FontWeight.w600,
+                                child:
+                                    state.isLoading
+                                        ? const CircularProgressIndicator(
                                           color: Colors.white,
-                                          height: 24 / (16 * scaleFactor),
-                                          letterSpacing:
-                                              -0.025 * (16 * scaleFactor),
+                                        )
+                                        : Text(
+                                          getButtonText(),
+                                          style: TextStyle(
+                                            fontSize: 16.0 * scaleFactor,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            height: 24 / (16 * scaleFactor),
+                                            letterSpacing:
+                                                -0.025 * (16 * scaleFactor),
+                                          ),
                                         ),
-                                      ),
                               ),
                             ),
                           ),

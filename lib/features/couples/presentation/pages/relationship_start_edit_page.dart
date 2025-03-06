@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper_fe/features/couples/presentation/viewmodels/couples_viewmodel.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/edit_field_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/save_button_widget.dart';
-import 'package:love_keeper_fe/features/members/presentation/widgets/date_text_input_formatter.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/date_text_input_formatter.dart';
 
 class RelationshipStartEditPage extends ConsumerStatefulWidget {
   const RelationshipStartEditPage({super.key});
@@ -64,14 +64,15 @@ class _RelationshipStartEditPageState
       setState(() {
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('날짜 업데이트 실패: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('날짜 업데이트 실패: $e')));
     }
   }
 
-  final RegExp relationshipdateRegex =
-      RegExp(r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$');
+  final RegExp relationshipdateRegex = RegExp(
+    r'^\d{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$',
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +81,13 @@ class _RelationshipStartEditPageState
     final double scaleFactor = deviceWidth / baseWidth;
     final bool hasText = _relationshipStartController.text.isNotEmpty;
 
-    final String guideMessage = hasText &&
-            !relationshipdateRegex.hasMatch(_relationshipStartController.text)
-        ? '유효한 날짜 형식(YYYY.MM.DD)을 입력해 주세요'
-        : '';
+    final String guideMessage =
+        hasText &&
+                !relationshipdateRegex.hasMatch(
+                  _relationshipStartController.text,
+                )
+            ? '유효한 날짜 형식(YYYY.MM.DD)을 입력해 주세요'
+            : '';
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
@@ -132,9 +136,7 @@ class _RelationshipStartEditPageState
                     ),
                   ),
                   if (_isLoading)
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    const Center(child: CircularProgressIndicator()),
                 ],
               ),
             ),

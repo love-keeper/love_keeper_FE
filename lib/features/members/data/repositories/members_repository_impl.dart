@@ -1,8 +1,8 @@
 import 'dart:io';
-import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/features/members/data/models/request/send_email_code_request.dart';
-import 'package:love_keeper_fe/features/members/data/models/request/verify_email_code_request.dart';
-import 'package:love_keeper_fe/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
+import 'package:love_keeper/features/members/data/models/request/send_email_code_request.dart';
+import 'package:love_keeper/features/members/data/models/request/verify_email_code_request.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -51,8 +51,11 @@ class MembersRepositoryImpl implements MembersRepository {
   }
 
   @override
-  Future<String> updatePassword(String currentPassword, String newPassword,
-      String newPasswordConfirm) async {
+  Future<String> updatePassword(
+    String currentPassword,
+    String newPassword,
+    String newPasswordConfirm,
+  ) async {
     final request = UpdatePasswordRequest(
       currentPassword: currentPassword,
       newPassword: newPassword,
