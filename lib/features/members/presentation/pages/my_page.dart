@@ -419,51 +419,49 @@ class _MyPageState extends ConsumerState<MyPage> {
             child: SingleChildScrollView(
               padding: EdgeInsets.only(top: 16 * scaleFactor),
               child: memberState.when(
-                data:
-                    (memberInfo) => Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: ClipOval(
-                            child:
-                                _profileImage != null
-                                    ? Image.file(
-                                      _profileImage!,
-                                      width: 84 * scaleFactor,
-                                      height: 84 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                    )
-                                    : Image.asset(
-                                      _defaultImagePath,
-                                      width: 84 * scaleFactor,
-                                      height: 84 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                    ),
-                          ),
-                        ),
-                        SizedBox(height: 30 * scaleFactor),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20 * scaleFactor,
-                          ),
-                          child: _buildInfoSection(scaleFactor, memberInfo),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                        Container(
-                          width: deviceWidth,
-                          height: 16 * scaleFactor,
-                          color: const Color(0xFFF7F8FB),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20 * scaleFactor,
-                          ),
-                          child: _buildMenuSection(scaleFactor),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                      ],
+                data: (memberInfo) => Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: ClipOval(
+                        child: _profileImage != null
+                            ? Image.file(
+                                _profileImage!,
+                                width: 84 * scaleFactor,
+                                height: 84 * scaleFactor,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                _defaultImagePath,
+                                width: 84 * scaleFactor,
+                                height: 84 * scaleFactor,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
                     ),
+                    SizedBox(height: 30 * scaleFactor),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20 * scaleFactor,
+                      ),
+                      child: _buildInfoSection(scaleFactor, memberInfo),
+                    ),
+                    SizedBox(height: 16 * scaleFactor),
+                    Container(
+                      width: deviceWidth,
+                      height: 16 * scaleFactor,
+                      color: const Color(0xFFF7F8FB),
+                    ),
+                    SizedBox(height: 16 * scaleFactor),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20 * scaleFactor,
+                      ),
+                      child: _buildMenuSection(scaleFactor),
+                    ),
+                    SizedBox(height: 16 * scaleFactor),
+                  ],
+                ),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
