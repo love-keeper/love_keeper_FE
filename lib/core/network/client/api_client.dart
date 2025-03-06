@@ -44,7 +44,7 @@ abstract class ApiClient {
       @Body() EmailDuplicationRequest request);
 
   @POST('/api/auth/reissue')
-  Future<ApiResponse<String>> reissue(@Body() String refreshToken);
+  Future<ApiResponse<String>> reissue(@Body() Map<String, dynamic> data);
 
   @MultiPart()
   @POST('/api/auth/signup')
@@ -194,9 +194,10 @@ abstract class ApiClient {
 
   // CALENDARS
 
-  @GET('/api/calendar')
+  @GET('/api/calendar') // 엔드포인트는 실제 백엔드에 맞게 조정
   Future<ApiResponse<CalendarResponse>> getCalendar(
     @Query('year') int year,
     @Query('month') int month,
+    @Query('day') int? day,
   );
 }

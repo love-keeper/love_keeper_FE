@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../network/client/api_client.dart';
+import 'package:love_keeper_fe/core/network/client/api_client.dart';
 
 part 'dio_module.g.dart';
 
 @Riverpod(keepAlive: true)
-Dio dio(DioRef ref) {
+ApiClient apiClient(ApiClientRef ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'https://lovekeeper.site',
@@ -23,14 +23,12 @@ Dio dio(DioRef ref) {
         final accessToken = prefs.getString('access_token');
         print('Requesting with Access Token: $accessToken for ${options.path}');
 
-        // /api/auth로 시작하는 경로 중 /api/auth/logout만 토큰 추가
         if (accessToken != null &&
             (options.path == '/api/auth/logout' ||
                 !options.path.startsWith('/api/auth'))) {
           options.headers['Authorization'] = 'Bearer $accessToken';
         }
 
-        // /api/auth/reissue 요청 시 refresh_token을 Cookie로 추가
         if (options.path == '/api/auth/reissue') {
           final refreshToken = prefs.getString('refresh_token');
           if (refreshToken != null) {
@@ -67,10 +65,12 @@ Dio dio(DioRef ref) {
           final refreshToken = prefs.getString('refresh_token');
           if (refreshToken != null) {
             try {
-              final apiClient = ref.read(apiClientProvider);
-              final response = await apiClient.reissue(refreshToken);
+              final response = await dio.post(
+                'https://lovekeeper.site/api/auth/reissue',
+                data: {'refreshToken': refreshToken},
+              );
               final newAccessToken =
-                  response.result; // '토큰 재발급 성공'이 아닌 헤더에서 가져옴
+                  response.data['result'] as String?; // 타입 명시
               if (newAccessToken != null) {
                 await prefs.setString('access_token', newAccessToken);
                 final options = error.requestOptions;
@@ -109,11 +109,5 @@ Dio dio(DioRef ref) {
     logPrint: print,
   ));
 
-  return dio;
-}
-
-@Riverpod(keepAlive: true)
-ApiClient apiClient(ApiClientRef ref) {
-  final dio = ref.watch(dioProvider);
   return ApiClient(dio);
 }

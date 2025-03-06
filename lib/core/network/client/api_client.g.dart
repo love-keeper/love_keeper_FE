@@ -61,11 +61,12 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<String>> reissue(String refreshToken) async {
+  Future<ApiResponse<String>> reissue(Map<String, dynamic> data) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = refreshToken;
+    final _data = <String, dynamic>{};
+    _data.addAll(data);
     final _options = _setStreamType<ApiResponse<String>>(Options(
       method: 'POST',
       headers: _headers,
@@ -1407,12 +1408,15 @@ class _ApiClient implements ApiClient {
   Future<ApiResponse<CalendarResponse>> getCalendar(
     int year,
     int month,
+    int? day,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'year': year,
       r'month': month,
+      r'day': day,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse<CalendarResponse>>(Options(

@@ -1,6 +1,6 @@
-import 'package:love_keeper_fe/features/calendar/damain/entities/calendar.dart';
-import 'package:love_keeper_fe/features/calendar/damain/repositories/calendar_repository.dart';
-import 'package:love_keeper_fe/features/calendar/data/repositories/calendar_repository_impl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:love_keeper_fe/features/calendar/domain/entities/calendar.dart';
+import 'package:love_keeper_fe/features/calendar/domain/repositories/calendar_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'calendar_viewmodel.g.dart';
@@ -15,10 +15,10 @@ class CalendarViewModel extends _$CalendarViewModel {
     return const AsyncValue.data(null);
   }
 
-  Future<Calendar> getCalendar(int year, int month) async {
+  Future<Calendar> getCalendar(int year, int month, [int? day]) async {
     state = const AsyncValue.loading();
     try {
-      final calendar = await _repository.getCalendar(year, month);
+      final calendar = await _repository.getCalendar(year, month, day);
       state = AsyncValue.data(calendar);
       return calendar;
     } catch (e, stackTrace) {

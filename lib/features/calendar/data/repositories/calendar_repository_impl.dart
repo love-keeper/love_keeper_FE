@@ -1,41 +1,26 @@
 import 'package:love_keeper_fe/core/network/client/api_client.dart';
-import 'package:love_keeper_fe/features/calendar/damain/entities/calendar.dart';
-import 'package:love_keeper_fe/features/calendar/damain/entities/calendar_item.dart';
-import 'package:love_keeper_fe/features/calendar/damain/repositories/calendar_repository.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../core/config/di/dio_module.dart';
-import '../../../../core/models/api_response.dart';
-
-part 'calendar_repository_impl.g.dart';
+import 'package:love_keeper_fe/features/calendar/domain/entities/calendar.dart';
+import 'package:love_keeper_fe/features/calendar/data/models/response/calendar_response.dart';
+import 'package:love_keeper_fe/features/calendar/domain/repositories/calendar_repository.dart';
 
 class CalendarRepositoryImpl implements CalendarRepository {
-  final ApiClient apiClient;
+  final ApiClient _apiClient;
 
-  CalendarRepositoryImpl(this.apiClient);
+  CalendarRepositoryImpl(this._apiClient);
 
   @override
-  Future<Calendar> getCalendar(int year, int month) async {
-    final response = await apiClient.getCalendar(year, month);
-    _handleResponse(response);
-    return Calendar(
-      letters: response.result!.letters
-          .map((e) => CalendarItem(date: e.date, count: e.count))
-          .toList(),
-      promises: response.result!.promises
-          .map((e) => CalendarItem(date: e.date, count: e.count))
-          .toList(),
-    );
-  }
-
-  void _handleResponse(ApiResponse response) {
-    if (response.code != 'COMMON200') {
-      throw Exception('${response.code}: ${response.message}');
+  Future<Calendar> getCalendar(int year, int month, int? day) async {
+    try {
+      print('Fetching calendar for $year-$month${day != null ? '-$day' : ''}');
+      final response = await _apiClient.getCalendar(year, month, day);
+      print('Response received: ${response.toString()}');
+      if (response.result == null) {
+        throw Exception('Calendar data not found in response');
+      }
+      return Calendar.fromResponse(response.result!);
+    } catch (e) {
+      print('Failed to fetch calendar: $e');
+      rethrow;
     }
   }
-}
-
-@riverpod
-CalendarRepository calendarRepository(CalendarRepositoryRef ref) {
-  final apiClient = ref.watch(apiClientProvider);
-  return CalendarRepositoryImpl(apiClient);
 }

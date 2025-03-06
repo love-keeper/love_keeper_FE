@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'calendar_response.dart';
+part of 'calendar.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -14,12 +14,8 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-CalendarResponse _$CalendarResponseFromJson(Map<String, dynamic> json) {
-  return _CalendarResponse.fromJson(json);
-}
-
 /// @nodoc
-mixin _$CalendarResponse {
+mixin _$Calendar {
   List<CalendarItemResponse> get letters => throw _privateConstructorUsedError;
   List<CalendarItemResponse> get promises => throw _privateConstructorUsedError;
   int get totalLetterCount => throw _privateConstructorUsedError;
@@ -27,17 +23,15 @@ mixin _$CalendarResponse {
   int get dailyLetterCount => throw _privateConstructorUsedError;
   int get dailyPromiseCount => throw _privateConstructorUsedError;
 
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $CalendarResponseCopyWith<CalendarResponse> get copyWith =>
+  $CalendarCopyWith<Calendar> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $CalendarResponseCopyWith<$Res> {
-  factory $CalendarResponseCopyWith(
-          CalendarResponse value, $Res Function(CalendarResponse) then) =
-      _$CalendarResponseCopyWithImpl<$Res, CalendarResponse>;
+abstract class $CalendarCopyWith<$Res> {
+  factory $CalendarCopyWith(Calendar value, $Res Function(Calendar) then) =
+      _$CalendarCopyWithImpl<$Res, Calendar>;
   @useResult
   $Res call(
       {List<CalendarItemResponse> letters,
@@ -49,9 +43,9 @@ abstract class $CalendarResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$CalendarResponseCopyWithImpl<$Res, $Val extends CalendarResponse>
-    implements $CalendarResponseCopyWith<$Res> {
-  _$CalendarResponseCopyWithImpl(this._value, this._then);
+class _$CalendarCopyWithImpl<$Res, $Val extends Calendar>
+    implements $CalendarCopyWith<$Res> {
+  _$CalendarCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -98,11 +92,11 @@ class _$CalendarResponseCopyWithImpl<$Res, $Val extends CalendarResponse>
 }
 
 /// @nodoc
-abstract class _$$CalendarResponseImplCopyWith<$Res>
-    implements $CalendarResponseCopyWith<$Res> {
-  factory _$$CalendarResponseImplCopyWith(_$CalendarResponseImpl value,
-          $Res Function(_$CalendarResponseImpl) then) =
-      __$$CalendarResponseImplCopyWithImpl<$Res>;
+abstract class _$$CalendarImplCopyWith<$Res>
+    implements $CalendarCopyWith<$Res> {
+  factory _$$CalendarImplCopyWith(
+          _$CalendarImpl value, $Res Function(_$CalendarImpl) then) =
+      __$$CalendarImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -115,11 +109,11 @@ abstract class _$$CalendarResponseImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$CalendarResponseImplCopyWithImpl<$Res>
-    extends _$CalendarResponseCopyWithImpl<$Res, _$CalendarResponseImpl>
-    implements _$$CalendarResponseImplCopyWith<$Res> {
-  __$$CalendarResponseImplCopyWithImpl(_$CalendarResponseImpl _value,
-      $Res Function(_$CalendarResponseImpl) _then)
+class __$$CalendarImplCopyWithImpl<$Res>
+    extends _$CalendarCopyWithImpl<$Res, _$CalendarImpl>
+    implements _$$CalendarImplCopyWith<$Res> {
+  __$$CalendarImplCopyWithImpl(
+      _$CalendarImpl _value, $Res Function(_$CalendarImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -132,7 +126,7 @@ class __$$CalendarResponseImplCopyWithImpl<$Res>
     Object? dailyLetterCount = null,
     Object? dailyPromiseCount = null,
   }) {
-    return _then(_$CalendarResponseImpl(
+    return _then(_$CalendarImpl(
       letters: null == letters
           ? _value._letters
           : letters // ignore: cast_nullable_to_non_nullable
@@ -162,9 +156,9 @@ class __$$CalendarResponseImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$CalendarResponseImpl implements _CalendarResponse {
-  const _$CalendarResponseImpl(
+
+class _$CalendarImpl implements _Calendar {
+  const _$CalendarImpl(
       {required final List<CalendarItemResponse> letters,
       required final List<CalendarItemResponse> promises,
       required this.totalLetterCount,
@@ -173,9 +167,6 @@ class _$CalendarResponseImpl implements _CalendarResponse {
       required this.dailyPromiseCount})
       : _letters = letters,
         _promises = promises;
-
-  factory _$CalendarResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$CalendarResponseImplFromJson(json);
 
   final List<CalendarItemResponse> _letters;
   @override
@@ -204,14 +195,14 @@ class _$CalendarResponseImpl implements _CalendarResponse {
 
   @override
   String toString() {
-    return 'CalendarResponse(letters: $letters, promises: $promises, totalLetterCount: $totalLetterCount, totalPromiseCount: $totalPromiseCount, dailyLetterCount: $dailyLetterCount, dailyPromiseCount: $dailyPromiseCount)';
+    return 'Calendar(letters: $letters, promises: $promises, totalLetterCount: $totalLetterCount, totalPromiseCount: $totalPromiseCount, dailyLetterCount: $dailyLetterCount, dailyPromiseCount: $dailyPromiseCount)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$CalendarResponseImpl &&
+            other is _$CalendarImpl &&
             const DeepCollectionEquality().equals(other._letters, _letters) &&
             const DeepCollectionEquality().equals(other._promises, _promises) &&
             (identical(other.totalLetterCount, totalLetterCount) ||
@@ -224,7 +215,6 @@ class _$CalendarResponseImpl implements _CalendarResponse {
                 other.dailyPromiseCount == dailyPromiseCount));
   }
 
-  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -238,29 +228,18 @@ class _$CalendarResponseImpl implements _CalendarResponse {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$CalendarResponseImplCopyWith<_$CalendarResponseImpl> get copyWith =>
-      __$$CalendarResponseImplCopyWithImpl<_$CalendarResponseImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$CalendarResponseImplToJson(
-      this,
-    );
-  }
+  _$$CalendarImplCopyWith<_$CalendarImpl> get copyWith =>
+      __$$CalendarImplCopyWithImpl<_$CalendarImpl>(this, _$identity);
 }
 
-abstract class _CalendarResponse implements CalendarResponse {
-  const factory _CalendarResponse(
+abstract class _Calendar implements Calendar {
+  const factory _Calendar(
       {required final List<CalendarItemResponse> letters,
       required final List<CalendarItemResponse> promises,
       required final int totalLetterCount,
       required final int totalPromiseCount,
       required final int dailyLetterCount,
-      required final int dailyPromiseCount}) = _$CalendarResponseImpl;
-
-  factory _CalendarResponse.fromJson(Map<String, dynamic> json) =
-      _$CalendarResponseImpl.fromJson;
+      required final int dailyPromiseCount}) = _$CalendarImpl;
 
   @override
   List<CalendarItemResponse> get letters;
@@ -276,6 +255,6 @@ abstract class _CalendarResponse implements CalendarResponse {
   int get dailyPromiseCount;
   @override
   @JsonKey(ignore: true)
-  _$$CalendarResponseImplCopyWith<_$CalendarResponseImpl> get copyWith =>
+  _$$CalendarImplCopyWith<_$CalendarImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
