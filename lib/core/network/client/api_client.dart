@@ -8,6 +8,7 @@ import 'package:love_keeper/features/couples/data/models/request/update_start_da
 import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper/features/drafts/data/models/request/create_draft_request.dart';
 import 'package:love_keeper/features/drafts/data/models/response/draft_response.dart';
+import 'package:love_keeper/features/fcm/data/models/fcm_models.dart';
 import 'package:love_keeper/features/letters/data/models/request/create_letter_request.dart';
 import 'package:love_keeper/features/letters/data/models/response/letter_list_response.dart';
 import 'package:love_keeper/features/members/data/models/request/send_email_code_request.dart';
@@ -215,4 +216,15 @@ abstract class ApiClient {
     @Query('month') int month,
     @Query('day') int? day,
   );
+
+  // FCM
+
+  @POST('/api/fcm/token')
+  Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
+
+  @DELETE('/api/fcm/token')
+  Future<ApiResponse<String>> removeFCMToken(@Body() FCMTokenRequest request);
+
+  @GET('/api/fcm/notifications')
+  Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications();
 }
