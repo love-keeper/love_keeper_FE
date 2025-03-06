@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -23,7 +24,9 @@ class _MyPageState extends ConsumerState<MyPage> {
   @override
   void initState() {
     super.initState();
-    ref.read(membersViewModelProvider.notifier); // 초기 데이터는 build에서 로드
+    Future(() {
+      ref.read(membersViewModelProvider.notifier).fetchMemberInfo();
+    });
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -131,13 +134,16 @@ class _MyPageState extends ConsumerState<MyPage> {
                                 onTap: () {
                                   Navigator.pop(dialogContext);
                                   setState(() {
-                                    _profileImage = null;
+                                    _profileImage = null; // 로컬 초기화
                                   });
                                   ref
                                       .read(membersViewModelProvider.notifier)
-                                      .updateProfileImage(
-                                        File(_defaultImagePath),
-                                      );
+                                      .updateProfileImage(null) // 서버에 null 전달
+                                      .then((_) {
+                                    print('Profile image set to default');
+                                  }).catchError((e) {
+                                    print('Error setting default image: $e');
+                                  });
                                 },
                                 child: Container(
                                   width: 168 * scaleFactor,
@@ -217,12 +223,17 @@ class _MyPageState extends ConsumerState<MyPage> {
       source: ImageSource.gallery,
     );
     if (pickedFile != null) {
+      final newImage = File(pickedFile.path);
       setState(() {
-        _profileImage = File(pickedFile.path);
+        _profileImage = newImage;
       });
-      await ref
-          .read(membersViewModelProvider.notifier)
-          .updateProfileImage(_profileImage!);
+      try {
+        await ref
+            .read(membersViewModelProvider.notifier)
+            .updateProfileImage(newImage);
+      } catch (e) {
+        print('Error updating profile image: $e');
+      }
     }
   }
 
@@ -243,22 +254,8 @@ class _MyPageState extends ConsumerState<MyPage> {
           onTap: () => context.push('/birthdate'),
         ),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '연애 시작일',
-          memberInfo?.relationshipStartDate ?? '',
-          scaleFactor,
-          onTap: () => context.push('/relationship'),
-        ),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '이메일',
-          memberInfo?.email ?? '',
-          scaleFactor,
-          onTap: () => context.push('/emailEdit'),
-        ),
-        // SizedBox(height: 18 * scaleFactor),
-        // _buildBoxedRow(
-        //     '커플 닉네임', memberInfo?.coupleNickname ?? '', scaleFactor), // 추가
+        _buildBoxedRow('이메일', memberInfo?.email ?? '', scaleFactor,
+            onTap: () => context.push('/emailEdit')),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
           '비밀번호 변경',
@@ -419,51 +416,45 @@ class _MyPageState extends ConsumerState<MyPage> {
             child: SingleChildScrollView(
               padding: EdgeInsets.only(top: 16 * scaleFactor),
               child: memberState.when(
-                data:
-                    (memberInfo) => Column(
-                      children: [
-                        Align(
-                          alignment: Alignment.center,
-                          child: ClipOval(
-                            child:
-                                _profileImage != null
-                                    ? Image.file(
-                                      _profileImage!,
-                                      width: 84 * scaleFactor,
-                                      height: 84 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                    )
-                                    : Image.asset(
+                data: (memberInfo) => Column(
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: ClipOval(
+                        child: _profileImage != null
+                            ? Image.file(
+                                _profileImage!,
+                                width: 84 * scaleFactor,
+                                height: 84 * scaleFactor,
+                                fit: BoxFit.cover,
+                              )
+                            : memberInfo?.profileImageUrl != null &&
+                                    memberInfo!.profileImageUrl!.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: memberInfo.profileImageUrl!,
+                                    width: 84 * scaleFactor,
+                                    height: 84 * scaleFactor,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
                                       _defaultImagePath,
                                       width: 84 * scaleFactor,
                                       height: 84 * scaleFactor,
                                       fit: BoxFit.cover,
                                     ),
-                          ),
-                        ),
-                        SizedBox(height: 30 * scaleFactor),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20 * scaleFactor,
-                          ),
-                          child: _buildInfoSection(scaleFactor, memberInfo),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                        Container(
-                          width: deviceWidth,
-                          height: 16 * scaleFactor,
-                          color: const Color(0xFFF7F8FB),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20 * scaleFactor,
-                          ),
-                          child: _buildMenuSection(scaleFactor),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                      ],
+                                  )
+                                : Image.asset(
+                                    _defaultImagePath,
+                                    width: 84 * scaleFactor,
+                                    height: 84 * scaleFactor,
+                                    fit: BoxFit.cover,
+                                  ),
+                      ),
                     ),
+                  ],
+                ),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),

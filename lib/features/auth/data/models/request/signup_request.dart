@@ -10,6 +10,9 @@ class SignupRequest with _$SignupRequest {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed, // 필수 아님
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     String? profileImage,

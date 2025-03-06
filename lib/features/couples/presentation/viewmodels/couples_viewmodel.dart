@@ -1,4 +1,7 @@
-import 'package:love_keeper/features/couples/data/models/response/couple_info.dart';
+import 'dart:core';
+
+import 'package:dio/dio.dart';
+import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper/features/couples/data/repositories/couples_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/invite_code.dart';
@@ -11,16 +14,43 @@ class CouplesViewModel extends _$CouplesViewModel {
   late final CouplesRepository _repository;
 
   @override
-  AsyncValue<dynamic> build() {
+  AsyncValue<CoupleInfo?> build() {
     _repository = ref.watch(couplesRepositoryProvider);
-    return const AsyncValue.data(null);
+    // 초기 로드
+    Future.microtask(() => getCoupleInfo());
+    return const AsyncValue.loading(); // 초기 상태를 로딩으로 설정
+  }
+
+  Future<CoupleInfo> getCoupleInfo({bool forceRefresh = false}) async {
+    if (state.value != null && !forceRefresh) {
+      return state.value!;
+    }
+    state = const AsyncValue.loading();
+    try {
+      final coupleInfo = await _repository.getCoupleInfo();
+      state = AsyncValue.data(coupleInfo);
+      print('Fetched couple info: ${coupleInfo.startedAt}');
+      return coupleInfo;
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      print('Get couple info failed: $e');
+      rethrow;
+    }
+  }
+
+  String getDday() {
+    final coupleInfo = state.value;
+    if (coupleInfo == null || coupleInfo.startedAt.isEmpty) {
+      return '0'; // 기본값
+    }
+    final startedAt = DateTime.parse(coupleInfo.startedAt);
+    final days = DateTime.now().difference(startedAt).inDays + 1; // +1 추가
+    return '$days';
   }
 
   Future<InviteCode> generateCode() async {
-    state = const AsyncValue.loading();
     try {
       final inviteCode = await _repository.generateCode();
-      state = AsyncValue.data(inviteCode);
       return inviteCode;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -29,10 +59,9 @@ class CouplesViewModel extends _$CouplesViewModel {
   }
 
   Future<String> connect(String inviteCode) async {
-    state = const AsyncValue.loading();
     try {
       final result = await _repository.connect(inviteCode);
-      state = AsyncValue.data(result);
+      await getCoupleInfo(forceRefresh: true);
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -41,10 +70,8 @@ class CouplesViewModel extends _$CouplesViewModel {
   }
 
   Future<int> getDaysSinceStarted() async {
-    state = const AsyncValue.loading();
     try {
       final days = await _repository.getDaysSinceStarted();
-      state = AsyncValue.data(days);
       return days;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -52,53 +79,28 @@ class CouplesViewModel extends _$CouplesViewModel {
     }
   }
 
-  Future<String> getStartDate() async {
-    state = const AsyncValue.loading();
-    try {
-      final startDate = await _repository.getStartDate();
-      state = AsyncValue.data(startDate);
-      return startDate;
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-      rethrow;
-    }
-  }
-
   Future<String> updateStartDate(String newStartDate) async {
-    state = const AsyncValue.loading();
+    print('Updating start date: $newStartDate');
     try {
       final result = await _repository.updateStartDate(newStartDate);
-      state = AsyncValue.data(result);
+      // 강제로 최신 데이터 가져오기
+      final updatedCoupleInfo = await _repository.getCoupleInfo();
+      state = AsyncValue.data(updatedCoupleInfo);
+      print('Start date updated: ${updatedCoupleInfo.startedAt}');
       return result;
     } catch (e, stackTrace) {
+      print('Update failed: $e');
       state = AsyncValue.error(e, stackTrace);
       rethrow;
     }
   }
 
   Future<String> deleteCouple() async {
-    state = const AsyncValue.loading();
     try {
       final result = await _repository.deleteCouple();
-      state = AsyncValue.data(result);
+      state = const AsyncValue.data(null);
       return result;
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-      rethrow;
-    }
-  }
-
-  Future<CoupleInfo> getCoupleInfo() async {
-    state = const AsyncValue.loading();
-    try {
-      final coupleInfo = await _repository.getCoupleInfo();
-      print(
-        'Couple info retrieved successfully: ${coupleInfo.coupleId}, ${coupleInfo.partnerNickname}',
-      );
-      state = AsyncValue.data(coupleInfo);
-      return coupleInfo;
-    } catch (e, stackTrace) {
-      print('Failed to get couple info: $e, StackTrace: $stackTrace');
       state = AsyncValue.error(e, stackTrace);
       rethrow;
     }

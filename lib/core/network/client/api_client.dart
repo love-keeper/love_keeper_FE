@@ -5,10 +5,9 @@ import 'package:love_keeper/features/auth/data/models/request/email_duplication_
 import 'package:love_keeper/features/auth/data/models/response/send_code_response.dart';
 import 'package:love_keeper/features/calendar/data/models/response/calendar_response.dart';
 import 'package:love_keeper/features/couples/data/models/request/update_start_date_request.dart';
-import 'package:love_keeper/features/couples/data/models/response/couple_info.dart';
+import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper/features/drafts/data/models/request/create_draft_request.dart';
 import 'package:love_keeper/features/drafts/data/models/response/draft_response.dart';
-import 'package:love_keeper/features/fcm/data/models/fcm_models.dart';
 import 'package:love_keeper/features/letters/data/models/request/create_letter_request.dart';
 import 'package:love_keeper/features/letters/data/models/response/letter_list_response.dart';
 import 'package:love_keeper/features/members/data/models/request/send_email_code_request.dart';
@@ -46,7 +45,7 @@ abstract class ApiClient {
   );
 
   @POST('/api/auth/reissue')
-  Future<ApiResponse<String>> reissue(@Body() String refreshToken);
+  Future<ApiResponse<String>> reissue(@Body() Map<String, dynamic> data);
 
   @MultiPart()
   @POST('/api/auth/signup')
@@ -55,6 +54,9 @@ abstract class ApiClient {
     @Part(name: 'nickname') required String nickname,
     @Part(name: 'birthDate') required String birthDate,
     @Part(name: 'provider') required String provider,
+    @Part(name: 'privacyPolicyAgreed') required bool privacyPolicyAgreed,
+    @Part(name: 'marketingAgreed') bool? marketingAgreed, // 필수 아님
+    @Part(name: 'termsOfServiceAgreed') required bool termsOfServiceAgreed,
     @Part(name: 'password') String? password,
     @Part(name: 'providerId') String? providerId,
     @Part(name: 'profileImage') File? profileImage,
@@ -88,6 +90,8 @@ abstract class ApiClient {
   Future<ApiResponse<String>> checkToken(@Header('Authorization') String token);
 
   // COUPLES
+  @GET('/api/couples/info')
+  Future<ApiResponse<CoupleInfo>> getCoupleInfo();
 
   @POST('/api/couples/generate-code')
   Future<ApiResponse<InviteCodeResponse>> generateCode();
@@ -108,9 +112,6 @@ abstract class ApiClient {
 
   @DELETE('/api/couples')
   Future<ApiResponse<String>> deleteCouple();
-
-  @GET('/api/couples/info')
-  Future<ApiResponse<CoupleInfo>> getCoupleInfo();
 
   // MEMBERS
   @GET('/api/members/me')
@@ -208,20 +209,10 @@ abstract class ApiClient {
 
   // CALENDARS
 
-  @GET('/api/calendar')
+  @GET('/api/calendar') // 엔드포인트는 실제 백엔드에 맞게 조정
   Future<ApiResponse<CalendarResponse>> getCalendar(
     @Query('year') int year,
     @Query('month') int month,
+    @Query('day') int? day,
   );
-
-  // FCM
-
-  @POST('/api/fcm/token')
-  Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
-
-  @DELETE('/api/fcm/token')
-  Future<ApiResponse<String>> removeFCMToken(@Body() FCMTokenRequest request);
-
-  @GET('/api/fcm/notifications')
-  Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications();
 }

@@ -6,12 +6,12 @@ part of 'couples_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$couplesViewModelHash() => r'9c42426fd303ed885d911b0361604f76d0f8faec';
+String _$couplesViewModelHash() => r'44a88c5f30c1d72e12cebfc1851bf33858e17152';
 
 /// See also [CouplesViewModel].
 @ProviderFor(CouplesViewModel)
-final couplesViewModelProvider =
-    AutoDisposeNotifierProvider<CouplesViewModel, AsyncValue<dynamic>>.internal(
+final couplesViewModelProvider = AutoDisposeNotifierProvider<CouplesViewModel,
+    AsyncValue<CoupleInfo?>>.internal(
   CouplesViewModel.new,
   name: r'couplesViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,6 +21,6 @@ final couplesViewModelProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$CouplesViewModel = AutoDisposeNotifier<AsyncValue<dynamic>>;
+typedef _$CouplesViewModel = AutoDisposeNotifier<AsyncValue<CoupleInfo?>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

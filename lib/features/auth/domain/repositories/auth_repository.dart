@@ -8,6 +8,9 @@ abstract class AuthRepository {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed, // 필수 아님
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage, // File 타입으로 변경

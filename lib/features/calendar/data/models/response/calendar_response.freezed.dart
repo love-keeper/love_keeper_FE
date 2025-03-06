@@ -22,6 +22,10 @@ CalendarResponse _$CalendarResponseFromJson(Map<String, dynamic> json) {
 mixin _$CalendarResponse {
   List<CalendarItemResponse> get letters => throw _privateConstructorUsedError;
   List<CalendarItemResponse> get promises => throw _privateConstructorUsedError;
+  int get totalLetterCount => throw _privateConstructorUsedError;
+  int get totalPromiseCount => throw _privateConstructorUsedError;
+  int get dailyLetterCount => throw _privateConstructorUsedError;
+  int get dailyPromiseCount => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -37,7 +41,11 @@ abstract class $CalendarResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {List<CalendarItemResponse> letters,
-      List<CalendarItemResponse> promises});
+      List<CalendarItemResponse> promises,
+      int totalLetterCount,
+      int totalPromiseCount,
+      int dailyLetterCount,
+      int dailyPromiseCount});
 }
 
 /// @nodoc
@@ -55,6 +63,10 @@ class _$CalendarResponseCopyWithImpl<$Res, $Val extends CalendarResponse>
   $Res call({
     Object? letters = null,
     Object? promises = null,
+    Object? totalLetterCount = null,
+    Object? totalPromiseCount = null,
+    Object? dailyLetterCount = null,
+    Object? dailyPromiseCount = null,
   }) {
     return _then(_value.copyWith(
       letters: null == letters
@@ -65,6 +77,22 @@ class _$CalendarResponseCopyWithImpl<$Res, $Val extends CalendarResponse>
           ? _value.promises
           : promises // ignore: cast_nullable_to_non_nullable
               as List<CalendarItemResponse>,
+      totalLetterCount: null == totalLetterCount
+          ? _value.totalLetterCount
+          : totalLetterCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalPromiseCount: null == totalPromiseCount
+          ? _value.totalPromiseCount
+          : totalPromiseCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      dailyLetterCount: null == dailyLetterCount
+          ? _value.dailyLetterCount
+          : dailyLetterCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      dailyPromiseCount: null == dailyPromiseCount
+          ? _value.dailyPromiseCount
+          : dailyPromiseCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -79,7 +107,11 @@ abstract class _$$CalendarResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {List<CalendarItemResponse> letters,
-      List<CalendarItemResponse> promises});
+      List<CalendarItemResponse> promises,
+      int totalLetterCount,
+      int totalPromiseCount,
+      int dailyLetterCount,
+      int dailyPromiseCount});
 }
 
 /// @nodoc
@@ -95,6 +127,10 @@ class __$$CalendarResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? letters = null,
     Object? promises = null,
+    Object? totalLetterCount = null,
+    Object? totalPromiseCount = null,
+    Object? dailyLetterCount = null,
+    Object? dailyPromiseCount = null,
   }) {
     return _then(_$CalendarResponseImpl(
       letters: null == letters
@@ -105,6 +141,22 @@ class __$$CalendarResponseImplCopyWithImpl<$Res>
           ? _value._promises
           : promises // ignore: cast_nullable_to_non_nullable
               as List<CalendarItemResponse>,
+      totalLetterCount: null == totalLetterCount
+          ? _value.totalLetterCount
+          : totalLetterCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalPromiseCount: null == totalPromiseCount
+          ? _value.totalPromiseCount
+          : totalPromiseCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      dailyLetterCount: null == dailyLetterCount
+          ? _value.dailyLetterCount
+          : dailyLetterCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      dailyPromiseCount: null == dailyPromiseCount
+          ? _value.dailyPromiseCount
+          : dailyPromiseCount // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -114,7 +166,11 @@ class __$$CalendarResponseImplCopyWithImpl<$Res>
 class _$CalendarResponseImpl implements _CalendarResponse {
   const _$CalendarResponseImpl(
       {required final List<CalendarItemResponse> letters,
-      required final List<CalendarItemResponse> promises})
+      required final List<CalendarItemResponse> promises,
+      required this.totalLetterCount,
+      required this.totalPromiseCount,
+      required this.dailyLetterCount,
+      required this.dailyPromiseCount})
       : _letters = letters,
         _promises = promises;
 
@@ -138,8 +194,17 @@ class _$CalendarResponseImpl implements _CalendarResponse {
   }
 
   @override
+  final int totalLetterCount;
+  @override
+  final int totalPromiseCount;
+  @override
+  final int dailyLetterCount;
+  @override
+  final int dailyPromiseCount;
+
+  @override
   String toString() {
-    return 'CalendarResponse(letters: $letters, promises: $promises)';
+    return 'CalendarResponse(letters: $letters, promises: $promises, totalLetterCount: $totalLetterCount, totalPromiseCount: $totalPromiseCount, dailyLetterCount: $dailyLetterCount, dailyPromiseCount: $dailyPromiseCount)';
   }
 
   @override
@@ -148,7 +213,15 @@ class _$CalendarResponseImpl implements _CalendarResponse {
         (other.runtimeType == runtimeType &&
             other is _$CalendarResponseImpl &&
             const DeepCollectionEquality().equals(other._letters, _letters) &&
-            const DeepCollectionEquality().equals(other._promises, _promises));
+            const DeepCollectionEquality().equals(other._promises, _promises) &&
+            (identical(other.totalLetterCount, totalLetterCount) ||
+                other.totalLetterCount == totalLetterCount) &&
+            (identical(other.totalPromiseCount, totalPromiseCount) ||
+                other.totalPromiseCount == totalPromiseCount) &&
+            (identical(other.dailyLetterCount, dailyLetterCount) ||
+                other.dailyLetterCount == dailyLetterCount) &&
+            (identical(other.dailyPromiseCount, dailyPromiseCount) ||
+                other.dailyPromiseCount == dailyPromiseCount));
   }
 
   @JsonKey(ignore: true)
@@ -156,7 +229,11 @@ class _$CalendarResponseImpl implements _CalendarResponse {
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_letters),
-      const DeepCollectionEquality().hash(_promises));
+      const DeepCollectionEquality().hash(_promises),
+      totalLetterCount,
+      totalPromiseCount,
+      dailyLetterCount,
+      dailyPromiseCount);
 
   @JsonKey(ignore: true)
   @override
@@ -175,9 +252,12 @@ class _$CalendarResponseImpl implements _CalendarResponse {
 
 abstract class _CalendarResponse implements CalendarResponse {
   const factory _CalendarResponse(
-          {required final List<CalendarItemResponse> letters,
-          required final List<CalendarItemResponse> promises}) =
-      _$CalendarResponseImpl;
+      {required final List<CalendarItemResponse> letters,
+      required final List<CalendarItemResponse> promises,
+      required final int totalLetterCount,
+      required final int totalPromiseCount,
+      required final int dailyLetterCount,
+      required final int dailyPromiseCount}) = _$CalendarResponseImpl;
 
   factory _CalendarResponse.fromJson(Map<String, dynamic> json) =
       _$CalendarResponseImpl.fromJson;
@@ -186,6 +266,14 @@ abstract class _CalendarResponse implements CalendarResponse {
   List<CalendarItemResponse> get letters;
   @override
   List<CalendarItemResponse> get promises;
+  @override
+  int get totalLetterCount;
+  @override
+  int get totalPromiseCount;
+  @override
+  int get dailyLetterCount;
+  @override
+  int get dailyPromiseCount;
   @override
   @JsonKey(ignore: true)
   _$$CalendarResponseImplCopyWith<_$CalendarResponseImpl> get copyWith =>

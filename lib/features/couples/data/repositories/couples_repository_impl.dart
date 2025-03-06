@@ -1,5 +1,5 @@
 import 'package:love_keeper/core/network/client/api_client.dart';
-import 'package:love_keeper/features/couples/data/models/response/couple_info.dart';
+import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
@@ -14,6 +14,15 @@ class CouplesRepositoryImpl implements CouplesRepository {
   final ApiClient apiClient;
 
   CouplesRepositoryImpl(this.apiClient);
+
+  @override
+  Future<CoupleInfo> getCoupleInfo() async {
+    final response = await apiClient.getCoupleInfo();
+    if (response.result == null) {
+      throw Exception('Couple info not found');
+    }
+    return response.result!;
+  }
 
   @override
   Future<InviteCode> generateCode() async {
@@ -33,15 +42,19 @@ class CouplesRepositoryImpl implements CouplesRepository {
   @override
   Future<int> getDaysSinceStarted() async {
     final response = await apiClient.getDaysSinceStarted();
-    _handleResponse(response);
-    return response.result!;
+    if (response.result == null) {
+      throw Exception('Days since started not found');
+    }
+    return response.result!; // int 반환
   }
 
   @override
   Future<String> getStartDate() async {
     final response = await apiClient.getStartDate();
-    _handleResponse(response);
-    return response.result!;
+    if (response.result == null) {
+      throw Exception('Start date not found');
+    }
+    return response.result!; // String 반환
   }
 
   @override
@@ -57,21 +70,6 @@ class CouplesRepositoryImpl implements CouplesRepository {
     final response = await apiClient.deleteCouple();
     _handleResponse(response);
     return response.result!;
-  }
-
-  @override
-  Future<CoupleInfo> getCoupleInfo() async {
-    try {
-      final response = await apiClient.getCoupleInfo();
-      print(
-        'API Response - Code: ${response.code}, Message: ${response.message}, Result: ${response.result}',
-      );
-      _handleResponse(response);
-      return response.result!;
-    } catch (e) {
-      print('getCoupleInfo API call failed: $e');
-      rethrow;
-    }
   }
 
   void _handleResponse(ApiResponse response) {

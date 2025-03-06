@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:love_keeper/features/calendar/damain/entities/calendar.dart';
+import 'package:love_keeper/features/calendar/data/models/response/calendar_item_response.dart';
+import 'package:love_keeper/features/calendar/domain/entities/calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:love_keeper/features/calendar/presentation/viewmodels/calendar_viewmodel.dart';
 import 'package:love_keeper/features/calendar/presentation/widgets/event_popup.dart';
@@ -15,24 +16,17 @@ class CalendarPage extends ConsumerStatefulWidget {
 
 class _CalendarPageState extends ConsumerState<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
-  bool _isFirstLoad = true; // 첫 로드 여부를 추적
-
-  @override
-  void initState() {
-    super.initState();
-    // initState에서는 아무것도 하지 않음
-  }
+  bool _isFirstLoad = true;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_isFirstLoad) {
-      // 첫 로드 시에만 getCalendar 호출
       Future.microtask(
-        () => ref
-            .read(calendarViewModelProvider.notifier)
-            .getCalendar(_focusedDay.year, _focusedDay.month),
-      );
+          () => ref.read(calendarViewModelProvider.notifier).getCalendar(
+                _focusedDay.year,
+                _focusedDay.month,
+              )); // 초기 로드는 day 없이
       _isFirstLoad = false;
     }
   }
@@ -40,10 +34,10 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   @override
   Widget build(BuildContext context) {
     final calendarState = ref.watch(calendarViewModelProvider);
-    final List<DateTime> eventDates = calendarState.when(
-      data: (calendar) => calendar?.eventDates ?? [],
-      loading: () => [],
-      error: (error, stack) => [],
+    final calendar = calendarState.when(
+      data: (calendar) => calendar,
+      loading: () => null,
+      error: (error, stack) => null,
     );
 
     return Scaffold(
@@ -53,10 +47,8 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
         scrolledUnderElevation: 0,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: Color(0xFF27282C),
-          ),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Color(0xFF27282C)),
           onPressed: () => context.pop(),
         ),
         title: const Text(
@@ -141,20 +133,20 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                               ],
                             ),
                             const SizedBox(height: 9),
-                            const Row(
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 Text(
-                                  '편지 10건',
-                                  style: TextStyle(
+                                  '편지 ${calendar?.totalLetterCount ?? 0}건',
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF747784),
                                   ),
                                 ),
                                 Text(
-                                  '약속 4건',
-                                  style: TextStyle(
+                                  '약속 ${calendar?.totalPromiseCount ?? 0}건',
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF747784),
@@ -170,9 +162,8 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                         left: 0,
                         right: 0,
                         child: Divider(
-                          thickness: 1,
-                          color: Color.fromRGBO(195, 198, 207, 1),
-                        ),
+                            thickness: 1,
+                            color: Color.fromRGBO(195, 198, 207, 1)),
                       ),
                     ],
                   ),
@@ -180,162 +171,117 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                 const SizedBox(height: 10),
                 _buildCustomCalendarHeader(),
                 Expanded(
-                  child: TableCalendar(
-                    locale: 'ko_KR',
-                    firstDay: DateTime(2020, 1, 1),
-                    lastDay: DateTime(2030, 12, 31),
-                    focusedDay: _focusedDay,
-                    headerVisible: false,
-                    eventLoader:
-                        (day) =>
-                            eventDates.where((d) => isSameDay(d, day)).toList(),
-                    daysOfWeekStyle: const DaysOfWeekStyle(
-                      weekdayStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                      weekendStyle: TextStyle(fontSize: 14, color: Colors.grey),
-                    ),
-                    calendarBuilders: CalendarBuilders(
-                      todayBuilder: (context, day, focusedDay) {
-                        final events =
-                            eventDates.where((d) => isSameDay(d, day)).toList();
-                        if (events.isNotEmpty) {
-                          return GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return EventPopup(
-                                    selectedDay: day,
-                                    letterCount: 10,
-                                    promiseCount: 4,
-                                  );
-                                },
+                  child: calendarState.when(
+                    data: (calendar) => TableCalendar(
+                      locale: 'ko_KR',
+                      firstDay: DateTime(2020, 1, 1),
+                      lastDay: DateTime(2030, 12, 31),
+                      focusedDay: _focusedDay,
+                      headerVisible: false,
+                      eventLoader: (day) => calendar != null
+                          ? [...calendar.letters, ...calendar.promises]
+                              .where((item) =>
+                                  isSameDay(DateTime.parse(item.date), day) &&
+                                  item.count >= 1)
+                              .toList()
+                          : [],
+                      daysOfWeekStyle: const DaysOfWeekStyle(
+                        weekdayStyle:
+                            TextStyle(fontSize: 14, color: Colors.grey),
+                        weekendStyle:
+                            TextStyle(fontSize: 14, color: Colors.grey),
+                      ),
+                      calendarBuilders: CalendarBuilders(
+                        todayBuilder: (context, day, focusedDay) {
+                          final hasEvent = calendar != null &&
+                              [...calendar.letters, ...calendar.promises].any(
+                                (item) =>
+                                    isSameDay(DateTime.parse(item.date), day) &&
+                                    item.count >= 1,
                               );
-                            },
-                            child: Container(
-                              width: 38,
-                              height: 38,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 3.5,
-                                vertical: 8,
-                              ),
-                              clipBehavior: Clip.none,
-                              decoration: BoxDecoration(
-                                color: const Color(0xffFF859B),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${day.day}',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    letterSpacing: -0.4,
-                                    height: 24 / 16,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Container(
-                            width: 38,
-                            height: 38,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 3.5,
-                              vertical: 8,
-                            ),
-                            clipBehavior: Clip.none,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${day.day}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  letterSpacing: -0.4,
-                                  height: 24 / 16,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      defaultBuilder: (context, day, focusedDay) {
-                        final events =
-                            eventDates.where((d) => isSameDay(d, day)).toList();
-                        if (events.isNotEmpty) {
-                          return GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return EventPopup(
-                                    selectedDay: day,
-                                    letterCount: 10,
-                                    promiseCount: 4,
-                                  );
-                                },
+                          return _buildDay(context, day, hasEvent,
+                              isToday: true);
+                        },
+                        defaultBuilder: (context, day, focusedDay) {
+                          final hasEvent = calendar != null &&
+                              [...calendar.letters, ...calendar.promises].any(
+                                (item) =>
+                                    isSameDay(DateTime.parse(item.date), day) &&
+                                    item.count >= 1,
                               );
-                            },
-                            child: Container(
-                              width: 38,
-                              height: 38,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 3.5,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xffFF859B),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '${day.day}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  letterSpacing: -0.4,
-                                  height: 24 / 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          );
-                        } else {
-                          return Container(
-                            width: 38,
-                            height: 38,
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 3.5,
-                              vertical: 8,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              '${day.day}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                letterSpacing: -0.4,
-                                height: 24 / 16,
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      markerBuilder: (context, day, events) {
-                        return const SizedBox.shrink();
-                      },
+                          return _buildDay(context, day, hasEvent);
+                        },
+                        markerBuilder: (context, day, events) =>
+                            const SizedBox.shrink(),
+                      ),
+                      rowHeight: 54,
                     ),
-                    rowHeight: 54,
+                    loading: () =>
+                        const Center(child: CircularProgressIndicator()),
+                    error: (error, stack) => Center(child: Text('오류: $error')),
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDay(BuildContext context, DateTime day, bool hasEvent,
+      {bool isToday = false}) {
+    return GestureDetector(
+      onTap: hasEvent
+          ? () async {
+              // 날짜 클릭 시 day 포함 호출
+              await ref.read(calendarViewModelProvider.notifier).getCalendar(
+                    _focusedDay.year,
+                    _focusedDay.month,
+                    day.day,
+                  );
+              final calendar = ref.read(calendarViewModelProvider).value;
+              final letterCount = calendar?.letters
+                      .firstWhere((e) => isSameDay(DateTime.parse(e.date), day),
+                          orElse: () => CalendarItemResponse(
+                              date: day.toString(), count: 0))
+                      .count ??
+                  0;
+              final promiseCount = calendar?.promises
+                      .firstWhere((e) => isSameDay(DateTime.parse(e.date), day),
+                          orElse: () => CalendarItemResponse(
+                              date: day.toString(), count: 0))
+                      .count ??
+                  0;
+              showDialog(
+                context: context,
+                builder: (context) => EventPopup(
+                  selectedDay: day,
+                  letterCount: letterCount,
+                  promiseCount: promiseCount,
+                ),
+              );
+            }
+          : null,
+      child: Container(
+        width: 38,
+        height: 38,
+        margin: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 8),
+        decoration: BoxDecoration(
+          color: hasEvent
+              ? const Color(0xffFF859B)
+              : (isToday ? Colors.white : null),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            '${day.day}',
+            style: TextStyle(
+              fontSize: 16,
+              letterSpacing: -0.4,
+              height: 24 / 16,
+              color: hasEvent ? Colors.white : Colors.black,
+              fontWeight: isToday ? FontWeight.bold : FontWeight.w600,
             ),
           ),
         ),
@@ -376,40 +322,30 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           Row(
             children: [
               IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  color: Color(0xffFF859B),
-                  size: 24,
-                ),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Color(0xffFF859B), size: 24),
                 onPressed: () {
                   setState(() {
-                    _focusedDay = DateTime(
-                      _focusedDay.year,
-                      _focusedDay.month - 1,
-                      _focusedDay.day,
-                    );
-                    ref
-                        .read(calendarViewModelProvider.notifier)
-                        .getCalendar(_focusedDay.year, _focusedDay.month);
+                    _focusedDay =
+                        DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+                    ref.read(calendarViewModelProvider.notifier).getCalendar(
+                          _focusedDay.year,
+                          _focusedDay.month,
+                        ); // day 없이 호출
                   });
                 },
               ),
               IconButton(
-                icon: const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: Color(0xffFF859B),
-                  size: 24,
-                ),
+                icon: const Icon(Icons.arrow_forward_ios_rounded,
+                    color: Color(0xffFF859B), size: 24),
                 onPressed: () {
                   setState(() {
-                    _focusedDay = DateTime(
-                      _focusedDay.year,
-                      _focusedDay.month + 1,
-                      _focusedDay.day,
-                    );
-                    ref
-                        .read(calendarViewModelProvider.notifier)
-                        .getCalendar(_focusedDay.year, _focusedDay.month);
+                    _focusedDay =
+                        DateTime(_focusedDay.year, _focusedDay.month + 1, 1);
+                    ref.read(calendarViewModelProvider.notifier).getCalendar(
+                          _focusedDay.year,
+                          _focusedDay.month,
+                        ); // day 없이 호출
                   });
                 },
               ),

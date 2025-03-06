@@ -24,6 +24,9 @@ class AuthRepositoryImpl implements AuthRepository {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed, // 필수 아님
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage,
@@ -33,6 +36,9 @@ class AuthRepositoryImpl implements AuthRepository {
       nickname: nickname,
       birthDate: birthDate,
       provider: provider,
+      privacyPolicyAgreed: privacyPolicyAgreed, // 추가
+      marketingAgreed: marketingAgreed, // 추가
+      termsOfServiceAgreed: termsOfServiceAgreed, // 추가
       password: password,
       providerId: providerId,
       profileImage: profileImage,

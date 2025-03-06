@@ -38,7 +38,7 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.splashScreen,
+    initialLocation: RouteNames.onboarding,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding Routes
@@ -75,8 +75,11 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.signupPage,
-        name: RouteNames.signupPage,
-        builder: (context, state) => const SignupPage(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return SignupPage(extraEmail: extra?['email'] as String?);
+        },
       ),
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
@@ -85,8 +88,15 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,
-        name: RouteNames.profileRegistrationPage,
-        builder: (context, state) => const ProfileRegistrationPage(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return ProfileRegistrationPage(
+            email: extra?['email'] as String?,
+            provider: extra?['provider'] as String?,
+            providerId: extra?['providerId'] as String?,
+          );
+        },
       ),
       GoRoute(
         path: RouteNames.codeConnectPage,

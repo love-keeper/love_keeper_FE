@@ -9,6 +9,10 @@ class CalendarResponse with _$CalendarResponse {
   const factory CalendarResponse({
     required List<CalendarItemResponse> letters,
     required List<CalendarItemResponse> promises,
+    required int totalLetterCount,
+    required int totalPromiseCount,
+    required int dailyLetterCount,
+    required int dailyPromiseCount,
   }) = _CalendarResponse;
 
   factory CalendarResponse.fromJson(Map<String, dynamic> json) =>

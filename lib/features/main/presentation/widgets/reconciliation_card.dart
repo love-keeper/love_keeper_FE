@@ -108,10 +108,9 @@ class ReconciliationCard extends ConsumerWidget {
               if (hasDraft) {
                 _showDraftDialog(context, ref, draftContents);
               } else {
-                context.pushNamed(
-                  RouteNames.sendLetter,
-                  extra: {'draftContents': List.filled(4, '')},
-                );
+                context.pushNamed('sendLetter', extra: {
+                  'draftContents': List.filled(4, ''),
+                });
               }
             },
             child: Padding(
@@ -179,18 +178,15 @@ class ReconciliationCard extends ConsumerWidget {
                 }
               }
               Navigator.pop(context);
-
-              context.pushNamed(
-                'sendLetter',
-                extra: {'draftContents': List.filled(4, '')},
-              );
+              context.pushNamed('sendLetter', extra: {
+                'draftContents': List.filled(4, ''),
+              });
             },
             onSave: () async {
               Navigator.pop(context);
-              context.pushNamed(
-                'sendLetter',
-                extra: {'draftContents': draftContents},
-              );
+              context.pushNamed('sendLetter', extra: {
+                'draftContents': draftContents,
+              });
             },
             onDismiss: () => Navigator.pop(context),
           );
