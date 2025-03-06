@@ -20,6 +20,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   bool _isCodeSent = false;
   bool _isLoading = false;
   String? _verificationCode;
+  bool _verificationFailed = false; // 인증 실패 여부
 
   @override
   void initState() {
@@ -60,6 +61,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         _isCodeSent = true;
         _isLoading = false;
         _verificationCode = code.toString(); // 인증 코드를 저장
+        _verificationFailed = false; // 초기화
       });
       debugPrint('인증코드 전송됨: $code');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -97,17 +99,24 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         _isLoading = false;
       });
       if (result == '인증 성공') {
+        // 인증 성공 시 실패 상태 초기화
+        setState(() {
+          _verificationFailed = false;
+        });
         context.push('/emailPasswordInput');
+      } else {
+        // 인증 실패 시 상태 업데이트
+        setState(() {
+          _verificationFailed = true;
+        });
       }
     } catch (e) {
       debugPrint('Verify code error: $e');
       setState(() {
         _emailCodeController.clear();
         _isLoading = false;
+        _verificationFailed = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('인증 실패: $e')),
-      );
     }
   }
 
@@ -119,6 +128,10 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     final bool hasText = _emailCodeController.text.isNotEmpty;
 
     final email = ref.watch(authStateNotifierProvider).email ?? '';
+
+    // 가이드 메시지는 인증 시도 후 실패했을 때만 표시
+    final String guideMessage =
+        _verificationFailed ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.' : '';
 
     void showResendBottomSheet(BuildContext context, double scaleFactor) {
       showModalBottomSheet(
@@ -163,7 +176,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                                   BorderRadius.circular(26 * scaleFactor),
                             ),
                           ),
-                          SizedBox(height: 44 * scaleFactor),
+                          SizedBox(height: 29 * scaleFactor),
                           Container(
                             width: 169 * scaleFactor,
                             height: 26 * scaleFactor,
@@ -180,7 +193,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 16 * scaleFactor),
+                          SizedBox(height: 23 * scaleFactor),
                           Container(
                             width: 335 * scaleFactor,
                             height: 72 * scaleFactor,
@@ -198,7 +211,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 16 * scaleFactor),
+                          SizedBox(height: 24 * scaleFactor),
                           Center(
                             child: GestureDetector(
                               onTap: () {
@@ -241,13 +254,6 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         },
       );
     }
-
-    final String guideMessage = (hasText &&
-            _verificationCode != null &&
-            _emailCodeController.text.length == _verificationCode!.length &&
-            _emailCodeController.text != _verificationCode)
-        ? '인증코드가 일치하지 않습니다. 다시 입력해 주세요.'
-        : '';
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -342,7 +348,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: 0 * scaleFactor),
+                    padding: EdgeInsets.only(bottom: 6 * scaleFactor),
                     child: SizedBox(
                       width: 131 * scaleFactor,
                       height: 22 * scaleFactor,

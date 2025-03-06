@@ -59,7 +59,7 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
                   onTap: () {},
                   child: Container(
                     width: 375 * scaleFactor,
-                    height: 288 * scaleFactor,
+                    height: 297 * scaleFactor,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -79,7 +79,7 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
                                 BorderRadius.circular(26 * scaleFactor),
                           ),
                         ),
-                        SizedBox(height: 48 * scaleFactor),
+                        SizedBox(height: 32 * scaleFactor),
                         Container(
                           width: 171 * scaleFactor,
                           height: 26 * scaleFactor,
@@ -96,7 +96,7 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 16 * scaleFactor),
+                        SizedBox(height: 26 * scaleFactor),
                         Container(
                           width: 335 * scaleFactor,
                           height: 72 * scaleFactor,
@@ -114,7 +114,7 @@ class _PwFindingPageState extends ConsumerState<PwFindingPage> {
                             ),
                           ),
                         ),
-                        SizedBox(height: 16 * scaleFactor),
+                        SizedBox(height: 27 * scaleFactor),
                         Center(
                           child: GestureDetector(
                             onTap: () {

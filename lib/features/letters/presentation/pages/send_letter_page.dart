@@ -90,7 +90,6 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
     });
   }
 
-  // 메인 페이지로 이동 (나가기 선택 시 텍스트는 그대로 유지됨)
   void _exitToHome() {
     context.go('/main');
   }
@@ -212,7 +211,33 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
             exitText: '나가기',
             saveText: '저장하기',
             showSaveButton: true,
-            onExit: _exitToHome,
+            onExit: () async {
+              for (int step = 0; step <= 3; step++) {
+                final draftOrder = step + 1;
+                try {
+                  await ref
+                      .read(draftsViewModelProvider.notifier)
+                      .deleteDraft(draftOrder);
+                  debugPrint('드래프트 삭제 성공 - order: $draftOrder');
+                } catch (e) {
+                  if (e is DioException) {
+                    if (e.response?.statusCode == 404) {
+                      debugPrint(
+                          '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 무시)');
+                      continue;
+                    } else {
+                      debugPrint(
+                          '드래프트 삭제 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}');
+                    }
+                  } else {
+                    debugPrint('드래프트 삭제 실패 - order: $draftOrder, Error: $e');
+                  }
+                }
+              }
+
+              Navigator.pop(context);
+              context.go('/main');
+            },
             onSave: _saveTemporaryLetter,
             onDismiss: () => Navigator.pop(context),
           );
