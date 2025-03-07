@@ -114,19 +114,12 @@ class AuthViewModel extends _$AuthViewModel {
             .read(authStateNotifierProvider.notifier)
             .updateProviderId(providerId);
 
-        context.push(
-          '/profileRegistration',
-          extra: {
-            'email': email,
-            'provider': provider,
-            'providerId': providerId,
-          },
-        );
+        // 네비게이션 제거: ProfileRegistrationPage로 이동하지 않음
+        // context.push('/profileRegistration', extra: {...});
       } on DioException catch (e) {
         if (e.response?.statusCode == 409) {
           await login(email: email, provider: provider, providerId: providerId);
           print('Social login successful: email=$email');
-          // 라우팅은 호출 페이지에서 처리
         } else {
           print(
             'Email duplication check failed: ${e.response?.statusCode}, ${e.response?.data}',

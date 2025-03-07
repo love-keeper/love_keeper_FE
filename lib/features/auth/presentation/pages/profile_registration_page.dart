@@ -271,47 +271,30 @@ class _ProfileRegistrationPageState
                                       );
                                     }
 
-                                    // 4. 커플 정보 조회 및 라우팅
+                                    // 4. 회원가입 및 로그인 완료 후 CodeConnectPage로 이동
                                     if (mounted) {
-                                      final coupleInfo =
-                                          await ref
-                                              .read(
-                                                couplesViewModelProvider
-                                                    .notifier,
-                                              )
-                                              .getCoupleInfo();
-                                      if (coupleInfo != null) {
-                                        debugPrint(
-                                          'Couple info found: ${coupleInfo.coupleId}, navigating to MainPage',
-                                        );
-                                        if (mounted)
-                                          context.go(RouteNames.mainPage);
-                                      } else {
-                                        debugPrint(
-                                          'No couple info found, navigating to CodeConnectPage',
-                                        );
-                                        if (mounted)
-                                          context.go(
-                                            RouteNames.codeConnectPage,
-                                          );
-                                      }
+                                      debugPrint(
+                                        'Signup and login completed, navigating to CodeConnectPage',
+                                      );
+                                      context.go(RouteNames.codeConnectPage);
                                     }
                                   } on DioException catch (e) {
-                                    if (e.response?.statusCode == 404) {
-                                      debugPrint(
-                                        'No couple info found (404), navigating to CodeConnectPage',
-                                      );
-                                      if (mounted)
+                                    debugPrint(
+                                      'Registration error (DioException): $e',
+                                    );
+                                    if (mounted) {
+                                      if (e.response?.statusCode == 404) {
+                                        debugPrint(
+                                          'No couple info found (404), navigating to CodeConnectPage',
+                                        );
                                         context.go(RouteNames.codeConnectPage);
-                                    } else {
-                                      debugPrint(
-                                        'Couple info fetch failed: $e',
-                                      );
-                                      if (mounted)
+                                      } else {
+                                        debugPrint(
+                                          'Couple info fetch failed: $e, navigating to CodeConnectPage',
+                                        );
                                         context.go(RouteNames.codeConnectPage);
+                                      }
                                     }
-                                    // 네비게이션 후에는 SnackBar를 표시하지 않음
-                                    debugPrint('Registration error: $e');
                                   } catch (e) {
                                     debugPrint('Registration error: $e');
                                   } finally {
