@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'calendar_repository_impl.dart';
+part of 'calendar_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
 String _$calendarRepositoryHash() =>
-    r'd2ffeb0898972a792b7de8b48d28b81693168ac5';
+    r'a110d8e1614ce7ba4922eead9f438d3cfa3cbad7';
 
 /// See also [calendarRepository].
 @ProviderFor(calendarRepository)

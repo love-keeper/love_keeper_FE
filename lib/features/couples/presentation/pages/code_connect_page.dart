@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -83,9 +85,9 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
         setState(() {
           _connectionFailed = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('연결 실패')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('연결 실패')));
       }
     } catch (e) {
       debugPrint('Connect error: $e');

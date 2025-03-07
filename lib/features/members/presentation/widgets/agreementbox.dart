@@ -33,13 +33,13 @@ class _AgreementRow extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   const _AgreementRow({
-    Key? key,
+    super.key,
     required this.text,
     required this.scaleFactor,
     required this.onChanged,
     this.requiredField = true,
     required this.isChecked,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,28 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+<<<<<<< HEAD
         
 
+=======
+        {
+            "name": "love_keeper",
+            "request": "launch",
+            "type": "dart"
+            
+        },
+        {
+            "name": "love_keeper (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "love_keeper (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+>>>>>>> backendrim
     ]
 }

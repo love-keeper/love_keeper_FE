@@ -15,10 +15,9 @@ class SocialLoginButtons extends ConsumerWidget {
     try {
       print('Kakao login button pressed');
       bool isInstalled = await kakao.isKakaoTalkInstalled();
-      kakao.OAuthToken token =
-          isInstalled
-              ? await kakao.UserApi.instance.loginWithKakaoTalk()
-              : await kakao.UserApi.instance.loginWithKakaoAccount();
+      kakao.OAuthToken token = isInstalled
+          ? await kakao.UserApi.instance.loginWithKakaoTalk()
+          : await kakao.UserApi.instance.loginWithKakaoAccount();
 
       kakao.User user = await kakao.UserApi.instance.me();
       await _handleLogin(
@@ -85,9 +84,7 @@ class SocialLoginButtons extends ConsumerWidget {
     String email,
     BuildContext context,
   ) async {
-    await ref
-        .read(authViewModelProvider.notifier)
-        .handleSocialLogin(
+    await ref.read(authViewModelProvider.notifier).handleSocialLogin(
           email: email,
           provider: provider,
           providerId: providerId,

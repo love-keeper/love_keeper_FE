@@ -15,6 +15,10 @@ _$CalendarResponseImpl _$$CalendarResponseImplFromJson(
       promises: (json['promises'] as List<dynamic>)
           .map((e) => CalendarItemResponse.fromJson(e as Map<String, dynamic>))
           .toList(),
+      totalLetterCount: (json['totalLetterCount'] as num).toInt(),
+      totalPromiseCount: (json['totalPromiseCount'] as num).toInt(),
+      dailyLetterCount: (json['dailyLetterCount'] as num).toInt(),
+      dailyPromiseCount: (json['dailyPromiseCount'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$CalendarResponseImplToJson(
@@ -22,4 +26,8 @@ Map<String, dynamic> _$$CalendarResponseImplToJson(
     <String, dynamic>{
       'letters': instance.letters,
       'promises': instance.promises,
+      'totalLetterCount': instance.totalLetterCount,
+      'totalPromiseCount': instance.totalPromiseCount,
+      'dailyLetterCount': instance.dailyLetterCount,
+      'dailyPromiseCount': instance.dailyPromiseCount,
     };

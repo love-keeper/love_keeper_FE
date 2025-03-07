@@ -61,11 +61,12 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<String>> reissue(String refreshToken) async {
+  Future<ApiResponse<String>> reissue(Map<String, dynamic> data) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = refreshToken;
+    final _data = <String, dynamic>{};
+    _data.addAll(data);
     final _options = _setStreamType<ApiResponse<String>>(Options(
       method: 'POST',
       headers: _headers,
@@ -102,6 +103,9 @@ class _ApiClient implements ApiClient {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed,
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage,
@@ -126,6 +130,20 @@ class _ApiClient implements ApiClient {
     _data.fields.add(MapEntry(
       'provider',
       provider,
+    ));
+    _data.fields.add(MapEntry(
+      'privacyPolicyAgreed',
+      privacyPolicyAgreed.toString(),
+    ));
+    if (marketingAgreed != null) {
+      _data.fields.add(MapEntry(
+        'marketingAgreed',
+        marketingAgreed.toString(),
+      ));
+    }
+    _data.fields.add(MapEntry(
+      'termsOfServiceAgreed',
+      termsOfServiceAgreed.toString(),
     ));
     if (password != null) {
       _data.fields.add(MapEntry(
@@ -436,6 +454,42 @@ class _ApiClient implements ApiClient {
   }
 
   @override
+  Future<ApiResponse<CoupleInfo>> getCoupleInfo() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<ApiResponse<CoupleInfo>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          '/api/couples/info',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiResponse<CoupleInfo> _value;
+    try {
+      _value = ApiResponse<CoupleInfo>.fromJson(
+        _result.data!,
+        (json) => CoupleInfo.fromJson(json as Map<String, dynamic>),
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<ApiResponse<InviteCodeResponse>> generateCode() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -644,42 +698,6 @@ class _ApiClient implements ApiClient {
       _value = ApiResponse<String>.fromJson(
         _result.data!,
         (json) => json as String,
-      );
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<ApiResponse<CoupleInfo>> getCoupleInfo() async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<ApiResponse<CoupleInfo>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/couples/info',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<CoupleInfo> _value;
-    try {
-      _value = ApiResponse<CoupleInfo>.fromJson(
-        _result.data!,
-        (json) => CoupleInfo.fromJson(json as Map<String, dynamic>),
       );
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
@@ -1026,12 +1044,12 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<void> deleteDraft(int order) async {
+  Future<ApiResponse<String>> deleteDraft(int order) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
+    final _options = _setStreamType<ApiResponse<String>>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
@@ -1047,7 +1065,18 @@ class _ApiClient implements ApiClient {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiResponse<String> _value;
+    try {
+      _value = ApiResponse<String>.fromJson(
+        _result.data!,
+        (json) => json as String,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override
@@ -1407,12 +1436,15 @@ class _ApiClient implements ApiClient {
   Future<ApiResponse<CalendarResponse>> getCalendar(
     int year,
     int month,
+    int? day,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'year': year,
       r'month': month,
+      r'day': day,
     };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse<CalendarResponse>>(Options(
@@ -1458,7 +1490,7 @@ class _ApiClient implements ApiClient {
     )
         .compose(
           _dio.options,
-          '/api/fcm/token',
+          '/api/fcm/register',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1488,13 +1520,13 @@ class _ApiClient implements ApiClient {
     final _headers = <String, dynamic>{};
     final _data = request;
     final _options = _setStreamType<ApiResponse<String>>(Options(
-      method: 'DELETE',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/api/fcm/token',
+          '/api/fcm/remove',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1518,10 +1550,16 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<List<PushNotificationResponse>>>
-      getPushNotifications() async {
+  Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
+    int? page,
+    int? size,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'page': page,
+      r'size': size,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =

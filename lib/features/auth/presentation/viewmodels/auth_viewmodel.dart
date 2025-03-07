@@ -38,6 +38,9 @@ class AuthViewModel extends _$AuthViewModel {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed, // 필수
+    bool? marketingAgreed, // 필수 아님
+    required bool termsOfServiceAgreed, // 필수
     String? password,
     String? providerId,
     File? profileImage,
@@ -49,6 +52,9 @@ class AuthViewModel extends _$AuthViewModel {
         nickname: nickname,
         birthDate: birthDate,
         provider: provider,
+        privacyPolicyAgreed: privacyPolicyAgreed,
+        marketingAgreed: marketingAgreed, // nullable로 전달
+        termsOfServiceAgreed: termsOfServiceAgreed,
         password: password,
         providerId: providerId,
         profileImage: profileImage,
@@ -83,10 +89,9 @@ class AuthViewModel extends _$AuthViewModel {
       state = AsyncValue.data(user);
       return user;
     } catch (e) {
-      String errorMessage =
-          e is DioException && e.response?.statusCode == 401
-              ? '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.'
-              : '로그인 중 오류 발생: $e';
+      String errorMessage = e is DioException && e.response?.statusCode == 401
+          ? '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.'
+          : '로그인 중 오류 발생: $e';
       print(errorMessage);
       state = AsyncValue.error(errorMessage, StackTrace.current);
       rethrow;
@@ -126,10 +131,9 @@ class AuthViewModel extends _$AuthViewModel {
           );
           print('Logged in user: ${user.memberId}, ${user.email}');
           try {
-            final coupleInfo =
-                await ref
-                    .read(couplesViewModelProvider.notifier)
-                    .getCoupleInfo();
+            final coupleInfo = await ref
+                .read(couplesViewModelProvider.notifier)
+                .getCoupleInfo();
             print(
               'Navigating to main page with couple info: ${coupleInfo.coupleId}',
             );
@@ -217,7 +221,8 @@ class AuthViewModel extends _$AuthViewModel {
     String email,
     String password,
     String passwordConfirm,
-  ) async => await _repository.resetPassword(email, password, passwordConfirm);
+  ) async =>
+      await _repository.resetPassword(email, password, passwordConfirm);
   Future<bool> checkToken(String token) async {
     try {
       return await _repository.checkToken(token);
@@ -232,6 +237,13 @@ class AuthViewModel extends _$AuthViewModel {
     }
   }
 
-  Future<String> emailDuplication(String email) async =>
-      await _repository.emailDuplication(email);
+  Future<String> emailDuplication(String email) async {
+    try {
+      final result = await _repository.emailDuplication(email);
+      return result;
+    } catch (e) {
+      print('Email duplication check error: $e');
+      rethrow;
+    }
+  }
 }

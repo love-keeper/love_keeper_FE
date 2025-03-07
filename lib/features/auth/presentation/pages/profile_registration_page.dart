@@ -11,7 +11,15 @@ import 'package:love_keeper/features/members/presentation/widgets/save_button_wi
 import 'package:love_keeper/features/members/presentation/widgets/date_text_input_formatter.dart';
 
 class ProfileRegistrationPage extends ConsumerStatefulWidget {
-  const ProfileRegistrationPage({super.key});
+  final String? email;
+  final String? provider;
+  final String? providerId;
+  const ProfileRegistrationPage({
+    this.email,
+    this.provider,
+    this.providerId,
+    super.key,
+  });
 
   @override
   _ProfileRegistrationPageState createState() =>
@@ -22,7 +30,7 @@ class _ProfileRegistrationPageState
     extends ConsumerState<ProfileRegistrationPage> {
   final TextEditingController _nicknameController = TextEditingController();
   final TextEditingController _birthdateController = TextEditingController();
-  late FocusNode _nicknameFocusNode; // late 유지
+  late FocusNode _nicknameFocusNode;
   File? _profileImage;
   final String _cameraImagePath = 'assets/images/my_page/Ic_Gallery.png';
   final String _defaultProfilePath =
@@ -36,7 +44,12 @@ class _ProfileRegistrationPageState
   @override
   void initState() {
     super.initState();
-    _nicknameFocusNode = FocusNode(); // 여기서 초기화
+    _email = widget.email;
+    _provider = widget.provider;
+    _providerId = widget.providerId;
+    debugPrint(
+        'Extra data received: email=$_email, provider=$_provider, providerId=$_providerId');
+    _nicknameFocusNode = FocusNode();
     _nicknameController.addListener(() => setState(() {}));
     _birthdateController.addListener(() => setState(() {}));
   }
@@ -44,29 +57,18 @@ class _ProfileRegistrationPageState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final extra =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    if (extra != null) {
-      _email = extra['email'] as String?;
-      _provider = extra['provider'] as String?;
-      _providerId = extra['providerId'] as String?;
-      debugPrint(
-        'Extra data received: email=$_email, provider=$_provider, providerId=$_providerId',
-      );
-    } else {
-      debugPrint('No extra data received');
-    }
   }
 
   @override
   void dispose() {
     _nicknameController.dispose();
     _birthdateController.dispose();
-    _nicknameFocusNode.dispose(); // 초기화된 객체를 dispose
+    _nicknameFocusNode.dispose();
     super.dispose();
   }
 
   void _showProfileBottomSheet(BuildContext context, double scaleFactor) {
+    // 기존 코드 유지 (변경 없음)
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -283,13 +285,14 @@ class _ProfileRegistrationPageState
       final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
 
       // 1. Signup 호출
-      final signupUser = await ref
-          .read(authViewModelProvider.notifier)
-          .signup(
+      final signupUser = await ref.read(authViewModelProvider.notifier).signup(
             email: email,
             nickname: _nicknameController.text,
             birthDate: formattedBirthdate,
             provider: provider,
+            privacyPolicyAgreed: authState.privacyPolicyAgreed,
+            marketingAgreed: authState.marketingAgreed,
+            termsOfServiceAgreed: authState.termsOfServiceAgreed,
             password: provider == 'LOCAL' ? password : null,
             providerId: provider != 'LOCAL' ? providerId : null,
             profileImage: _profileImage,
@@ -299,9 +302,7 @@ class _ProfileRegistrationPageState
       );
 
       // 2. Login 호출
-      final loginUser = await ref
-          .read(authViewModelProvider.notifier)
-          .login(
+      final loginUser = await ref.read(authViewModelProvider.notifier).login(
             email: email,
             provider: provider,
             password: provider == 'LOCAL' ? password : null,
@@ -385,36 +386,34 @@ class _ProfileRegistrationPageState
                       children: [
                         SizedBox(height: 16 * scaleFactor),
                         GestureDetector(
-                          onTap:
-                              () =>
-                                  _showProfileBottomSheet(context, scaleFactor),
-                          child:
-                              _profileImage != null
-                                  ? ClipOval(
-                                    child: Image.file(
-                                      _profileImage!,
-                                      width: 80 * scaleFactor,
-                                      height: 80 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                  : _useDefaultProfile
-                                  ? ClipOval(
-                                    child: Image.asset(
-                                      _defaultProfilePath,
-                                      width: 80 * scaleFactor,
-                                      height: 80 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                  : ClipOval(
-                                    child: Image.asset(
-                                      _cameraImagePath,
-                                      width: 80 * scaleFactor,
-                                      height: 80 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                    ),
+                          onTap: () =>
+                              _showProfileBottomSheet(context, scaleFactor),
+                          child: _profileImage != null
+                              ? ClipOval(
+                                  child: Image.file(
+                                    _profileImage!,
+                                    width: 80 * scaleFactor,
+                                    height: 80 * scaleFactor,
+                                    fit: BoxFit.cover,
                                   ),
+                                )
+                              : _useDefaultProfile
+                                  ? ClipOval(
+                                      child: Image.asset(
+                                        _defaultProfilePath,
+                                        width: 80 * scaleFactor,
+                                        height: 80 * scaleFactor,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    )
+                                  : ClipOval(
+                                      child: Image.asset(
+                                        _cameraImagePath,
+                                        width: 80 * scaleFactor,
+                                        height: 80 * scaleFactor,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                         ),
                         SizedBox(height: 36 * scaleFactor),
                         EditFieldWidget(
@@ -446,9 +445,7 @@ class _ProfileRegistrationPageState
             ),
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: 12 * scaleFactor,
-                ), // 'custom'은 오타로 보임, 'bottom'으로 수정 권장
+                padding: EdgeInsets.only(bottom: 12 * scaleFactor),
                 child: SaveButtonWidget(
                   scaleFactor: scaleFactor,
                   enabled: isSaveEnabled,

@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper/features/main/presentation/widgets/fallback_circle_avatar.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 
 class DdayPage extends ConsumerStatefulWidget {
   const DdayPage({super.key});
@@ -14,27 +18,16 @@ class DdayPage extends ConsumerStatefulWidget {
 }
 
 class _DdayPageState extends ConsumerState<DdayPage> {
-  // 초기 날짜는 임시 값, 백엔드에서 받아온 값으로 업데이트
   DateTime _selectedDate = DateTime(2024, 12, 5);
+  final String _defaultImagePath = 'assets/images/main_page/Img_Profile.png';
 
   @override
   void initState() {
     super.initState();
-    // 백엔드에서 시작 날짜를 지연 호출로 가져옴
-    Future(() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
           .read(couplesViewModelProvider.notifier)
-          .getStartDate()
-          .then((startDateString) {
-            if (mounted) {
-              setState(() {
-                _selectedDate = DateTime.parse(startDateString);
-              });
-            }
-          })
-          .catchError((e) {
-            debugPrint('시작 날짜를 받아오지 못했습니다: $e');
-          });
+          .getCoupleInfo(forceRefresh: true);
     });
   }
 
@@ -45,6 +38,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
       barrierColor: Colors.transparent,
       isScrollControlled: true,
       builder: (BuildContext context) {
+        DateTime tempDate = _selectedDate;
         return Container(
           margin: const EdgeInsets.only(top: 100),
           decoration: const BoxDecoration(
@@ -66,9 +60,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                   minimumDate: DateTime(2000),
                   maximumDate: DateTime.now(),
                   onDateTimeChanged: (DateTime newDate) {
-                    setState(() {
-                      _selectedDate = newDate;
-                    });
+                    tempDate = newDate;
                   },
                 ),
               ),
@@ -85,14 +77,18 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                     ),
                   ),
                   onPressed: () async {
-                    final newDateStr = DateFormat(
-                      'yyyy-MM-dd',
-                    ).format(_selectedDate);
+                    final newDateStr =
+                        DateFormat('yyyy-MM-dd').format(tempDate);
                     try {
                       await ref
                           .read(couplesViewModelProvider.notifier)
                           .updateStartDate(newDateStr);
-                      // UI는 이미 setState로 업데이트됐으므로 추가 호출 불필요
+                      setState(() {
+                        _selectedDate = tempDate;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('날짜가 성공적으로 업데이트되었습니다')),
+                      );
                     } catch (e) {
                       debugPrint('시작 날짜 업데이트 실패: $e');
                       ScaffoldMessenger.of(
@@ -121,6 +117,11 @@ class _DdayPageState extends ConsumerState<DdayPage> {
 
   @override
   Widget build(BuildContext context) {
+    final memberState = ref.watch(membersViewModelProvider);
+    final coupleState = ref.watch(couplesViewModelProvider);
+    final dday =
+        ref.watch(couplesViewModelProvider.notifier).getDday(); // 디데이 일수 가져오기
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
@@ -162,20 +163,38 @@ class _DdayPageState extends ConsumerState<DdayPage> {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 154),
-              _buildAnniversaryCard(),
-              const SizedBox(height: 29),
-              _buildDdayList(),
-            ],
+          child: memberState.when(
+            data: (memberInfo) => coupleState.when(
+              data: (coupleInfo) {
+                if (coupleInfo != null && coupleInfo.startedAt.isNotEmpty) {
+                  _selectedDate = DateTime.parse(coupleInfo.startedAt);
+                }
+                return Column(
+                  children: [
+                    const SizedBox(height: 154),
+                    _buildAnniversaryCard(memberInfo, coupleInfo, dday),
+                    const SizedBox(height: 29),
+                    _buildDdayList(),
+                  ],
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) => Center(child: Text('Error: $error')),
+            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (error, stack) => Center(child: Text('Error: $error')),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAnniversaryCard() {
+  Widget _buildAnniversaryCard(
+      MemberInfo? memberInfo, CoupleInfo? coupleInfo, String dday) {
+    final double deviceWidth = MediaQuery.of(context).size.width;
+    const double baseWidth = 375.0;
+    final double scaleFactor = deviceWidth / baseWidth;
+
     return Container(
       height: 128,
       padding: const EdgeInsets.all(16),
@@ -196,12 +215,41 @@ class _DdayPageState extends ConsumerState<DdayPage> {
           Positioned(
             left: 20,
             top: 20,
-            child: _buildCircleImage('assets/images/main_page/user1.JPG'),
+            child: memberInfo?.profileImageUrl != null &&
+                    memberInfo!.profileImageUrl!.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: memberInfo.profileImageUrl!,
+                      width: 54 * scaleFactor,
+                      height: 54 * scaleFactor,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          _buildCircleImage(_defaultImagePath),
+                    ),
+                  )
+                : _buildCircleImage(_defaultImagePath),
           ),
           Positioned(
             right: 20,
             top: 20,
-            child: _buildCircleImage('assets/images/main_page/user2.JPG'),
+            child: coupleInfo != null &&
+                    coupleInfo.partnerProfileImageUrl != null &&
+                    coupleInfo.partnerProfileImageUrl!.isNotEmpty
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: coupleInfo.partnerProfileImageUrl!,
+                      width: 54 * scaleFactor,
+                      height: 54 * scaleFactor,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          _buildCircleImage(_defaultImagePath),
+                    ),
+                  )
+                : _buildCircleImage(_defaultImagePath),
           ),
           Align(
             alignment: Alignment.center,
@@ -219,7 +267,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                 ),
                 const SizedBox(height: 0),
                 Text(
-                  '${DateTime.now().difference(_selectedDate).inDays} 일째',
+                  '$dday 일째', // ViewModel에서 계산된 dday 사용
                   style: const TextStyle(
                     fontSize: 24,
                     letterSpacing: -0.6,
@@ -261,15 +309,13 @@ class _DdayPageState extends ConsumerState<DdayPage> {
 
     List<int> ddayIntervals = ddaySet.toList()..sort();
 
-    List<int> futureIntervals =
-        ddayIntervals
-            .where(
-              (days) => _selectedDate
-                  .add(Duration(days: days))
-                  .isAfter(DateTime.now()),
-            )
-            .take(10)
-            .toList();
+    List<int> futureIntervals = ddayIntervals
+        .where(
+          (days) =>
+              _selectedDate.add(Duration(days: days)).isAfter(DateTime.now()),
+        )
+        .take(10)
+        .toList();
 
     return Container(
       height: 385,
@@ -288,75 +334,72 @@ class _DdayPageState extends ConsumerState<DdayPage> {
       ),
       child: SingleChildScrollView(
         child: Column(
-          children:
-              futureIntervals.map((days) {
-                final DateTime anniversaryDate = _selectedDate.add(
-                  Duration(days: days),
-                );
-                final int remainingDays =
-                    anniversaryDate.difference(DateTime.now()).inDays;
-                final bool isAnniversary = days % 365 == 0;
+          children: futureIntervals.map((days) {
+            final DateTime anniversaryDate = _selectedDate.add(
+              Duration(days: days),
+            );
+            final int remainingDays =
+                anniversaryDate.difference(DateTime.now()).inDays;
+            final bool isAnniversary = days % 365 == 0;
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 9.5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 9.5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isAnniversary ? '${days ~/ 365}주년' : '$days일',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: isAnniversary
+                          ? const Color(0xFFFC6383)
+                          : const Color(0xFF27282C),
+                    ),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        isAnniversary ? '${days ~/ 365}주년' : '$days일',
+                        remainingDays == 0 ? '오늘' : 'D-$remainingDays',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color:
-                              isAnniversary
-                                  ? const Color(0xFFFC6383)
-                                  : const Color(0xFF27282C),
+                          letterSpacing: -0.4,
+                          height: 1.143,
+                          color: isAnniversary
+                              ? const Color(0xFFFC6383)
+                              : const Color(0xFF27282C),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            remainingDays == 0 ? '오늘' : 'D-$remainingDays',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.4,
-                              height: 1.143,
-                              color:
-                                  isAnniversary
-                                      ? const Color(0xFFFC6383)
-                                      : const Color(0xFF27282C),
-                            ),
-                          ),
-                          const SizedBox(height: 0),
-                          Text(
-                            DateFormat('yyyy. MM. dd.').format(anniversaryDate),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              height: 1.167,
-                              letterSpacing: -0.3,
-                              color: Color(0xFF27282C),
-                            ),
-                          ),
-                        ],
+                      const SizedBox(height: 0),
+                      Text(
+                        DateFormat('yyyy. MM. dd.').format(anniversaryDate),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          height: 1.167,
+                          letterSpacing: -0.3,
+                          color: Color(0xFF27282C),
+                        ),
                       ),
                     ],
                   ),
-                );
-              }).toList(),
+                ],
+              ),
+            );
+          }).toList(),
         ),
       ),
     );
   }
-}
 
-Widget _buildCircleImage(String imagePath) {
-  return FallbackCircleAvatar(
-    imagePath: imagePath,
-    fallbackPath: 'assets/images/main_page/Img_Profile.png',
-    radius: 27,
-  );
+  Widget _buildCircleImage(String imagePath) {
+    return FallbackCircleAvatar(
+      imagePath: imagePath,
+      fallbackPath: 'assets/images/main_page/Img_Profile.png',
+      radius: 27,
+    );
+  }
 }

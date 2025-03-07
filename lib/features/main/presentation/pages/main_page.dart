@@ -24,7 +24,9 @@ class MainPage extends StatelessWidget {
                   // DdayPage로 이동 (GoRouter 사용)
                   context.push('/dday');
                 },
-                child: DdayBox(dday: '1,626', width: width),
+                child: DdayBox(
+                  width: width,
+                ),
               ),
               const SizedBox(height: 12),
               const ReconciliationCard(),

@@ -4,6 +4,8 @@ import 'package:love_keeper/features/members/data/models/request/send_email_code
 import 'package:love_keeper/features/members/data/models/request/verify_email_code_request.dart';
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
 import '../../domain/repositories/members_repository.dart';
@@ -29,8 +31,8 @@ class MembersRepositoryImpl implements MembersRepository {
           birthday: '',
           relationshipStartDate: '',
           email: '',
-          profileImageUrl: null,
-          coupleNickname: null,
+          profileImageUrl: '',
+          coupleNickname: '',
         );
   }
 
@@ -67,10 +69,21 @@ class MembersRepositoryImpl implements MembersRepository {
   }
 
   @override
-  Future<String> updateProfileImage(File profileImage) async {
-    final response = await apiClient.updateProfileImage(profileImage);
+  Future<String> updateProfileImage(File? profileImage) async {
+    final fileToUpload =
+        profileImage ?? await _uploadDefaultImage(); // null이면 기본 이미지
+    final response = await apiClient.updateProfileImage(fileToUpload);
     _handleResponse(response);
     return response.result!;
+  }
+
+  Future<File> _uploadDefaultImage() async {
+    final byteData =
+        await rootBundle.load('assets/images/my_page/Img_Profile.png');
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/default_profile.png');
+    await file.writeAsBytes(byteData.buffer.asUint8List());
+    return file;
   }
 
   @override
