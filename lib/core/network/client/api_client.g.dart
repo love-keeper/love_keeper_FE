@@ -1044,12 +1044,12 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<void> deleteDraft(int order) async {
+  Future<ApiResponse<String>> deleteDraft(int order) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<void>(Options(
+    final _options = _setStreamType<ApiResponse<String>>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
@@ -1065,7 +1065,18 @@ class _ApiClient implements ApiClient {
           _dio.options.baseUrl,
           baseUrl,
         )));
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ApiResponse<String> _value;
+    try {
+      _value = ApiResponse<String>.fromJson(
+        _result.data!,
+        (json) => json as String,
+      );
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override
@@ -1479,7 +1490,7 @@ class _ApiClient implements ApiClient {
     )
         .compose(
           _dio.options,
-          '/api/fcm/token',
+          '/api/fcm/register',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1509,13 +1520,13 @@ class _ApiClient implements ApiClient {
     final _headers = <String, dynamic>{};
     final _data = request;
     final _options = _setStreamType<ApiResponse<String>>(Options(
-      method: 'DELETE',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/api/fcm/token',
+          '/api/fcm/remove',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1539,10 +1550,16 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<List<PushNotificationResponse>>>
-      getPushNotifications() async {
+  Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
+    int? page,
+    int? size,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'page': page,
+      r'size': size,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
