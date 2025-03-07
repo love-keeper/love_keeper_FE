@@ -1,0 +1,15 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$UpdateNicknameRequestImpl _$$UpdateNicknameRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$UpdateNicknameRequestImpl(
+      nickname: json['nickname'] as String,
+    );
+
+Map<String, dynamic> _$$UpdateNicknameRequestImplToJson(
+        _$UpdateNicknameRequestImpl instance) =>
+    <String, dynamic>{
+      'nickname': instance.nickname,
+    };

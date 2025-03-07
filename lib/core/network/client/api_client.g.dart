@@ -61,12 +61,12 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<String>> reissue(Map<String, dynamic> data) async {
+  Future<ApiResponse<String>> reissue(String refreshToken) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(data);
+    final _headers = <String, dynamic>{r'Cookie': refreshToken};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse<String>>(Options(
       method: 'POST',
       headers: _headers,
@@ -1490,7 +1490,7 @@ class _ApiClient implements ApiClient {
     )
         .compose(
           _dio.options,
-          '/api/fcm/register',
+          '/api/fcm/token',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1520,13 +1520,13 @@ class _ApiClient implements ApiClient {
     final _headers = <String, dynamic>{};
     final _data = request;
     final _options = _setStreamType<ApiResponse<String>>(Options(
-      method: 'POST',
+      method: 'DELETE',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          '/api/fcm/remove',
+          '/api/fcm/token',
           queryParameters: queryParameters,
           data: _data,
         )

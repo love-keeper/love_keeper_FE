@@ -1,0 +1,17 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$CreateDraftRequestImpl _$$CreateDraftRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$CreateDraftRequestImpl(
+      draftOrder: (json['draftOrder'] as num).toInt(),
+      content: json['content'] as String,
+    );
+
+Map<String, dynamic> _$$CreateDraftRequestImplToJson(
+        _$CreateDraftRequestImpl instance) =>
+    <String, dynamic>{
+      'draftOrder': instance.draftOrder,
+      'content': instance.content,
+    };

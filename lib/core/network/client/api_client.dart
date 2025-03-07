@@ -46,7 +46,7 @@ abstract class ApiClient {
   );
 
   @POST('/api/auth/reissue')
-  Future<ApiResponse<String>> reissue(@Body() Map<String, dynamic> data);
+  Future<ApiResponse<String>> reissue(@Header('Cookie') String refreshToken);
 
   @MultiPart()
   @POST('/api/auth/signup')
@@ -217,10 +217,10 @@ abstract class ApiClient {
     @Query('day') int? day,
   );
 
-  @POST('/api/fcm/register')
+  @POST('/api/fcm/token')
   Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
 
-  @POST('/api/fcm/remove')
+  @DELETE('/api/fcm/token')
   Future<ApiResponse<String>> removeFCMToken(@Body() FCMTokenRequest request);
 
   @GET('/api/fcm/notifications')

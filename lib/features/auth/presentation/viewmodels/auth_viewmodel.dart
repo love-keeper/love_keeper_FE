@@ -60,7 +60,6 @@ class AuthViewModel extends _$AuthViewModel {
         profileImage: profileImage,
       );
       await _saveTokens(user);
-      await _updateFCMToken();
       state = AsyncValue.data(user);
       return user;
     } catch (e, stackTrace) {
@@ -75,7 +74,6 @@ class AuthViewModel extends _$AuthViewModel {
     required String provider,
     String? password,
     String? providerId,
-    required BuildContext context, // context 추가
   }) async {
     state = const AsyncValue.loading();
     try {
@@ -88,25 +86,6 @@ class AuthViewModel extends _$AuthViewModel {
       await _saveTokens(user);
       await _updateFCMToken();
       state = AsyncValue.data(user);
-
-      // 로그인 후 커플 상태 체크
-      try {
-        final coupleInfo =
-            await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
-        if (coupleInfo != null) {
-          print(
-            'Couple info found: ${coupleInfo.coupleId}, navigating to MainPage',
-          );
-          context.go(RouteNames.mainPage);
-        } else {
-          print('No couple info found, navigating to CodeConnectPage');
-          context.go(RouteNames.codeConnectPage);
-        }
-      } on DioException catch (e) {
-        print('Couple info fetch failed: $e');
-        context.go(RouteNames.codeConnectPage);
-      }
-
       return user;
     } catch (e) {
       String errorMessage =
@@ -145,14 +124,9 @@ class AuthViewModel extends _$AuthViewModel {
         );
       } on DioException catch (e) {
         if (e.response?.statusCode == 409) {
-          final user = await login(
-            email: email,
-            provider: provider,
-            providerId: providerId,
-            context: context, // context 전달
-          );
-          print('Logged in user: ${user.memberId}, ${user.email}');
-          // login 메서드에서 라우팅 처리하므로 여기서 추가 작업 불필요
+          await login(email: email, provider: provider, providerId: providerId);
+          print('Social login successful: email=$email');
+          // 라우팅은 호출 페이지에서 처리
         } else {
           print(
             'Email duplication check failed: ${e.response?.statusCode}, ${e.response?.data}',
@@ -224,11 +198,13 @@ class AuthViewModel extends _$AuthViewModel {
 
   Future<String> resetPasswordRequest(String email) async =>
       await _repository.resetPasswordRequest(email);
+
   Future<String> resetPassword(
     String email,
     String password,
     String passwordConfirm,
   ) async => await _repository.resetPassword(email, password, passwordConfirm);
+
   Future<bool> checkToken(String token) async {
     try {
       return await _repository.checkToken(token);
