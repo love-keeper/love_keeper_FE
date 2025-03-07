@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
-import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -37,25 +36,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             .read(authViewModelProvider.notifier)
             .checkToken(accessToken);
         if (isValid && mounted) {
-          try {
-            final coupleInfo =
-                await ref
-                    .read(couplesViewModelProvider.notifier)
-                    .getCoupleInfo();
-            print(
-              'Couple info loaded: coupleId=${coupleInfo.coupleId}, partnerNickname=${coupleInfo.partnerNickname}',
-            );
-            _navigateTo(RouteNames.mainPage);
-          } catch (e) {
-            print('Couple info not found: $e');
-            _navigateTo(RouteNames.codeConnectPage);
-          }
+          print('Token valid, navigating to MainPage');
+          _navigateTo(RouteNames.mainPage);
         } else if (mounted) {
-          print('Token invalid or expired');
+          print('Token invalid or expired, navigating to Onboarding');
           _navigateToLogin();
         }
       } else if (mounted) {
-        print('No access token found');
+        print('No access token found, navigating to Onboarding');
         _navigateToLogin();
       }
     });

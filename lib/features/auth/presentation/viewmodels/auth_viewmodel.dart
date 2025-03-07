@@ -38,9 +38,9 @@ class AuthViewModel extends _$AuthViewModel {
     required String nickname,
     required String birthDate,
     required String provider,
-    required bool privacyPolicyAgreed, // 필수
-    bool? marketingAgreed, // 필수 아님
-    required bool termsOfServiceAgreed, // 필수
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed,
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage,
@@ -53,14 +53,14 @@ class AuthViewModel extends _$AuthViewModel {
         birthDate: birthDate,
         provider: provider,
         privacyPolicyAgreed: privacyPolicyAgreed,
-        marketingAgreed: marketingAgreed, // nullable로 전달
+        marketingAgreed: marketingAgreed,
         termsOfServiceAgreed: termsOfServiceAgreed,
         password: password,
         providerId: providerId,
         profileImage: profileImage,
       );
       await _saveTokens(user);
-      await _updateFCMToken(); // 토큰 저장 후 FCM 업데이트
+      await _updateFCMToken();
       state = AsyncValue.data(user);
       return user;
     } catch (e, stackTrace) {
@@ -75,6 +75,7 @@ class AuthViewModel extends _$AuthViewModel {
     required String provider,
     String? password,
     String? providerId,
+    required BuildContext context, // context 추가
   }) async {
     state = const AsyncValue.loading();
     try {
@@ -85,13 +86,33 @@ class AuthViewModel extends _$AuthViewModel {
         providerId: providerId,
       );
       await _saveTokens(user);
-      await _updateFCMToken(); // 토큰 저장 후 FCM 업데이트
+      await _updateFCMToken();
       state = AsyncValue.data(user);
+
+      // 로그인 후 커플 상태 체크
+      try {
+        final coupleInfo =
+            await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
+        if (coupleInfo != null) {
+          print(
+            'Couple info found: ${coupleInfo.coupleId}, navigating to MainPage',
+          );
+          context.go(RouteNames.mainPage);
+        } else {
+          print('No couple info found, navigating to CodeConnectPage');
+          context.go(RouteNames.codeConnectPage);
+        }
+      } on DioException catch (e) {
+        print('Couple info fetch failed: $e');
+        context.go(RouteNames.codeConnectPage);
+      }
+
       return user;
     } catch (e) {
-      String errorMessage = e is DioException && e.response?.statusCode == 401
-          ? '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.'
-          : '로그인 중 오류 발생: $e';
+      String errorMessage =
+          e is DioException && e.response?.statusCode == 401
+              ? '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.'
+              : '로그인 중 오류 발생: $e';
       print(errorMessage);
       state = AsyncValue.error(errorMessage, StackTrace.current);
       rethrow;
@@ -128,22 +149,10 @@ class AuthViewModel extends _$AuthViewModel {
             email: email,
             provider: provider,
             providerId: providerId,
+            context: context, // context 전달
           );
           print('Logged in user: ${user.memberId}, ${user.email}');
-          try {
-            final coupleInfo = await ref
-                .read(couplesViewModelProvider.notifier)
-                .getCoupleInfo();
-            print(
-              'Navigating to main page with couple info: ${coupleInfo.coupleId}',
-            );
-            context.go(RouteNames.mainPage);
-          } on DioException catch (e) {
-            print(
-              'Couple info fetch failed - Status: ${e.response?.statusCode}, Data: ${e.response?.data}, Error: $e',
-            );
-            context.go(RouteNames.codeConnectPage);
-          }
+          // login 메서드에서 라우팅 처리하므로 여기서 추가 작업 불필요
         } else {
           print(
             'Email duplication check failed: ${e.response?.statusCode}, ${e.response?.data}',
@@ -186,7 +195,6 @@ class AuthViewModel extends _$AuthViewModel {
   Future<void> _saveTokens(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('memberId', user.memberId);
-    // Dio 인터셉터가 응답에서 access_token을 저장하므로, 여기서는 확인만
     final accessToken = prefs.getString('access_token');
     if (accessToken == null) {
       print('Warning: access_token not found after login/signup');
@@ -203,7 +211,6 @@ class AuthViewModel extends _$AuthViewModel {
     await prefs.remove('memberId');
   }
 
-  // 나머지 메서드 (sendCode, verifyCode, logout 등) 유지
   Future<String> sendCode(String email) async =>
       await _repository.sendCode(email);
   Future<String> verifyCode(String email, int code) async =>
@@ -221,8 +228,7 @@ class AuthViewModel extends _$AuthViewModel {
     String email,
     String password,
     String passwordConfirm,
-  ) async =>
-      await _repository.resetPassword(email, password, passwordConfirm);
+  ) async => await _repository.resetPassword(email, password, passwordConfirm);
   Future<bool> checkToken(String token) async {
     try {
       return await _repository.checkToken(token);

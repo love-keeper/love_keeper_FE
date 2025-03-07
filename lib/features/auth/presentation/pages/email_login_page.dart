@@ -75,8 +75,10 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
               .read(authStateNotifierProvider.notifier)
               .updateEmail(_emailController.text);
           debugPrint('Pushing to signup with email: ${_emailController.text}');
-          context.push(RouteNames.signupPage,
-              extra: {'email': _emailController.text});
+          context.push(
+            RouteNames.signupPage,
+            extra: {'email': _emailController.text},
+          );
         } else {
           setState(() {
             showPasswordField = true;
@@ -88,12 +90,13 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           provider: 'LOCAL',
           password: _passwordController.text,
           providerId: null,
+          context: context, // context 추가
         );
+        // login 메서드에서 라우팅 처리하므로 추가 이동 불필요
         if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
-        context.go(RouteNames.mainPage);
       }
     } catch (e) {
       debugPrint('Error: $e');
@@ -136,7 +139,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
             : '';
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,

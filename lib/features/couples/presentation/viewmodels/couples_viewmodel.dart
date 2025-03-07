@@ -16,22 +16,27 @@ class CouplesViewModel extends _$CouplesViewModel {
   @override
   AsyncValue<CoupleInfo?> build() {
     _repository = ref.watch(couplesRepositoryProvider);
-    // 초기 로드
     Future.microtask(() => getCoupleInfo());
     return const AsyncValue.loading(); // 초기 상태를 로딩으로 설정
   }
 
-  Future<CoupleInfo> getCoupleInfo({bool forceRefresh = false}) async {
+  Future<CoupleInfo?> getCoupleInfo({bool forceRefresh = false}) async {
     if (state.value != null && !forceRefresh) {
-      return state.value!;
+      return state.value;
     }
     state = const AsyncValue.loading();
     try {
+      print('Fetching couple info...');
       final coupleInfo = await _repository.getCoupleInfo();
       state = AsyncValue.data(coupleInfo);
       print('Fetched couple info: ${coupleInfo.startedAt}');
       return coupleInfo;
     } catch (e, stackTrace) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        print('No couple info found (404), setting state to null');
+        state = const AsyncValue.data(null);
+        return null;
+      }
       state = AsyncValue.error(e, stackTrace);
       print('Get couple info failed: $e');
       rethrow;
@@ -83,7 +88,6 @@ class CouplesViewModel extends _$CouplesViewModel {
     print('Updating start date: $newStartDate');
     try {
       final result = await _repository.updateStartDate(newStartDate);
-      // 강제로 최신 데이터 가져오기
       final updatedCoupleInfo = await _repository.getCoupleInfo();
       state = AsyncValue.data(updatedCoupleInfo);
       print('Start date updated: ${updatedCoupleInfo.startedAt}');

@@ -9,7 +9,8 @@ import 'package:love_keeper/features/members/presentation/widgets/save_button_wi
 import 'package:love_keeper/features/members/presentation/widgets/agreementbox.dart';
 
 class EmailPasswordInputPage extends ConsumerStatefulWidget {
-  const EmailPasswordInputPage({super.key});
+  final String? email;
+  const EmailPasswordInputPage({this.email, super.key});
 
   @override
   _EmailPasswordInputPageState createState() => _EmailPasswordInputPageState();
@@ -40,14 +41,12 @@ class _EmailPasswordInputPageState
   @override
   void initState() {
     super.initState();
+    debugPrint('Received email from extra: ${widget.email}');
+    // updateEmail 호출 제거
     _passwordFocusNode = FocusNode();
     _confirmFocusNode = FocusNode();
-    _passwordController.addListener(() {
-      setState(() {});
-    });
-    _confirmController.addListener(() {
-      setState(() {});
-    });
+    _passwordController.addListener(() => setState(() {}));
+    _confirmController.addListener(() => setState(() {}));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _passwordFocusNode.requestFocus();
     });
@@ -62,8 +61,6 @@ class _EmailPasswordInputPageState
     super.dispose();
   }
 
-  // 약관 동의 바텀시트: "전체 동의 (선택 포함)" 체크박스가 눌리면 나머지 세 체크박스(필수 및 선택)가 모두 같은 상태로 전환된다.
-  // 또한, 개별 체크박스가 변경될 때 필수 항목(required2, required3)이 모두 체크되어야만 마스터가 체크되도록 한다.
   void _showTermsBottomSheet(BuildContext context, double scaleFactor) {
     showModalBottomSheet(
       context: context,
@@ -105,8 +102,9 @@ class _EmailPasswordInputPageState
                               height: 5 * scaleFactor,
                               decoration: BoxDecoration(
                                 color: const Color(0xFFC3C6CF),
-                                borderRadius:
-                                    BorderRadius.circular(26 * scaleFactor),
+                                borderRadius: BorderRadius.circular(
+                                  26 * scaleFactor,
+                                ),
                               ),
                             ),
                             SizedBox(height: 33 * scaleFactor),
@@ -187,7 +185,7 @@ class _EmailPasswordInputPageState
                             GestureDetector(
                               onTap: () {
                                 if (required2 && required3) {
-                                  // 동의 값 저장
+                                  // 상태 업데이트를 여기서 처리
                                   ref
                                       .read(authStateNotifierProvider.notifier)
                                       .updatePassword(_passwordController.text);
@@ -198,13 +196,21 @@ class _EmailPasswordInputPageState
                                         marketingAgreed: optional,
                                         termsOfServiceAgreed: required2,
                                       );
+                                  if (widget.email != null) {
+                                    ref
+                                        .read(
+                                          authStateNotifierProvider.notifier,
+                                        )
+                                        .updateEmail(widget.email!);
+                                  }
                                   Navigator.pop(dialogContext);
-                                  context.pushNamed(
-                                    RouteNames.profileRegistrationPage,
+                                  debugPrint(
+                                    'Pushing to: /profileRegistration with email: ${widget.email}',
+                                  );
+                                  context.push(
+                                    '/profileRegistration',
                                     extra: {
-                                      'email': ref
-                                          .read(authStateNotifierProvider)
-                                          .email,
+                                      'email': widget.email,
                                       'provider': 'LOCAL',
                                       'providerId': null,
                                     },
@@ -215,11 +221,13 @@ class _EmailPasswordInputPageState
                                 width: 334 * scaleFactor,
                                 height: 52 * scaleFactor,
                                 decoration: BoxDecoration(
-                                  color: (required2 && required3)
-                                      ? const Color(0xFFFF859B)
-                                      : const Color(0xFFC3C6CF),
-                                  borderRadius:
-                                      BorderRadius.circular(55 * scaleFactor),
+                                  color:
+                                      (required2 && required3)
+                                          ? const Color(0xFFFF859B)
+                                          : const Color(0xFFC3C6CF),
+                                  borderRadius: BorderRadius.circular(
+                                    55 * scaleFactor,
+                                  ),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -266,21 +274,23 @@ class _EmailPasswordInputPageState
             ? '비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요.'
             : '';
 
-    final String confirmGuideMessage = showConfirmField &&
-            hasConfirm &&
-            (_confirmController.text != _passwordController.text)
-        ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
-        : '';
+    final String confirmGuideMessage =
+        showConfirmField &&
+                hasConfirm &&
+                (_confirmController.text != _passwordController.text)
+            ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
-    final bool isButtonEnabled = showConfirmField
-        ? (hasPassword &&
-            hasConfirm &&
-            passwordRegex.hasMatch(_passwordController.text) &&
-            (_passwordController.text == _confirmController.text) &&
-            !_isLoading)
-        : (hasPassword &&
-            passwordRegex.hasMatch(_passwordController.text) &&
-            !_isLoading);
+    final bool isButtonEnabled =
+        showConfirmField
+            ? (hasPassword &&
+                hasConfirm &&
+                passwordRegex.hasMatch(_passwordController.text) &&
+                (_passwordController.text == _confirmController.text) &&
+                !_isLoading)
+            : (hasPassword &&
+                passwordRegex.hasMatch(_passwordController.text) &&
+                !_isLoading);
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
@@ -361,25 +371,37 @@ class _EmailPasswordInputPageState
                   scaleFactor: scaleFactor,
                   enabled: isButtonEnabled,
                   buttonText: '다음',
-                  onPressed: _isLoading
-                      ? null
-                      : () async {
-                          if (!showConfirmField) {
-                            if (hasPassword &&
-                                passwordRegex.hasMatch(
-                                  _passwordController.text,
-                                )) {
-                              setState(() {
-                                showConfirmField = true;
-                              });
-                              WidgetsBinding.instance.addPostFrameCallback((
-                                _,
-                              ) {
-                                _confirmFocusNode.requestFocus();
-                              });
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () async {
+                            debugPrint(
+                              'Next button pressed: showConfirmField=$showConfirmField',
+                            );
+                            if (!showConfirmField) {
+                              if (hasPassword &&
+                                  passwordRegex.hasMatch(
+                                    _passwordController.text,
+                                  )) {
+                                setState(() {
+                                  showConfirmField = true;
+                                });
+                                WidgetsBinding.instance.addPostFrameCallback((
+                                  _,
+                                ) {
+                                  _confirmFocusNode.requestFocus();
+                                });
+                              }
+                            } else {
+                              if (hasPassword &&
+                                  hasConfirm &&
+                                  _passwordController.text ==
+                                      _confirmController.text) {
+                                debugPrint('Opening terms bottom sheet');
+                                _showTermsBottomSheet(context, scaleFactor);
+                              }
                             }
-                          }
-                        },
+                          },
                 ),
               ),
             ),

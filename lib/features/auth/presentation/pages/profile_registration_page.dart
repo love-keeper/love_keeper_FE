@@ -48,15 +48,11 @@ class _ProfileRegistrationPageState
     _provider = widget.provider;
     _providerId = widget.providerId;
     debugPrint(
-        'Extra data received: email=$_email, provider=$_provider, providerId=$_providerId');
+      'Extra data received: email=$_email, provider=$_provider, providerId=$_providerId',
+    );
     _nicknameFocusNode = FocusNode();
     _nicknameController.addListener(() => setState(() {}));
     _birthdateController.addListener(() => setState(() {}));
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -285,7 +281,9 @@ class _ProfileRegistrationPageState
       final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
 
       // 1. Signup 호출
-      final signupUser = await ref.read(authViewModelProvider.notifier).signup(
+      final signupUser = await ref
+          .read(authViewModelProvider.notifier)
+          .signup(
             email: email,
             nickname: _nicknameController.text,
             birthDate: formattedBirthdate,
@@ -302,11 +300,14 @@ class _ProfileRegistrationPageState
       );
 
       // 2. Login 호출
-      final loginUser = await ref.read(authViewModelProvider.notifier).login(
+      final loginUser = await ref
+          .read(authViewModelProvider.notifier)
+          .login(
             email: email,
             provider: provider,
             password: provider == 'LOCAL' ? password : null,
             providerId: provider != 'LOCAL' ? providerId : null,
+            context: context, // context 추가
           );
       debugPrint(
         'Login successful: memberId=${loginUser.memberId}, email=${loginUser.email}',
@@ -315,7 +316,7 @@ class _ProfileRegistrationPageState
       setState(() {
         _isLoading = false;
       });
-      context.pushNamed(RouteNames.codeConnectPage);
+      // login 메서드에서 라우팅 처리하므로 추가 이동 불필요
     } catch (e) {
       debugPrint('Profile registration error: $e');
       setState(() {
@@ -386,34 +387,36 @@ class _ProfileRegistrationPageState
                       children: [
                         SizedBox(height: 16 * scaleFactor),
                         GestureDetector(
-                          onTap: () =>
-                              _showProfileBottomSheet(context, scaleFactor),
-                          child: _profileImage != null
-                              ? ClipOval(
-                                  child: Image.file(
-                                    _profileImage!,
-                                    width: 80 * scaleFactor,
-                                    height: 80 * scaleFactor,
-                                    fit: BoxFit.cover,
-                                  ),
-                                )
-                              : _useDefaultProfile
+                          onTap:
+                              () =>
+                                  _showProfileBottomSheet(context, scaleFactor),
+                          child:
+                              _profileImage != null
                                   ? ClipOval(
-                                      child: Image.asset(
-                                        _defaultProfilePath,
-                                        width: 80 * scaleFactor,
-                                        height: 80 * scaleFactor,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
-                                  : ClipOval(
-                                      child: Image.asset(
-                                        _cameraImagePath,
-                                        width: 80 * scaleFactor,
-                                        height: 80 * scaleFactor,
-                                        fit: BoxFit.cover,
-                                      ),
+                                    child: Image.file(
+                                      _profileImage!,
+                                      width: 80 * scaleFactor,
+                                      height: 80 * scaleFactor,
+                                      fit: BoxFit.cover,
                                     ),
+                                  )
+                                  : _useDefaultProfile
+                                  ? ClipOval(
+                                    child: Image.asset(
+                                      _defaultProfilePath,
+                                      width: 80 * scaleFactor,
+                                      height: 80 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  )
+                                  : ClipOval(
+                                    child: Image.asset(
+                                      _cameraImagePath,
+                                      width: 80 * scaleFactor,
+                                      height: 80 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
                         ),
                         SizedBox(height: 36 * scaleFactor),
                         EditFieldWidget(

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
+import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
@@ -84,9 +85,9 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
         setState(() {
           _connectionFailed = true;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('연결 실패')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('연결 실패')));
       }
     } catch (e) {
       debugPrint('Connect error: $e');
