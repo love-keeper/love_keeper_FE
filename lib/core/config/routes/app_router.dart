@@ -83,8 +83,11 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
-        name: RouteNames.emailPasswordInputPage,
-        builder: (context, state) => const EmailPasswordInputPage(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return EmailPasswordInputPage(email: extra?['email'] as String?);
+        },
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,

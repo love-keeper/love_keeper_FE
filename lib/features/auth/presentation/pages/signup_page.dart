@@ -31,7 +31,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     super.initState();
     debugPrint('SignupPage extraEmail: ${widget.extraEmail}');
     debugPrint(
-        'SignupPage provider email: ${ref.read(authStateNotifierProvider).email}');
+      'SignupPage provider email: ${ref.read(authStateNotifierProvider).email}',
+    );
     _focusNode = FocusNode();
     _emailCodeController.addListener(() {
       setState(() {});
@@ -63,9 +64,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     debugPrint('Verifying code with email: $email');
     if (email.isEmpty) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('이메일이 설정되지 않았습니다.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('이메일이 설정되지 않았습니다.')));
       });
       return;
     }
@@ -74,8 +75,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       _isLoading = true;
     });
     try {
-      final code =
-          await ref.read(authViewModelProvider.notifier).sendCode(email);
+      final code = await ref
+          .read(authViewModelProvider.notifier)
+          .sendCode(email);
       setState(() {
         _isCodeSent = true;
         _isLoading = false;
@@ -84,9 +86,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       });
       debugPrint('인증코드 전송됨: $code');
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('인증코드가 전송되었습니다.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('인증코드가 전송되었습니다.')));
       });
     } catch (e) {
       debugPrint('Send code error: $e');
@@ -94,9 +96,9 @@ class _SignupPageState extends ConsumerState<SignupPage> {
         _isLoading = false;
       });
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('인증코드 전송 실패: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('인증코드 전송 실패: $e')));
       });
     }
   }
@@ -124,9 +126,10 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       });
       if (result == '인증 성공') {
         debugPrint('Pushing to: ${RouteNames.emailPasswordInputPage}');
-        context.push(RouteNames.emailPasswordInputPage, extra: {
-          'email': email,
-        });
+        context.push(
+          RouteNames.emailPasswordInputPage,
+          extra: {'email': email},
+        );
       }
     } catch (e) {
       debugPrint('Verify code error: $e');
@@ -380,8 +383,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        onPressed: () =>
-                            showResendBottomSheet(context, scaleFactor),
+                        onPressed:
+                            () => showResendBottomSheet(context, scaleFactor),
                         child: Text(
                           '메일을 받지 못하셨나요?',
                           textAlign: TextAlign.center,
