@@ -135,8 +135,8 @@ class AuthViewModel extends _$AuthViewModel {
             .read(authStateNotifierProvider.notifier)
             .updateProviderId(providerId);
 
-        context.pushNamed(
-          RouteNames.profileRegistrationPage,
+        context.push(
+          '/profileRegistration',
           extra: {
             'email': email,
             'provider': provider,
