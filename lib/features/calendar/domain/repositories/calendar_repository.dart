@@ -8,7 +8,7 @@ import 'package:love_keeper/core/config/di/dio_module.dart';
 part 'calendar_repository.g.dart';
 
 abstract class CalendarRepository {
-  Future<Calendar> getCalendar(int year, int month, int? day); // day 추가
+  Future<Calendar> getCalendar(int year, int month, [int? day]); // day 추가
 }
 
 @riverpod

@@ -23,6 +23,7 @@ mixin _$LetterResponse {
   String get senderNickname => throw _privateConstructorUsedError;
   String get receiverNickname => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
+  String get sentDate => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,7 +37,11 @@ abstract class $LetterResponseCopyWith<$Res> {
           LetterResponse value, $Res Function(LetterResponse) then) =
       _$LetterResponseCopyWithImpl<$Res, LetterResponse>;
   @useResult
-  $Res call({String senderNickname, String receiverNickname, String content});
+  $Res call(
+      {String senderNickname,
+      String receiverNickname,
+      String content,
+      String sentDate});
 }
 
 /// @nodoc
@@ -55,6 +60,7 @@ class _$LetterResponseCopyWithImpl<$Res, $Val extends LetterResponse>
     Object? senderNickname = null,
     Object? receiverNickname = null,
     Object? content = null,
+    Object? sentDate = null,
   }) {
     return _then(_value.copyWith(
       senderNickname: null == senderNickname
@@ -69,6 +75,10 @@ class _$LetterResponseCopyWithImpl<$Res, $Val extends LetterResponse>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      sentDate: null == sentDate
+          ? _value.sentDate
+          : sentDate // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -81,7 +91,11 @@ abstract class _$$LetterResponseImplCopyWith<$Res>
       __$$LetterResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String senderNickname, String receiverNickname, String content});
+  $Res call(
+      {String senderNickname,
+      String receiverNickname,
+      String content,
+      String sentDate});
 }
 
 /// @nodoc
@@ -98,6 +112,7 @@ class __$$LetterResponseImplCopyWithImpl<$Res>
     Object? senderNickname = null,
     Object? receiverNickname = null,
     Object? content = null,
+    Object? sentDate = null,
   }) {
     return _then(_$LetterResponseImpl(
       senderNickname: null == senderNickname
@@ -112,6 +127,10 @@ class __$$LetterResponseImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      sentDate: null == sentDate
+          ? _value.sentDate
+          : sentDate // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -122,7 +141,8 @@ class _$LetterResponseImpl implements _LetterResponse {
   const _$LetterResponseImpl(
       {required this.senderNickname,
       required this.receiverNickname,
-      required this.content});
+      required this.content,
+      required this.sentDate});
 
   factory _$LetterResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$LetterResponseImplFromJson(json);
@@ -133,10 +153,12 @@ class _$LetterResponseImpl implements _LetterResponse {
   final String receiverNickname;
   @override
   final String content;
+  @override
+  final String sentDate;
 
   @override
   String toString() {
-    return 'LetterResponse(senderNickname: $senderNickname, receiverNickname: $receiverNickname, content: $content)';
+    return 'LetterResponse(senderNickname: $senderNickname, receiverNickname: $receiverNickname, content: $content, sentDate: $sentDate)';
   }
 
   @override
@@ -148,13 +170,15 @@ class _$LetterResponseImpl implements _LetterResponse {
                 other.senderNickname == senderNickname) &&
             (identical(other.receiverNickname, receiverNickname) ||
                 other.receiverNickname == receiverNickname) &&
-            (identical(other.content, content) || other.content == content));
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.sentDate, sentDate) ||
+                other.sentDate == sentDate));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, senderNickname, receiverNickname, content);
+  int get hashCode => Object.hash(
+      runtimeType, senderNickname, receiverNickname, content, sentDate);
 
   @JsonKey(ignore: true)
   @override
@@ -175,7 +199,8 @@ abstract class _LetterResponse implements LetterResponse {
   const factory _LetterResponse(
       {required final String senderNickname,
       required final String receiverNickname,
-      required final String content}) = _$LetterResponseImpl;
+      required final String content,
+      required final String sentDate}) = _$LetterResponseImpl;
 
   factory _LetterResponse.fromJson(Map<String, dynamic> json) =
       _$LetterResponseImpl.fromJson;
@@ -186,6 +211,8 @@ abstract class _LetterResponse implements LetterResponse {
   String get receiverNickname;
   @override
   String get content;
+  @override
+  String get sentDate;
   @override
   @JsonKey(ignore: true)
   _$$LetterResponseImplCopyWith<_$LetterResponseImpl> get copyWith =>

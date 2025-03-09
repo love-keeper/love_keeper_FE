@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$LetterList {
-  List<Letter> get letterList => throw _privateConstructorUsedError;
+  List<Letter> get letters => throw _privateConstructorUsedError;
   bool get isFirst => throw _privateConstructorUsedError;
   bool get isLast => throw _privateConstructorUsedError;
   bool get hasNext => throw _privateConstructorUsedError;
@@ -32,7 +32,7 @@ abstract class $LetterListCopyWith<$Res> {
           LetterList value, $Res Function(LetterList) then) =
       _$LetterListCopyWithImpl<$Res, LetterList>;
   @useResult
-  $Res call({List<Letter> letterList, bool isFirst, bool isLast, bool hasNext});
+  $Res call({List<Letter> letters, bool isFirst, bool isLast, bool hasNext});
 }
 
 /// @nodoc
@@ -48,15 +48,15 @@ class _$LetterListCopyWithImpl<$Res, $Val extends LetterList>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? letterList = null,
+    Object? letters = null,
     Object? isFirst = null,
     Object? isLast = null,
     Object? hasNext = null,
   }) {
     return _then(_value.copyWith(
-      letterList: null == letterList
-          ? _value.letterList
-          : letterList // ignore: cast_nullable_to_non_nullable
+      letters: null == letters
+          ? _value.letters
+          : letters // ignore: cast_nullable_to_non_nullable
               as List<Letter>,
       isFirst: null == isFirst
           ? _value.isFirst
@@ -82,7 +82,7 @@ abstract class _$$LetterListImplCopyWith<$Res>
       __$$LetterListImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({List<Letter> letterList, bool isFirst, bool isLast, bool hasNext});
+  $Res call({List<Letter> letters, bool isFirst, bool isLast, bool hasNext});
 }
 
 /// @nodoc
@@ -96,15 +96,15 @@ class __$$LetterListImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? letterList = null,
+    Object? letters = null,
     Object? isFirst = null,
     Object? isLast = null,
     Object? hasNext = null,
   }) {
     return _then(_$LetterListImpl(
-      letterList: null == letterList
-          ? _value._letterList
-          : letterList // ignore: cast_nullable_to_non_nullable
+      letters: null == letters
+          ? _value._letters
+          : letters // ignore: cast_nullable_to_non_nullable
               as List<Letter>,
       isFirst: null == isFirst
           ? _value.isFirst
@@ -126,18 +126,18 @@ class __$$LetterListImplCopyWithImpl<$Res>
 
 class _$LetterListImpl implements _LetterList {
   const _$LetterListImpl(
-      {required final List<Letter> letterList,
+      {required final List<Letter> letters,
       required this.isFirst,
       required this.isLast,
       required this.hasNext})
-      : _letterList = letterList;
+      : _letters = letters;
 
-  final List<Letter> _letterList;
+  final List<Letter> _letters;
   @override
-  List<Letter> get letterList {
-    if (_letterList is EqualUnmodifiableListView) return _letterList;
+  List<Letter> get letters {
+    if (_letters is EqualUnmodifiableListView) return _letters;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_letterList);
+    return EqualUnmodifiableListView(_letters);
   }
 
   @override
@@ -149,7 +149,7 @@ class _$LetterListImpl implements _LetterList {
 
   @override
   String toString() {
-    return 'LetterList(letterList: $letterList, isFirst: $isFirst, isLast: $isLast, hasNext: $hasNext)';
+    return 'LetterList(letters: $letters, isFirst: $isFirst, isLast: $isLast, hasNext: $hasNext)';
   }
 
   @override
@@ -157,20 +157,15 @@ class _$LetterListImpl implements _LetterList {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LetterListImpl &&
-            const DeepCollectionEquality()
-                .equals(other._letterList, _letterList) &&
+            const DeepCollectionEquality().equals(other._letters, _letters) &&
             (identical(other.isFirst, isFirst) || other.isFirst == isFirst) &&
             (identical(other.isLast, isLast) || other.isLast == isLast) &&
             (identical(other.hasNext, hasNext) || other.hasNext == hasNext));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_letterList),
-      isFirst,
-      isLast,
-      hasNext);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_letters), isFirst, isLast, hasNext);
 
   @JsonKey(ignore: true)
   @override
@@ -181,13 +176,13 @@ class _$LetterListImpl implements _LetterList {
 
 abstract class _LetterList implements LetterList {
   const factory _LetterList(
-      {required final List<Letter> letterList,
+      {required final List<Letter> letters,
       required final bool isFirst,
       required final bool isLast,
       required final bool hasNext}) = _$LetterListImpl;
 
   @override
-  List<Letter> get letterList;
+  List<Letter> get letters;
   @override
   bool get isFirst;
   @override

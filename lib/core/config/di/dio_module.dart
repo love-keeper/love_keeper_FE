@@ -49,8 +49,9 @@ ApiClient apiClient(ApiClientRef ref) {
           print('Stored access token from response: $accessToken');
         }
         final refreshTokenCookie = response.headers['set-cookie']?.firstWhere(
-            (cookie) => cookie.contains('refresh_token'),
-            orElse: () => '');
+          (cookie) => cookie.contains('refresh_token'),
+          orElse: () => '',
+        );
         if (refreshTokenCookie != null) {
           final refreshToken =
               refreshTokenCookie.split(';').first.split('=')[1];
@@ -100,14 +101,16 @@ ApiClient apiClient(ApiClientRef ref) {
     ),
   );
 
-  dio.interceptors.add(LogInterceptor(
-    request: true,
-    requestHeader: true,
-    requestBody: true,
-    responseHeader: true,
-    responseBody: true,
-    logPrint: print,
-  ));
+  dio.interceptors.add(
+    LogInterceptor(
+      request: true,
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      logPrint: print,
+    ),
+  );
 
   return ApiClient(dio);
 }

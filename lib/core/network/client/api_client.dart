@@ -171,7 +171,6 @@ abstract class ApiClient {
     @Query('page') int page,
     @Query('size') int size,
   );
-
   @GET('/api/letters/count')
   Future<ApiResponse<int>> getLetterCount();
 
@@ -215,6 +214,12 @@ abstract class ApiClient {
     @Query('year') int year,
     @Query('month') int month,
     @Query('day') int? day,
+  );
+
+  @GET('/api/calendar')
+  Future<ApiResponse<CalendarResponse>> getCalendarWithoutDay(
+    @Query('year') int year,
+    @Query('month') int month,
   );
 
   // FCM

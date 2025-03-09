@@ -1,65 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper/features/letters/domain/entities/letter.dart';
+import 'package:love_keeper/features/letters/presentation/viewmodels/letters_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/letter_box_widget.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart'; // 수정된 임포트
 import 'package:love_keeper/features/promises/presentation/widgets/promise_box_widget.dart';
 import 'package:intl/intl.dart';
 
-class StoragePage extends StatefulWidget {
+class StoragePage extends ConsumerStatefulWidget {
   final int initialTab; // 0: 편지, 1: 약속
   const StoragePage({super.key, this.initialTab = 0});
 
   @override
-  _StoragePageState createState() => _StoragePageState();
+  ConsumerState<StoragePage> createState() => _StoragePageState();
 }
 
-class _StoragePageState extends State<StoragePage> {
+class _StoragePageState extends ConsumerState<StoragePage> {
   late int selectedIndex;
 
-  // 약속 탭의 초기 샘플 데이터
   List<Map<String, String>> promises = [
     {
       'title': '첫 번째 약속',
-      'content': '약속 내용이 이곳에 표시됩니다. 자세한 내용은 생략될 수 있습니다.',
+      'content': '약속 내용이 이곳에 표시됩니다.',
       'date': '2025. 02. 01.',
     },
-    {
-      'title': '두 번째 약속',
-      'content': '또 다른 약속의 내용이 여기에 표시됩니다. 내용이 길 경우 ... 처리됩니다.',
-      'date': '2025. 02. 05.',
-    },
-    {
-      'title': '세 번째 약속',
-      'content': '세 번째 약속 내용 예시입니다.',
-      'date': '2025. 02. 10.',
-    },
-    {'title': '네 번째 약속', 'content': '네 번째 약속 내용입니다.', 'date': '2025. 02. 15.'},
+    {'title': '두 번째 약속', 'content': '또 다른 약속의 내용입니다.', 'date': '2025. 02. 05.'},
   ];
 
-  // 편지 탭의 샘플 데이터
-  final List<Map<String, String>> letters = [
-    {
-      'user': '돌돌',
-      'content': '내가 너무 심했던 것 같아 용서해 줄 수 있어? 다시해와 엊꺼ㅜ우',
-      'date': '2025. 02. 01.',
-    },
-    {
-      'user': '미미',
-      'content': '예시 내용입니다. 이것은 긴 내용일 경우 생략됩니다. 어쩌라고',
-      'date': '2025. 02. 02.',
-    },
-    {
-      'user': '돌돌',
-      'content': '세 번째 편지 내용이 이렇게 길게 들어갈 경우 테스트 합니다.',
-      'date': '2025. 02. 03.',
-    },
-    {'user': '돌돌', 'content': '네 번째 편지 내용입니다.', 'date': '2025. 02. 04.'},
-    {'user': '미미', 'content': '다섯 번째 편지 내용입니다.', 'date': '2025. 02. 05.'},
-    {'user': '돌돌', 'content': '여섯 번째 편지 내용입니다.', 'date': '2025. 02. 06.'},
-    {'user': '미미', 'content': '일곱 번째 편지 내용입니다.', 'date': '2025. 02. 07.'},
-    {'user': '돌돌', 'content': '여덟 번째 편지 내용입니다.', 'date': '2025. 02. 08.'},
-  ];
-
-  // 약속 작성 상태와 텍스트 컨트롤러 (내부 탭 전환은 유지)
   bool _isEditingPromise = false;
   final TextEditingController _promiseController = TextEditingController();
 
@@ -67,6 +35,7 @@ class _StoragePageState extends State<StoragePage> {
   void initState() {
     super.initState();
     selectedIndex = widget.initialTab;
+    // MembersViewModel에서 이미 fetchMemberInfo가 호출되므로 추가 호출 불필요
   }
 
   void _submitPromise() {
@@ -140,7 +109,7 @@ class _StoragePageState extends State<StoragePage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: ListView.separated(
-        padding: const EdgeInsets.only(bottom: 83 + 15),
+        padding: const EdgeInsets.only(top: 0),
         itemCount: itemCount,
         separatorBuilder: (context, index) => const SizedBox(height: 15),
         itemBuilder: (context, index) {
@@ -177,156 +146,155 @@ class _StoragePageState extends State<StoragePage> {
     final screenWidth = MediaQuery.of(context).size.width;
     final double boxWidth = (screenWidth - 55) / 2;
     final double boxHeight = boxWidth * (160 / 156);
-    List<Map<String, String>> sortedLetters = List.from(letters);
-    sortedLetters.sort((a, b) {
-      DateTime dateA = DateFormat(
-        'yyyy. MM. dd.',
-      ).parse(a['date'] ?? '1900. 01. 01.');
-      DateTime dateB = DateFormat(
-        'yyyy. MM. dd.',
-      ).parse(b['date'] ?? '1900. 01. 01.');
-      return dateB.compareTo(dateA);
-    });
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GridView.builder(
-        padding: const EdgeInsets.only(bottom: 83 + 15),
-        itemCount: sortedLetters.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
-          childAspectRatio: boxWidth / boxHeight,
-        ),
-        itemBuilder: (context, index) {
-          final letter = sortedLetters[index];
-          return LetterBoxWidget(
-            title: '${letter['user']}의 편지',
-            content: letter['content'] ?? '',
-            date: letter['date'] ?? '',
-          );
-        },
-      ),
+    final lettersState = ref.watch(lettersViewModelProvider);
+    final memberInfo = ref.watch(membersViewModelProvider).value; // 변경된 프로바이더
+
+    return lettersState.when(
+      data: (letterList) {
+        if (letterList == null || letterList.letters.isEmpty) {
+          return const Center(child: Text('편지가 없습니다.'));
+        }
+        final sortedLetters = List<Letter>.from(letterList.letters);
+        sortedLetters.sort((a, b) {
+          DateTime dateA = DateTime.parse(a.sentDate);
+          DateTime dateB = DateTime.parse(b.sentDate);
+          return dateB.compareTo(dateA); // 최신순 정렬
+        });
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: GridView.builder(
+            padding: const EdgeInsets.only(top: 0),
+            itemCount: sortedLetters.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 15,
+              mainAxisSpacing: 15,
+              childAspectRatio: boxWidth / boxHeight,
+            ),
+            itemBuilder: (context, index) {
+              final letter = sortedLetters[index];
+              final myNickname = memberInfo?.nickname ?? '나';
+              final partnerNickname = memberInfo?.coupleNickname ?? '상대방';
+              final title =
+                  letter.senderNickname == myNickname
+                      ? '$myNickname의 편지'
+                      : '$partnerNickname의 편지';
+              final formattedDate = DateFormat(
+                'yyyy. MM. dd.',
+              ).format(DateTime.parse(letter.sentDate));
+              return LetterBoxWidget(
+                title: title,
+                content: letter.content,
+                date: formattedDate,
+              );
+            },
+          ),
+        );
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (error, stack) => Center(child: Text('오류: $error')),
     );
   }
 
-  // 내부 탭바(편지/약속 전환) UI는 그대로 유지합니다.
   Widget _buildCustomTabBar() {
     double screenWidth = MediaQuery.of(context).size.width;
-    double barWidth = (screenWidth - 40) / 2;
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTapDown: (TapDownDetails details) {
-        double tapX = details.globalPosition.dx - 20;
-        setState(() {
-          selectedIndex = tapX < barWidth ? 0 : 1;
-          if (selectedIndex == 0) {
-            _isEditingPromise = false;
-            _promiseController.clear();
-          }
-        });
-      },
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: double.infinity,
+    double barWidth = (screenWidth - 40) / 2; // 탭 바 너비 계산
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: double.infinity,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFC3C6CF),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 250),
+                left: selectedIndex == 0 ? 0 : barWidth,
+                child: Container(
+                  width: barWidth,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFC3C6CF),
+                    color: const Color(0xFFFF859B),
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
-                AnimatedPositioned(
-                  duration: const Duration(milliseconds: 250),
-                  left: selectedIndex == 0 ? 0 : barWidth,
-                  child: Container(
-                    width: barWidth,
-                    height: 6,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF859B),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = 0;
-                        _isEditingPromise = false;
-                        _promiseController.clear();
-                      });
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: SizedBox(
-                      width: barWidth,
-                      child: Center(
-                        child: Text(
-                          '편지',
-                          style: TextStyle(
-                            fontSize: 14,
-                            height: 22 / 14,
-                            fontWeight: FontWeight.w400,
-                            color:
-                                selectedIndex == 0
-                                    ? const Color(0xFFFF859B)
-                                    : const Color(0xFFAFB2BF),
-                          ),
-                        ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // "편지" 탭
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedIndex = 0;
+                    _isEditingPromise = false;
+                    _promiseController.clear();
+                    print('Switched to Letters: $selectedIndex');
+                  });
+                },
+                child: SizedBox(
+                  width: barWidth,
+                  child: Center(
+                    child: Text(
+                      '편지',
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 22 / 14,
+                        fontWeight: FontWeight.w400,
+                        color:
+                            selectedIndex == 0
+                                ? const Color(0xFFFF859B)
+                                : const Color(0xFFAFB2BF),
                       ),
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        selectedIndex = 1;
-                        _isEditingPromise = false;
-                        _promiseController.clear();
-                      });
-                    },
-                    behavior: HitTestBehavior.translucent,
-                    child: SizedBox(
-                      width: barWidth,
-                      child: Center(
-                        child: Text(
-                          '약속',
-                          style: TextStyle(
-                            fontSize: 14,
-                            height: 22 / 14,
-                            fontWeight: FontWeight.w400,
-                            color:
-                                selectedIndex == 1
-                                    ? const Color(0xFFFF859B)
-                                    : const Color(0xFFAFB2BF),
-                          ),
-                        ),
+              ),
+              // "약속" 탭
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    selectedIndex = 1;
+                    _isEditingPromise = false;
+                    _promiseController.clear();
+                    print('Switched to Promises: $selectedIndex');
+                  });
+                },
+                child: SizedBox(
+                  width: barWidth,
+                  child: Center(
+                    child: Text(
+                      '약속',
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 22 / 14,
+                        fontWeight: FontWeight.w400,
+                        color:
+                            selectedIndex == 1
+                                ? const Color(0xFFFF859B)
+                                : const Color(0xFFAFB2BF),
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -338,33 +306,13 @@ class _StoragePageState extends State<StoragePage> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+      'Build - selectedIndex: $selectedIndex, _isEditingPromise: $_isEditingPromise',
+    );
     return Scaffold(
-      // 개별 StoragePage에서는 글로벌 탭바는 제거하고 내부 탭 UI만 사용합니다.
       extendBodyBehindAppBar: true,
-      extendBody: true,
+      extendBody: false,
       backgroundColor: Colors.white,
-      floatingActionButton:
-          (selectedIndex == 1 && !_isEditingPromise)
-              ? SizedBox(
-                width: 56,
-                height: 56,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEditingPromise = true;
-                    });
-                  },
-                  backgroundColor: const Color(0xFFFF859B),
-                  elevation: 0,
-                  shape: const CircleBorder(),
-                  child: const Icon(
-                    Icons.add_rounded,
-                    color: Colors.white,
-                    size: 35,
-                  ),
-                ),
-              )
-              : null,
       appBar: AppBar(
         scrolledUnderElevation: 0,
         automaticallyImplyLeading: false,
@@ -387,34 +335,64 @@ class _StoragePageState extends State<StoragePage> {
           ),
         ],
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromRGBO(255, 231, 235, 0.4),
-              Color.fromRGBO(255, 206, 215, 0.4),
-            ],
-            begin: FractionalOffset(0.12, 0.0),
-            end: FractionalOffset(0.88, 1.0),
-          ),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 130),
-            _buildCustomTabBar(),
-            const SizedBox(height: 30),
-            Expanded(
-              child:
-                  selectedIndex == 0
-                      ? _buildLetterStorage()
-                      : _buildPromiseStorage(),
+      body: Stack(
+        children: [
+          // 기존 body 내용
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color.fromRGBO(255, 231, 235, 0.4),
+                  Color.fromRGBO(255, 206, 215, 0.4),
+                ],
+                begin: FractionalOffset(0.12, 0.0),
+                end: FractionalOffset(0.88, 1.0),
+              ),
             ),
-          ],
-        ),
+            child: Column(
+              children: [
+                const SizedBox(height: 130),
+                _buildCustomTabBar(),
+                const SizedBox(height: 30),
+                Expanded(
+                  child:
+                      selectedIndex == 0
+                          ? _buildLetterStorage()
+                          : _buildPromiseStorage(),
+                ),
+                const SizedBox(height: 95),
+              ],
+            ),
+          ),
+          // 조건문에 따라 버튼 배치
+          if (selectedIndex == 1 && !_isEditingPromise)
+            Positioned(
+              bottom: 103, // 탭 바 위로 배치 (필요시 조정)
+              right: 20, // 오른쪽 여백
+              child: SizedBox(
+                width: 56,
+                height: 56,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    setState(() {
+                      _isEditingPromise = true;
+                    });
+                  },
+                  backgroundColor: const Color(0xFFFF859B),
+                  elevation: 0,
+                  shape: const CircleBorder(),
+                  child: const Icon(
+                    Icons.add_rounded,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
-      // global 탭바는 ShellRoute에서 관리하므로, 여기 bottomNavigationBar는 제거합니다.
     );
   }
 }
