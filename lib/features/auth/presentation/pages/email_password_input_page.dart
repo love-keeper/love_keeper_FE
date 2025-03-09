@@ -6,7 +6,6 @@ import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
-import 'package:love_keeper/features/members/presentation/widgets/agreementbox.dart';
 
 class EmailPasswordInputPage extends ConsumerStatefulWidget {
   final String? email;
@@ -23,15 +22,6 @@ class _EmailPasswordInputPageState
   late FocusNode _passwordFocusNode;
   late FocusNode _confirmFocusNode;
 
-  // 체크박스 상태 (필수 항목)
-  bool required1 = false; // 마스터: "전체 동의 (선택 포함)"
-  bool required2 = false; // 필수: "러브키퍼 이용약관 동의 (필수)"
-  bool required3 = false; // 필수: "개인정보수집 및 이용에 대한 안내 (필수)"
-  bool optional = false; // 선택: "마케팅 정보 수신 (선택)"
-
-  // 하단 버튼 활성화 조건은 필수 항목인 required2와 required3가 모두 체크되어 있어야 함
-  bool get allRequiredChecked => required2 && required3;
-
   final RegExp passwordRegex = RegExp(
     r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]).{8,}$',
   );
@@ -42,7 +32,6 @@ class _EmailPasswordInputPageState
   void initState() {
     super.initState();
     debugPrint('Received email from extra: ${widget.email}');
-    // updateEmail 호출 제거
     _passwordFocusNode = FocusNode();
     _confirmFocusNode = FocusNode();
     _passwordController.addListener(() => setState(() {}));
@@ -59,205 +48,6 @@ class _EmailPasswordInputPageState
     _passwordFocusNode.dispose();
     _confirmFocusNode.dispose();
     super.dispose();
-  }
-
-  void _showTermsBottomSheet(BuildContext context, double scaleFactor) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      isDismissible: true,
-      builder: (BuildContext dialogContext) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setModalState) {
-            return GestureDetector(
-              onTap: () => Navigator.pop(dialogContext),
-              behavior: HitTestBehavior.opaque,
-              child: Stack(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.transparent,
-                  ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 375 * scaleFactor,
-                        height: 354 * scaleFactor,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(16 * scaleFactor),
-                            topRight: Radius.circular(16 * scaleFactor),
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 6 * scaleFactor),
-                            Container(
-                              width: 50 * scaleFactor,
-                              height: 5 * scaleFactor,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFC3C6CF),
-                                borderRadius: BorderRadius.circular(
-                                  26 * scaleFactor,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 33 * scaleFactor),
-                            Center(
-                              child: Text(
-                                '약관동의',
-                                style: TextStyle(
-                                  fontSize: 18 * scaleFactor,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF27282C),
-                                  height: 26 / (18 * scaleFactor),
-                                  letterSpacing: -0.4 * scaleFactor,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 29 * scaleFactor),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                buildAgreementRow(
-                                  '전체 동의 (선택 포함)',
-                                  scaleFactor,
-                                  isChecked: required1,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      required1 = value;
-                                      required2 = value;
-                                      required3 = value;
-                                      optional = value;
-                                    });
-                                    setModalState(() {});
-                                  },
-                                ),
-                                SizedBox(height: 10 * scaleFactor),
-                                buildAgreementRow(
-                                  '러브키퍼 이용약관 동의 (필수)',
-                                  scaleFactor,
-                                  isChecked: required2,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      required2 = value;
-                                      required1 =
-                                          required2 && required3 && optional;
-                                    });
-                                    setModalState(() {});
-                                  },
-                                ),
-                                SizedBox(height: 10 * scaleFactor),
-                                buildAgreementRow(
-                                  '개인정보수집 및 이용에 대한 안내 (필수)',
-                                  scaleFactor,
-                                  isChecked: required3,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      required3 = value;
-                                      required1 =
-                                          required2 && required3 && optional;
-                                    });
-                                    setModalState(() {});
-                                  },
-                                ),
-                                SizedBox(height: 10 * scaleFactor),
-                                buildAgreementRow(
-                                  '마케팅 정보 수신 (선택)',
-                                  scaleFactor,
-                                  required: false,
-                                  isChecked: optional,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      optional = value;
-                                    });
-                                    setModalState(() {});
-                                  },
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 27 * scaleFactor),
-                            GestureDetector(
-                              onTap: () {
-                                if (required2 && required3) {
-                                  // 상태 업데이트를 여기서 처리
-                                  ref
-                                      .read(authStateNotifierProvider.notifier)
-                                      .updatePassword(_passwordController.text);
-                                  ref
-                                      .read(authStateNotifierProvider.notifier)
-                                      .updateAgreements(
-                                        privacyPolicyAgreed: required3,
-                                        marketingAgreed: optional,
-                                        termsOfServiceAgreed: required2,
-                                      );
-                                  if (widget.email != null) {
-                                    ref
-                                        .read(
-                                          authStateNotifierProvider.notifier,
-                                        )
-                                        .updateEmail(widget.email!);
-                                  }
-                                  Navigator.pop(dialogContext);
-                                  debugPrint(
-                                    'Pushing to: /profileRegistration with email: ${widget.email}',
-                                  );
-                                  context.push(
-                                    '/profileRegistration',
-                                    extra: {
-                                      'email': widget.email,
-                                      'provider': 'LOCAL',
-                                      'providerId': null,
-                                    },
-                                  );
-                                }
-                              },
-                              child: Container(
-                                width: 334 * scaleFactor,
-                                height: 52 * scaleFactor,
-                                decoration: BoxDecoration(
-                                  color:
-                                      (required2 && required3)
-                                          ? const Color(0xFFFF859B)
-                                          : const Color(0xFFC3C6CF),
-                                  borderRadius: BorderRadius.circular(
-                                    55 * scaleFactor,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '동의하고 계속하기',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 16 * scaleFactor,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                      height: 24 / (16 * scaleFactor),
-                                      letterSpacing:
-                                          -0.025 * (16 * scaleFactor),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 16 * scaleFactor),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -397,8 +187,23 @@ class _EmailPasswordInputPageState
                                   hasConfirm &&
                                   _passwordController.text ==
                                       _confirmController.text) {
-                                debugPrint('Opening terms bottom sheet');
-                                _showTermsBottomSheet(context, scaleFactor);
+                                ref
+                                    .read(authStateNotifierProvider.notifier)
+                                    .updatePassword(_passwordController.text);
+                                if (widget.email != null) {
+                                  ref
+                                      .read(authStateNotifierProvider.notifier)
+                                      .updateEmail(widget.email!);
+                                }
+                                // context를 login에 전달하지 않음
+                                context.push(
+                                  '/profileRegistration',
+                                  extra: {
+                                    'email': widget.email,
+                                    'provider': 'LOCAL',
+                                    'providerId': null,
+                                  },
+                                );
                               }
                             }
                           },

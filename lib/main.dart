@@ -8,19 +8,46 @@ import 'package:love_keeper/core/config/routes/app_router.dart';
 import 'package:love_keeper/features/fcm/presentation/viewmodels/fcm_viewmodel.dart';
 import 'package:love_keeper/firebase_options.dart';
 
+// 백그라운드 메시지 핸들러
+@pragma('vm:entry-point') // 중요: Flutter 엔진이 이 함수를 보존하도록 함
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  // 백그라운드 핸들러에서는 Firebase를 다시 초기화하지 않음
+  // 단순히 메시지 처리만 수행
   print("백그라운드 메시지 수신: ${message.messageId}");
 }
 
+// Firebase 초기화 함수
+Future<void> initializeFirebase() async {
+  try {
+    // 이미 초기화된 앱이 있는지 확인
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      print("Firebase 초기화 성공");
+    } else {
+      Firebase.app(); // 기존 앱 인스턴스 가져오기
+      print("Firebase 이미 초기화됨");
+    }
+
+    // 백그라운드 메시지 핸들러 등록
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  } catch (e) {
+    print("Firebase 초기화 오류: $e");
+  }
+}
+
 void main() async {
+  // Flutter 바인딩 초기화
   WidgetsFlutterBinding.ensureInitialized();
 
+  // KakaoSDK 초기화
   KakaoSdk.init(nativeAppKey: '4082411ebc9c7d9b7612cc9c7bee8da8');
-  //이부분만 수정함
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+  // Firebase 초기화
+  await initializeFirebase();
+
+  // 앱 실행
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -32,7 +59,10 @@ class MyApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     // FCM 초기화 (권한 요청 및 리스너 설정만)
-    ref.read(fCMViewModelProvider.notifier).initializeFCM();
+    // 첫 빌드 후에만 실행되도록 설정
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(fCMViewModelProvider.notifier).initializeFCM();
+    });
 
     return MaterialApp.router(
       title: 'Love Keeper',

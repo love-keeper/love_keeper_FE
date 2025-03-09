@@ -6,6 +6,7 @@ import 'package:flutter_naver_login/flutter_naver_login.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/fcm/presentation/viewmodels/fcm_viewmodel.dart';
 
 class SocialLoginButtons extends ConsumerWidget {
@@ -15,9 +16,10 @@ class SocialLoginButtons extends ConsumerWidget {
     try {
       print('Kakao login button pressed');
       bool isInstalled = await kakao.isKakaoTalkInstalled();
-      kakao.OAuthToken token = isInstalled
-          ? await kakao.UserApi.instance.loginWithKakaoTalk()
-          : await kakao.UserApi.instance.loginWithKakaoAccount();
+      kakao.OAuthToken token =
+          isInstalled
+              ? await kakao.UserApi.instance.loginWithKakaoTalk()
+              : await kakao.UserApi.instance.loginWithKakaoAccount();
 
       kakao.User user = await kakao.UserApi.instance.me();
       await _handleLogin(
@@ -84,14 +86,31 @@ class SocialLoginButtons extends ConsumerWidget {
     String email,
     BuildContext context,
   ) async {
-    await ref.read(authViewModelProvider.notifier).handleSocialLogin(
+    // 1. 소셜 로그인 처리
+    await ref
+        .read(authViewModelProvider.notifier)
+        .handleSocialLogin(
           email: email,
           provider: provider,
           providerId: providerId,
           context: context,
         );
-    // 로그인 성공 후 FCM 토큰 등록
+
+    // 2. FCM 토큰 등록
     await ref.read(fCMViewModelProvider.notifier).registerTokenOnLogin();
+
+    // 3. 커플 연결 상태 확인
+    final coupleInfo =
+        await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
+
+    // 4. 커플 연결 여부에 따라 네비게이션
+    if (coupleInfo != null) {
+      print('Couple is connected, navigating to MainPage');
+      context.go(RouteNames.mainPage);
+    } else {
+      print('Couple is not connected, navigating to CodeConnectPage');
+      context.go(RouteNames.codeConnectPage);
+    }
   }
 
   void _showError(BuildContext context, String message) {

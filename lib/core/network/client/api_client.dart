@@ -211,7 +211,6 @@ abstract class ApiClient {
     @Query('day') int? day,
   );
 
-  // FCM
   @POST('/api/fcm/token')
   Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
 

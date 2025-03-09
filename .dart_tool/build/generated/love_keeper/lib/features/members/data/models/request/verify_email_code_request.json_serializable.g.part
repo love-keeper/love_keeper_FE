@@ -1,0 +1,17 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$VerifyEmailCodeRequestImpl _$$VerifyEmailCodeRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$VerifyEmailCodeRequestImpl(
+      email: json['email'] as String,
+      code: json['code'] as String,
+    );
+
+Map<String, dynamic> _$$VerifyEmailCodeRequestImplToJson(
+        _$VerifyEmailCodeRequestImpl instance) =>
+    <String, dynamic>{
+      'email': instance.email,
+      'code': instance.code,
+    };

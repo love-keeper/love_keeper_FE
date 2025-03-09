@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
 
@@ -75,10 +76,12 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
               .read(authStateNotifierProvider.notifier)
               .updateEmail(_emailController.text);
           debugPrint('Pushing to signup with email: ${_emailController.text}');
-          context.push(
-            RouteNames.signupPage,
-            extra: {'email': _emailController.text},
-          );
+          if (mounted) {
+            context.push(
+              RouteNames.signupPage,
+              extra: {'email': _emailController.text},
+            );
+          }
         } else {
           setState(() {
             showPasswordField = true;
@@ -90,13 +93,40 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           provider: 'LOCAL',
           password: _passwordController.text,
           providerId: null,
-          context: context, // context 추가
         );
-        // login 메서드에서 라우팅 처리하므로 추가 이동 불필요
+        // 로그인 성공 후 커플 상태 체크 및 라우팅
         if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
+
+        try {
+          final coupleInfo =
+              await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
+          if (coupleInfo != null && mounted) {
+            debugPrint(
+              'Couple info found: ${coupleInfo.coupleId}, navigating to MainPage',
+            );
+            context.go(RouteNames.mainPage);
+          } else {
+            debugPrint('No couple info found, navigating to CodeConnectPage');
+            if (mounted) {
+              context.go(RouteNames.codeConnectPage);
+            }
+          }
+        } on DioException catch (e) {
+          if (e.response?.statusCode == 404 && mounted) {
+            debugPrint(
+              'No couple info found (404), navigating to CodeConnectPage',
+            );
+            context.go(RouteNames.codeConnectPage);
+          } else {
+            debugPrint('Couple info fetch failed: $e');
+            if (mounted) {
+              context.go(RouteNames.codeConnectPage);
+            }
+          }
+        }
       }
     } catch (e) {
       debugPrint('Error: $e');
@@ -110,11 +140,13 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           showPasswordField = true;
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(showPasswordField ? '로그인 실패: $e' : '이메일 확인 실패: $e'),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(showPasswordField ? '로그인 실패: $e' : '이메일 확인 실패: $e'),
+            ),
+          );
+        }
       }
     }
   }

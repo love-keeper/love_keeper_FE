@@ -39,6 +39,7 @@ class FCMViewModel extends _$FCMViewModel {
   @override
   FCMState build() {
     _repository = ref.watch(fcmRepositoryProvider);
+    initializeFCM();
     return FCMState();
   }
 

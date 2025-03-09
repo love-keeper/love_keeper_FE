@@ -6,7 +6,21 @@ part of 'dio_module.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$apiClientHash() => r'0a980a5c3afc9c6eab2070c5713a3136856862d3';
+String _$dioHash() => r'8a0b80df4660e3d503f77ac0490b2de85235a89b';
+
+/// See also [dio].
+@ProviderFor(dio)
+final dioProvider = Provider<Dio>.internal(
+  dio,
+  name: r'dioProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$dioHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef DioRef = ProviderRef<Dio>;
+String _$apiClientHash() => r'04f88fa418cd123c02c8f1c25fe2c1649b44b73a';
 
 /// See also [apiClient].
 @ProviderFor(apiClient)
