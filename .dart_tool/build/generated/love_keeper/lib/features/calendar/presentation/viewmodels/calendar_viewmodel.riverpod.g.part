@@ -2,7 +2,7 @@
 // RiverpodGenerator
 // **************************************************************************
 
-String _$calendarViewModelHash() => r'6e7479e9645ee92867bb1d30cd57bcd8f6857399';
+String _$calendarViewModelHash() => r'9bde1f90163d9d8dabefbd330a531be98b83a18e';
 
 /// See also [CalendarViewModel].
 @ProviderFor(CalendarViewModel)

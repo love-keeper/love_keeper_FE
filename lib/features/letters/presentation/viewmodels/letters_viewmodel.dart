@@ -10,16 +10,26 @@ class LettersViewModel extends _$LettersViewModel {
   late final LettersRepository _repository;
 
   @override
-  AsyncValue<dynamic> build() {
+  AsyncValue<LetterList?> build() {
     _repository = ref.watch(lettersRepositoryProvider);
+    _fetchInitialLetters();
     return const AsyncValue.data(null);
+  }
+
+  Future<void> _fetchInitialLetters() async {
+    try {
+      final letterList = await _repository.getLetterList(0, 10);
+      state = AsyncValue.data(letterList);
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+    }
   }
 
   Future<String> createLetter(String content) async {
     state = const AsyncValue.loading();
     try {
       final result = await _repository.createLetter(content);
-      state = AsyncValue.data(result);
+      await _fetchInitialLetters(); // 편지 생성 후 목록 갱신
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
@@ -43,7 +53,6 @@ class LettersViewModel extends _$LettersViewModel {
     state = const AsyncValue.loading();
     try {
       final count = await _repository.getLetterCount();
-      state = AsyncValue.data(count);
       return count;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);

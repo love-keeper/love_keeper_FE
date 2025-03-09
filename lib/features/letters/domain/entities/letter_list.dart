@@ -6,7 +6,7 @@ part 'letter_list.freezed.dart';
 @freezed
 class LetterList with _$LetterList {
   const factory LetterList({
-    required List<Letter> letterList,
+    required List<Letter> letters,
     required bool isFirst,
     required bool isLast,
     required bool hasNext,
