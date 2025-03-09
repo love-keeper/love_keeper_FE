@@ -5,9 +5,7 @@ part 'fcm_models.g.dart';
 
 @freezed
 class FCMTokenRequest with _$FCMTokenRequest {
-  const factory FCMTokenRequest({
-    required String token,
-  }) = _FCMTokenRequest;
+  const factory FCMTokenRequest({required String token}) = _FCMTokenRequest;
 
   factory FCMTokenRequest.fromJson(Map<String, dynamic> json) =>
       _$FCMTokenRequestFromJson(json);

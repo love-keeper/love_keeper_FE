@@ -61,12 +61,12 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<String>> reissue(Map<String, dynamic> data) async {
+  Future<ApiResponse<String>> reissue(String refreshToken) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(data);
+    final _headers = <String, dynamic>{r'Cookie': refreshToken};
+    _headers.removeWhere((k, v) => v == null);
+    const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<ApiResponse<String>>(Options(
       method: 'POST',
       headers: _headers,
@@ -1490,43 +1490,7 @@ class _ApiClient implements ApiClient {
     )
         .compose(
           _dio.options,
-          '/api/fcm/register',
-          queryParameters: queryParameters,
-          data: _data,
-        )
-        .copyWith(
-            baseUrl: _combineBaseUrls(
-          _dio.options.baseUrl,
-          baseUrl,
-        )));
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late ApiResponse<String> _value;
-    try {
-      _value = ApiResponse<String>.fromJson(
-        _result.data!,
-        (json) => json as String,
-      );
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<ApiResponse<String>> removeFCMToken(FCMTokenRequest request) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = request;
-    final _options = _setStreamType<ApiResponse<String>>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-        .compose(
-          _dio.options,
-          '/api/fcm/remove',
+          '/api/fcm/token',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1551,15 +1515,14 @@ class _ApiClient implements ApiClient {
 
   @override
   Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
-    int? page,
-    int? size,
+    int page,
+    int size,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'page': page,
       r'size': size,
     };
-    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =

@@ -8,7 +8,6 @@ part 'fcm_repository.g.dart';
 
 abstract class FCMRepository {
   Future<void> registerToken(String token);
-  Future<void> removeToken(String token);
   Future<List<PushNotificationResponse>> getPushNotifications({
     int? page,
     int? size,
@@ -28,20 +27,16 @@ class FCMRepositoryImpl implements FCMRepository {
   }
 
   @override
-  Future<void> removeToken(String token) async {
-    final request = FCMTokenRequest(token: token);
-    final response = await _apiClient.removeFCMToken(request);
-    _handleResponse(response);
-  }
-
-  @override
   Future<List<PushNotificationResponse>> getPushNotifications({
     int? page,
     int? size,
   }) async {
-    final response = await _apiClient.getPushNotifications(page, size);
+    final response = await _apiClient.getPushNotifications(
+      page ?? 1,
+      size ?? 20,
+    );
     _handleResponse(response);
-    return response.result ?? []; // null 안전성 추가
+    return response.result ?? [];
   }
 
   void _handleResponse(ApiResponse<dynamic> response) {

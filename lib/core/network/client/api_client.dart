@@ -39,14 +39,13 @@ abstract class ApiClient {
   factory ApiClient(Dio dio) = _ApiClient;
 
   // AUTH
-
   @POST('/api/auth/email-duplication')
   Future<ApiResponse<String>> emailDuplication(
     @Body() EmailDuplicationRequest request,
   );
 
   @POST('/api/auth/reissue')
-  Future<ApiResponse<String>> reissue(@Body() Map<String, dynamic> data);
+  Future<ApiResponse<String>> reissue(@Header('Cookie') String refreshToken);
 
   @MultiPart()
   @POST('/api/auth/signup')
@@ -56,7 +55,7 @@ abstract class ApiClient {
     @Part(name: 'birthDate') required String birthDate,
     @Part(name: 'provider') required String provider,
     @Part(name: 'privacyPolicyAgreed') required bool privacyPolicyAgreed,
-    @Part(name: 'marketingAgreed') bool? marketingAgreed, // 필수 아님
+    @Part(name: 'marketingAgreed') bool? marketingAgreed,
     @Part(name: 'termsOfServiceAgreed') required bool termsOfServiceAgreed,
     @Part(name: 'password') String? password,
     @Part(name: 'providerId') String? providerId,
@@ -150,19 +149,16 @@ abstract class ApiClient {
   );
 
   // DRAFTS
-
   @POST('/api/drafts')
   Future<ApiResponse<String>> createDraft(@Body() CreateDraftRequest request);
 
   @GET('/api/drafts/{order}')
   Future<ApiResponse<DraftResponse>> getDraft(@Path('order') int order);
 
-  // 드래프트 삭제
   @DELETE('/api/drafts/{order}')
   Future<ApiResponse<String>> deleteDraft(@Path('order') int order);
 
   // LETTERS
-
   @POST('/api/letters')
   Future<ApiResponse<String>> createLetter(@Body() CreateLetterRequest request);
 
@@ -183,7 +179,6 @@ abstract class ApiClient {
   );
 
   // PROMISES
-
   @POST('/api/promises')
   Future<ApiResponse<String>> createPromise(
     @Body() CreatePromiseRequest request,
@@ -209,23 +204,20 @@ abstract class ApiClient {
   );
 
   // CALENDARS
-
-  @GET('/api/calendar') // 엔드포인트는 실제 백엔드에 맞게 조정
+  @GET('/api/calendar')
   Future<ApiResponse<CalendarResponse>> getCalendar(
     @Query('year') int year,
     @Query('month') int month,
     @Query('day') int? day,
   );
 
-  @POST('/api/fcm/register')
+  // FCM
+  @POST('/api/fcm/token')
   Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
-
-  @POST('/api/fcm/remove')
-  Future<ApiResponse<String>> removeFCMToken(@Body() FCMTokenRequest request);
 
   @GET('/api/fcm/notifications')
   Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
-    @Query('page') int? page,
-    @Query('size') int? size,
+    @Query('page') int page,
+    @Query('size') int size,
   );
 }

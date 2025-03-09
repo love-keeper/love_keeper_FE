@@ -17,7 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   KakaoSdk.init(nativeAppKey: '4082411ebc9c7d9b7612cc9c7bee8da8');
-
+  //이부분만 수정함
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 

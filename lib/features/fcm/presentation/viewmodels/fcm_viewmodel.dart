@@ -89,17 +89,6 @@ class FCMViewModel extends _$FCMViewModel {
     }
   }
 
-  Future<void> removeToken(String token) async {
-    state = state.copyWith(isLoading: true);
-    try {
-      await _repository.removeToken(token);
-      state = state.copyWith(isLoading: false);
-      print('FCM 토큰 삭제 성공');
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: 'FCM 토큰 삭제 실패: $e');
-    }
-  }
-
   Future<void> fetchNotifications() async {
     state = state.copyWith(isLoading: true);
     try {
