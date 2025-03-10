@@ -213,7 +213,7 @@ abstract class ApiClient {
 
   @POST('/api/fcm/token')
   Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
-
+  //원래 맵 형태로 해야하는데 g 파일 오류가 해결이 안되어서 일단은 리스트로 받고 레퍼지토리 코드에서 처리하게 해둠.
   @GET('/api/fcm/notifications')
   Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
     @Query('page') int page,
