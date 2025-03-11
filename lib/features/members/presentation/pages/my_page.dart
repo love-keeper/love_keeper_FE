@@ -37,7 +37,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useRootNavigator: true, // 바텀시트 위로 올라가게
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {
@@ -134,16 +134,19 @@ class _MyPageState extends ConsumerState<MyPage> {
                                 onTap: () {
                                   Navigator.pop(dialogContext);
                                   setState(() {
-                                    _profileImage = null; // 로컬 초기화
+                                    _profileImage = null;
                                   });
                                   ref
                                       .read(membersViewModelProvider.notifier)
-                                      .updateProfileImage(null) // 서버에 null 전달
+                                      .updateProfileImage(null)
                                       .then((_) {
-                                    print('Profile image set to default');
-                                  }).catchError((e) {
-                                    print('Error setting default image: $e');
-                                  });
+                                        print('Profile image set to default');
+                                      })
+                                      .catchError((e) {
+                                        print(
+                                          'Error setting default image: $e',
+                                        );
+                                      });
                                 },
                                 child: Container(
                                   width: 168 * scaleFactor,
@@ -218,22 +221,30 @@ class _MyPageState extends ConsumerState<MyPage> {
     );
   }
 
+  // 이미지 선택 함수 개선: 오류 처리 및 품질 설정 추가
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      final newImage = File(pickedFile.path);
-      setState(() {
-        _profileImage = newImage;
-      });
-      try {
+    try {
+      final pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85, // 이미지 품질을 낮춰 크기 문제 방지
+      );
+      if (pickedFile != null) {
+        final newImage = File(pickedFile.path);
+        setState(() {
+          _profileImage = newImage;
+        });
         await ref
             .read(membersViewModelProvider.notifier)
             .updateProfileImage(newImage);
-      } catch (e) {
-        print('Error updating profile image: $e');
+        print('Profile image updated successfully');
+      } else {
+        print('No image selected');
       }
+    } catch (e) {
+      print('Error picking image: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('이미지 선택 중 오류가 발생했습니다: $e')));
     }
   }
 
@@ -254,8 +265,12 @@ class _MyPageState extends ConsumerState<MyPage> {
           onTap: () => context.push('/birthdate'),
         ),
         SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow('이메일', memberInfo?.email ?? '', scaleFactor,
-            onTap: () => context.push('/emailEdit')),
+        _buildBoxedRow(
+          '이메일',
+          memberInfo?.email ?? '',
+          scaleFactor,
+          onTap: () => context.push('/emailEdit'),
+        ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
           '비밀번호 변경',
@@ -416,45 +431,55 @@ class _MyPageState extends ConsumerState<MyPage> {
             child: SingleChildScrollView(
               padding: EdgeInsets.only(top: 16 * scaleFactor),
               child: memberState.when(
-                data: (memberInfo) => Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: ClipOval(
-                        child: _profileImage != null
-                            ? Image.file(
-                                _profileImage!,
-                                width: 84 * scaleFactor,
-                                height: 84 * scaleFactor,
-                                fit: BoxFit.cover,
-                              )
-                            : memberInfo?.profileImageUrl != null &&
-                                    memberInfo!.profileImageUrl!.isNotEmpty
-                                ? CachedNetworkImage(
-                                    imageUrl: memberInfo.profileImageUrl!,
-                                    width: 84 * scaleFactor,
-                                    height: 84 * scaleFactor,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) =>
-                                        const CircularProgressIndicator(),
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(
+                data:
+                    (memberInfo) => Column(
+                      children: [
+                        // 프로필 사진
+                        Align(
+                          alignment: Alignment.center,
+                          child: ClipOval(
+                            child:
+                                _profileImage != null
+                                    ? Image.file(
+                                      _profileImage!,
+                                      width: 84 * scaleFactor,
+                                      height: 84 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                    )
+                                    : memberInfo?.profileImageUrl != null &&
+                                        memberInfo!.profileImageUrl!.isNotEmpty
+                                    ? CachedNetworkImage(
+                                      imageUrl: memberInfo.profileImageUrl!,
+                                      width: 84 * scaleFactor,
+                                      height: 84 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          (context, url) =>
+                                              const CircularProgressIndicator(),
+                                      errorWidget:
+                                          (context, url, error) => Image.asset(
+                                            _defaultImagePath,
+                                            width: 84 * scaleFactor,
+                                            height: 84 * scaleFactor,
+                                            fit: BoxFit.cover,
+                                          ),
+                                    )
+                                    : Image.asset(
                                       _defaultImagePath,
                                       width: 84 * scaleFactor,
                                       height: 84 * scaleFactor,
                                       fit: BoxFit.cover,
                                     ),
-                                  )
-                                : Image.asset(
-                                    _defaultImagePath,
-                                    width: 84 * scaleFactor,
-                                    height: 84 * scaleFactor,
-                                    fit: BoxFit.cover,
-                                  ),
-                      ),
+                          ),
+                        ),
+                        SizedBox(height: 20 * scaleFactor),
+                        // 정보 섹션 추가
+                        _buildInfoSection(scaleFactor, memberInfo),
+                        SizedBox(height: 20 * scaleFactor),
+                        // 메뉴 섹션 추가
+                        _buildMenuSection(scaleFactor),
+                      ],
                     ),
-                  ],
-                ),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
               ),
