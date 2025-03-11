@@ -299,7 +299,7 @@ class _ProfileRegistrationPageState
         'Signup successful: memberId=${signupUser.memberId}, email=${signupUser.email}',
       );
 
-      // 2. Login 호출
+      // 2. Login 호출 (context 추가)
       final loginUser = await ref
           .read(authViewModelProvider.notifier)
           .login(
@@ -307,7 +307,7 @@ class _ProfileRegistrationPageState
             provider: provider,
             password: provider == 'LOCAL' ? password : null,
             providerId: provider != 'LOCAL' ? providerId : null,
-            context: context, // context 추가
+            context: context, // 여기에 context 추가
           );
       debugPrint(
         'Login successful: memberId=${loginUser.memberId}, email=${loginUser.email}',

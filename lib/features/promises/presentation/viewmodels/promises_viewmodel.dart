@@ -1,18 +1,20 @@
 import 'package:love_keeper/features/promises/data/repositories/promises_repository_impl.dart';
+import 'package:love_keeper/features/promises/domain/entities/promise_list.dart';
+import 'package:love_keeper/features/promises/domain/repositories/promises_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../domain/entities/promise_list.dart';
-import '../../domain/repositories/promises_repository.dart';
 
 part 'promises_viewmodel.g.dart';
 
 @riverpod
 class PromisesViewModel extends _$PromisesViewModel {
-  late final PromisesRepository _repository;
+  late final PromisesRepository _repository; // late로 변경
 
   @override
   AsyncValue<dynamic> build() {
     _repository = ref.watch(promisesRepositoryProvider);
-    return const AsyncValue.data(null);
+    print('PromisesViewModel build called');
+    getPromises(0, 10); // 초기 데이터 로드
+    return const AsyncValue.loading(); // 초기 상태를 로딩으로 설정
   }
 
   Future<String> createPromise(String content) async {
@@ -31,6 +33,9 @@ class PromisesViewModel extends _$PromisesViewModel {
     state = const AsyncValue.loading();
     try {
       final promiseList = await _repository.getPromises(page, size);
+      print(
+        'Fetched promises: ${promiseList.promiseList.map((p) => p.toJson())}',
+      );
       state = AsyncValue.data(promiseList);
       return promiseList;
     } catch (e, stackTrace) {

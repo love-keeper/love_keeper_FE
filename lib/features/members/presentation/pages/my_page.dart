@@ -1,9 +1,10 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:photo_manager/photo_manager.dart';
+import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 
@@ -221,6 +222,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     );
   }
 
+<<<<<<< Updated upstream
   // 이미지 선택 함수 개선: 오류 처리 및 품질 설정 추가
   Future<void> _pickImage() async {
     try {
@@ -240,6 +242,43 @@ class _MyPageState extends ConsumerState<MyPage> {
       } else {
         print('No image selected');
       }
+=======
+  // 이미지 선택 함수 수정: 최신 wechat_assets_picker에서는 pickerConfig를 사용합니다.
+  Future<void> _pickImage() async {
+    try {
+      final PermissionState ps = await PhotoManager.requestPermissionExtend();
+      if (!ps.isAuth) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('사진 접근 권한이 필요합니다.')));
+        return;
+      }
+
+      final List<AssetEntity>? assets = await AssetPicker.pickAssets(
+        context,
+        pickerConfig: const AssetPickerConfig(
+          maxAssets: 1,
+          requestType: RequestType.image,
+        ),
+      );
+
+      if (assets != null && assets.isNotEmpty) {
+        final File? file = await assets.first.file;
+        if (file != null) {
+          setState(() {
+            _profileImage = file;
+          });
+          await ref
+              .read(membersViewModelProvider.notifier)
+              .updateProfileImage(file);
+          print('Profile image updated successfully');
+        } else {
+          print('선택한 자산에서 파일을 불러오지 못했습니다.');
+        }
+      } else {
+        print('이미지가 선택되지 않았습니다.');
+      }
+>>>>>>> Stashed changes
     } catch (e) {
       print('Error picking image: $e');
       ScaffoldMessenger.of(
@@ -255,14 +294,14 @@ class _MyPageState extends ConsumerState<MyPage> {
           '닉네임',
           memberInfo?.nickname ?? '',
           scaleFactor,
-          onTap: () => context.push('/nickname'),
+          onTap: () => context.push('/nicknameEdit'),
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
           '생년월일',
           memberInfo?.birthday ?? '',
           scaleFactor,
-          onTap: () => context.push('/birthdate'),
+          onTap: () => context.push('/birthdateEdit'),
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(

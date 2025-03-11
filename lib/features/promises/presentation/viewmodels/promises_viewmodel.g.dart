@@ -6,7 +6,7 @@ part of 'promises_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$promisesViewModelHash() => r'0a43604b63d1de9b975e1cd69b4eefa12a100419';
+String _$promisesViewModelHash() => r'a97b5aab5269b06e2335070c6eecfe8bd4b76ffb';
 
 /// See also [PromisesViewModel].
 @ProviderFor(PromisesViewModel)

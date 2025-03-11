@@ -73,13 +73,21 @@ class MembersViewModel extends _$MembersViewModel {
   }
 
   Future<String> updateProfileImage(File? profileImage) async {
-    // File?로 수정
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.updateProfileImage(profileImage!);
-      await fetchMemberInfo(); // 최신 데이터 가져오기
-      return result;
+      if (profileImage == null) {
+        print('Profile image is null, setting to default');
+        final result = await _repository.updateProfileImage(null); // null 허용 시
+        await fetchMemberInfo();
+        return result;
+      } else {
+        print('Uploading profile image: ${profileImage.path}');
+        final result = await _repository.updateProfileImage(profileImage);
+        await fetchMemberInfo();
+        return result;
+      }
     } catch (e, stackTrace) {
+      print('Error in updateProfileImage: $e');
       state = AsyncValue.error(e, stackTrace);
       rethrow;
     }
