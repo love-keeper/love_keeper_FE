@@ -1,8 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart' as kakao;
 import 'package:flutter_naver_login/flutter_naver_login.dart';
+import 'package:love_keeper/core/providers/auth_state_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
@@ -86,30 +89,56 @@ class SocialLoginButtons extends ConsumerWidget {
     String email,
     BuildContext context,
   ) async {
-    // 1. 소셜 로그인 처리
-    await ref
-        .read(authViewModelProvider.notifier)
-        .handleSocialLogin(
-          email: email,
-          provider: provider,
-          providerId: providerId,
-          context: context,
+    try {
+      final authViewModel = ref.read(authViewModelProvider.notifier);
+      final authStateNotifier = ref.read(authStateNotifierProvider.notifier);
+
+      // 이메일 중복 체크
+      try {
+        await authViewModel.emailDuplication(email);
+        // authState에 데이터 저장
+        authStateNotifier.updateEmail(email);
+        authStateNotifier.updateProvider(provider);
+        authStateNotifier.updateProviderId(providerId);
+        debugPrint('=== _handleLogin: Data saved to authState ===');
+        final authState = ref.read(authStateNotifierProvider);
+        debugPrint(
+          'Verified state: email=${authState.email}, provider=${authState.provider}, providerId=${authState.providerId}',
         );
 
-    // 2. FCM 토큰 등록
-    await ref.read(fCMViewModelProvider.notifier).registerTokenOnLogin();
+        // ProfileRegistrationPage로 이동 (extra 제거)
+        context.push(RouteNames.profileRegistrationPage);
+      } on DioException catch (e) {
+        if (e.response?.statusCode == 409) {
+          // 기존 회원: 즉시 로그인
+          final user = await authViewModel.login(
+            email: email,
+            provider: provider,
+            providerId: providerId,
+          );
+          print('Existing user logged in: ${user.email}');
 
-    // 3. 커플 연결 상태 확인
-    final coupleInfo =
-        await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
+          final prefs = await SharedPreferences.getInstance();
+          final accessToken = prefs.getString('access_token');
+          if (accessToken == null) {
+            throw Exception('Access Token not set after login');
+          }
 
-    // 4. 커플 연결 여부에 따라 네비게이션
-    if (coupleInfo != null) {
-      print('Couple is connected, navigating to MainPage');
-      context.go(RouteNames.mainPage);
-    } else {
-      print('Couple is not connected, navigating to CodeConnectPage');
-      context.go(RouteNames.codeConnectPage);
+          await ref.read(fCMViewModelProvider.notifier).registerTokenOnLogin();
+          final coupleInfo =
+              await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
+
+          if (coupleInfo != null) {
+            context.go(RouteNames.mainPage);
+          } else {
+            context.go(RouteNames.codeConnectPage);
+          }
+        } else {
+          rethrow;
+        }
+      }
+    } catch (e) {
+      _showError(context, '소셜 로그인 처리 중 오류: $e');
     }
   }
 
