@@ -34,8 +34,7 @@ dependencies:
   intl: any
   
  # 이미지 관련
-  photo_manager: ^2.7.2
-  wechat_assets_picker: ^7.3.4
+
  
   # 네트워크 및 관련 패키지 (http 버전을 dart_code_metrics와 호환되는 버전으로 낮춤)
   http: ^0.13.6
@@ -130,3 +129,11 @@ flutter:
           weight: 800
         - asset: assets/fonts/Pretendard-Black.otf
           weight: 900
+          
+dependency_overrides:
+  photo_manager:
+    path: /Users/flal/lovekeeper_flal/love_keeper/flutter_photo_manager
+  extended_image: 
+    path: /Users/flal/lovekeeper_flal/love_keeper/extended_image
+  wechat_assets_picker:
+    path: /Users/flal/lovekeeper_flal/love_keeper/flutter_wechat_assets_picker

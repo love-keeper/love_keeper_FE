@@ -306,13 +306,12 @@ packages:
     source: hosted
     version: "5.0.3"
   extended_image:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
-      name: extended_image
-      sha256: a6b738d9b8d5513be72c545cc3e9c5c451fbee77c8db3cbec7c32ae85b82fb93
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.4.1"
+      path: "/Users/flal/lovekeeper_flal/love_keeper/extended_image"
+      relative: false
+    source: path
+    version: "10.0.0"
   extended_image_library:
     dependency: transitive
     description:
@@ -998,13 +997,20 @@ packages:
     source: hosted
     version: "6.1.0"
   photo_manager:
-    dependency: "direct main"
+    dependency: "direct overridden"
     description:
-      name: photo_manager
-      sha256: "74e5cb8a9e359e7fd461f684564c5a3e82b2d360f0e46d64264b4b381628c86d"
+      path: "/Users/flal/lovekeeper_flal/love_keeper/flutter_photo_manager"
+      relative: false
+    source: path
+    version: "2.7.2"
+  photo_manager_image_provider:
+    dependency: transitive
+    description:
+      name: photo_manager_image_provider
+      sha256: b6015b67b32f345f57cf32c126f871bced2501236c405aafaefa885f7c821e4f
       url: "https://pub.dev"
     source: hosted
-    version: "2.8.2"
+    version: "2.2.0"
   platform:
     dependency: transitive
     description:
@@ -1498,6 +1504,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.4"
+  visibility_detector:
+    dependency: transitive
+    description:
+      name: visibility_detector
+      sha256: dd5cc11e13494f432d15939c3aa8ae76844c42b723398643ce9addb88a5ed420
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.0+2"
   vm_service:
     dependency: transitive
     description:
@@ -1571,13 +1585,20 @@ packages:
     source: hosted
     version: "3.18.4"
   wechat_assets_picker:
-    dependency: "direct main"
+    dependency: "direct overridden"
     description:
-      name: wechat_assets_picker
-      sha256: "49184fbc83f855bade59961566a6323a2015634ece1f889de5af6fa133a10706"
+      path: "/Users/flal/lovekeeper_flal/love_keeper/flutter_wechat_assets_picker"
+      relative: false
+    source: path
+    version: "9.5.0"
+  wechat_picker_library:
+    dependency: transitive
+    description:
+      name: wechat_picker_library
+      sha256: a42e09cb85b15fc9410f6a69671371cc60aa99c4a1f7967f6593a7f665f6f47a
       url: "https://pub.dev"
     source: hosted
-    version: "7.3.4"
+    version: "1.0.5"
   xdg_directories:
     dependency: transitive
     description:

@@ -222,30 +222,10 @@ class _MyPageState extends ConsumerState<MyPage> {
     );
   }
 
-<<<<<<< Updated upstream
-  // 이미지 선택 함수 개선: 오류 처리 및 품질 설정 추가
-  Future<void> _pickImage() async {
-    try {
-      final pickedFile = await ImagePicker().pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85, // 이미지 품질을 낮춰 크기 문제 방지
-      );
-      if (pickedFile != null) {
-        final newImage = File(pickedFile.path);
-        setState(() {
-          _profileImage = newImage;
-        });
-        await ref
-            .read(membersViewModelProvider.notifier)
-            .updateProfileImage(newImage);
-        print('Profile image updated successfully');
-      } else {
-        print('No image selected');
-      }
-=======
   // 이미지 선택 함수 수정: 최신 wechat_assets_picker에서는 pickerConfig를 사용합니다.
   Future<void> _pickImage() async {
     try {
+      // 권한 확인
       final PermissionState ps = await PhotoManager.requestPermissionExtend();
       if (!ps.isAuth) {
         ScaffoldMessenger.of(
@@ -254,6 +234,7 @@ class _MyPageState extends ConsumerState<MyPage> {
         return;
       }
 
+      // 이미지 선택
       final List<AssetEntity>? assets = await AssetPicker.pickAssets(
         context,
         pickerConfig: const AssetPickerConfig(
@@ -263,7 +244,20 @@ class _MyPageState extends ConsumerState<MyPage> {
       );
 
       if (assets != null && assets.isNotEmpty) {
-        final File? file = await assets.first.file;
+        final AssetEntity asset = assets.first;
+
+        // iCloud 이미지 다운로드 처리
+        File? file;
+        if (Platform.isIOS) {
+          print('iOS에서 이미지 처리 중...');
+          // iCloud에서 다운로드 대기
+          file = await asset.loadFile(
+            withSubtype: true, // iCloud 다운로드 포함
+          );
+        } else {
+          file = await asset.file;
+        }
+
         if (file != null) {
           setState(() {
             _profileImage = file;
@@ -271,16 +265,19 @@ class _MyPageState extends ConsumerState<MyPage> {
           await ref
               .read(membersViewModelProvider.notifier)
               .updateProfileImage(file);
-          print('Profile image updated successfully');
+          print('프로필 이미지가 성공적으로 업데이트되었습니다.');
         } else {
-          print('선택한 자산에서 파일을 불러오지 못했습니다.');
+          print('선택한 이미지 파일을 불러오지 못했습니다.');
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('이미지 파일을 가져오지 못했습니다.')));
         }
       } else {
         print('이미지가 선택되지 않았습니다.');
       }
->>>>>>> Stashed changes
-    } catch (e) {
-      print('Error picking image: $e');
+    } catch (e, stackTrace) {
+      print('이미지 선택 중 오류 발생: $e');
+      print('스택 트레이스: $stackTrace');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('이미지 선택 중 오류가 발생했습니다: $e')));
