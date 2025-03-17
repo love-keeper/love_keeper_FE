@@ -93,13 +93,7 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: RouteNames.profileRegistrationPage,
         builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>?;
-          debugPrint('GoRouter received extra: $extra');
-          return ProfileRegistrationPage(
-            email: extra?['email'] as String?,
-            provider: extra?['provider'] as String?,
-            providerId: extra?['providerId'] as String?,
-          );
+          return const ProfileRegistrationPage();
         },
       ),
       GoRoute(

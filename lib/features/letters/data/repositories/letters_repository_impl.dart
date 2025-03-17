@@ -1,11 +1,13 @@
 import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../../../core/config/di/dio_module.dart';
-import '../../../../core/models/api_response.dart';
-import '../../domain/entities/letter.dart';
-import '../../domain/entities/letter_list.dart';
-import '../../domain/repositories/letters_repository.dart';
-import '../models/request/create_letter_request.dart';
+import 'package:love_keeper/core/config/di/dio_module.dart';
+import 'package:love_keeper/core/models/api_response.dart';
+import 'package:love_keeper/features/letters/domain/entities/letter.dart';
+import 'package:love_keeper/features/letters/domain/entities/letter_list.dart'
+    as Domain; // 별칭 추가
+import 'package:love_keeper/features/letters/domain/repositories/letters_repository.dart';
+import 'package:love_keeper/features/letters/data/models/request/create_letter_request.dart';
+import 'package:love_keeper/features/letters/data/models/response/letter_list_response.dart';
 
 part 'letters_repository_impl.g.dart';
 
@@ -23,17 +25,19 @@ class LettersRepositoryImpl implements LettersRepository {
   }
 
   @override
-  Future<LetterList> getLetterList(int page, int size) async {
+  Future<Domain.LetterList> getLetterList(int page, int size) async {
+    // Domain.LetterList 사용
     final response = await apiClient.getLetterList(page, size);
     _handleResponse(response);
-    return LetterList(
-      letterList:
+    return Domain.LetterList(
+      letters:
           response.result!.letterList
               .map(
                 (e) => Letter(
                   senderNickname: e.senderNickname,
                   receiverNickname: e.receiverNickname,
                   content: e.content,
+                  sentDate: e.sentDate,
                 ),
               )
               .toList(),
@@ -51,17 +55,23 @@ class LettersRepositoryImpl implements LettersRepository {
   }
 
   @override
-  Future<LetterList> getLettersByDate(String date, int page, int size) async {
+  Future<Domain.LetterList> getLettersByDate(
+    String date,
+    int page,
+    int size,
+  ) async {
+    // Domain.LetterList 사용
     final response = await apiClient.getLettersByDate(date, page, size);
     _handleResponse(response);
-    return LetterList(
-      letterList:
+    return Domain.LetterList(
+      letters:
           response.result!.letterList
               .map(
                 (e) => Letter(
                   senderNickname: e.senderNickname,
                   receiverNickname: e.receiverNickname,
                   content: e.content,
+                  sentDate: e.sentDate,
                 ),
               )
               .toList(),

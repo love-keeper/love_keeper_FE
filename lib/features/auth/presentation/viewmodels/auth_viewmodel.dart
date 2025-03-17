@@ -84,13 +84,18 @@ class AuthViewModel extends _$AuthViewModel {
         providerId: providerId,
       );
       await _saveTokens(user);
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('access_token');
+      if (accessToken == null) {
+        throw Exception('Access token not stored after login');
+      }
       await _updateFCMToken();
       state = AsyncValue.data(user);
       return user;
     } catch (e) {
       String errorMessage =
           e is DioException && e.response?.statusCode == 401
-              ? '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.'
+              ? '로그인 실패: 계정 정보가 잘못되었습니다.'
               : '로그인 중 오류 발생: $e';
       print(errorMessage);
       state = AsyncValue.error(errorMessage, StackTrace.current);
@@ -113,17 +118,17 @@ class AuthViewModel extends _$AuthViewModel {
         ref
             .read(authStateNotifierProvider.notifier)
             .updateProviderId(providerId);
-
-        // 네비게이션 제거: ProfileRegistrationPage로 이동하지 않음
-        // context.push('/profileRegistration', extra: {...});
+        // 회원가입 로직 추가 필요 (아래 참고)
       } on DioException catch (e) {
         if (e.response?.statusCode == 409) {
           await login(email: email, provider: provider, providerId: providerId);
-          print('Social login successful: email=$email');
-        } else {
+          final prefs = await SharedPreferences.getInstance();
+          final accessToken = prefs.getString('access_token');
           print(
-            'Email duplication check failed: ${e.response?.statusCode}, ${e.response?.data}',
+            'Social login successful: email=$email, accessToken=$accessToken',
           );
+        } else {
+          print('Email duplication check failed: ${e.response?.statusCode}');
           rethrow;
         }
       }

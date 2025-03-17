@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
+import 'package:love_keeper/features/couples/data/models/response/couple_info.dart';
 import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 import 'package:love_keeper/features/main/presentation/widgets/fallback_circle_avatar.dart';
@@ -77,8 +77,9 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                     ),
                   ),
                   onPressed: () async {
-                    final newDateStr =
-                        DateFormat('yyyy-MM-dd').format(tempDate);
+                    final newDateStr = DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(tempDate);
                     try {
                       await ref
                           .read(couplesViewModelProvider.notifier)
@@ -164,23 +165,25 @@ class _DdayPageState extends ConsumerState<DdayPage> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: memberState.when(
-            data: (memberInfo) => coupleState.when(
-              data: (coupleInfo) {
-                if (coupleInfo != null && coupleInfo.startedAt.isNotEmpty) {
-                  _selectedDate = DateTime.parse(coupleInfo.startedAt);
-                }
-                return Column(
-                  children: [
-                    const SizedBox(height: 154),
-                    _buildAnniversaryCard(memberInfo, coupleInfo, dday),
-                    const SizedBox(height: 29),
-                    _buildDdayList(),
-                  ],
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stack) => Center(child: Text('Error: $error')),
-            ),
+            data:
+                (memberInfo) => coupleState.when(
+                  data: (coupleInfo) {
+                    if (coupleInfo != null && coupleInfo.startedAt.isNotEmpty) {
+                      _selectedDate = DateTime.parse(coupleInfo.startedAt);
+                    }
+                    return Column(
+                      children: [
+                        const SizedBox(height: 154),
+                        _buildAnniversaryCard(memberInfo, coupleInfo, dday),
+                        const SizedBox(height: 29),
+                        _buildDdayList(),
+                      ],
+                    );
+                  },
+                  loading:
+                      () => const Center(child: CircularProgressIndicator()),
+                  error: (error, stack) => Center(child: Text('Error: $error')),
+                ),
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(child: Text('Error: $error')),
           ),
@@ -190,7 +193,10 @@ class _DdayPageState extends ConsumerState<DdayPage> {
   }
 
   Widget _buildAnniversaryCard(
-      MemberInfo? memberInfo, CoupleInfo? coupleInfo, String dday) {
+    MemberInfo? memberInfo,
+    CoupleInfo? coupleInfo,
+    String dday,
+  ) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
@@ -215,41 +221,45 @@ class _DdayPageState extends ConsumerState<DdayPage> {
           Positioned(
             left: 20,
             top: 20,
-            child: memberInfo?.profileImageUrl != null &&
-                    memberInfo!.profileImageUrl!.isNotEmpty
-                ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: memberInfo.profileImageUrl!,
-                      width: 54 * scaleFactor,
-                      height: 54 * scaleFactor,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          _buildCircleImage(_defaultImagePath),
-                    ),
-                  )
-                : _buildCircleImage(_defaultImagePath),
+            child:
+                memberInfo?.profileImageUrl != null &&
+                        memberInfo!.profileImageUrl!.isNotEmpty
+                    ? ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: memberInfo.profileImageUrl!,
+                        width: 54 * scaleFactor,
+                        height: 54 * scaleFactor,
+                        fit: BoxFit.cover,
+                        placeholder:
+                            (context, url) => const CircularProgressIndicator(),
+                        errorWidget:
+                            (context, url, error) =>
+                                _buildCircleImage(_defaultImagePath),
+                      ),
+                    )
+                    : _buildCircleImage(_defaultImagePath),
           ),
           Positioned(
             right: 20,
             top: 20,
-            child: coupleInfo != null &&
-                    coupleInfo.partnerProfileImageUrl != null &&
-                    coupleInfo.partnerProfileImageUrl!.isNotEmpty
-                ? ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: coupleInfo.partnerProfileImageUrl!,
-                      width: 54 * scaleFactor,
-                      height: 54 * scaleFactor,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(),
-                      errorWidget: (context, url, error) =>
-                          _buildCircleImage(_defaultImagePath),
-                    ),
-                  )
-                : _buildCircleImage(_defaultImagePath),
+            child:
+                coupleInfo != null &&
+                        coupleInfo.partnerProfileImageUrl != null &&
+                        coupleInfo.partnerProfileImageUrl!.isNotEmpty
+                    ? ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: coupleInfo.partnerProfileImageUrl!,
+                        width: 54 * scaleFactor,
+                        height: 54 * scaleFactor,
+                        fit: BoxFit.cover,
+                        placeholder:
+                            (context, url) => const CircularProgressIndicator(),
+                        errorWidget:
+                            (context, url, error) =>
+                                _buildCircleImage(_defaultImagePath),
+                      ),
+                    )
+                    : _buildCircleImage(_defaultImagePath),
           ),
           Align(
             alignment: Alignment.center,
@@ -309,13 +319,15 @@ class _DdayPageState extends ConsumerState<DdayPage> {
 
     List<int> ddayIntervals = ddaySet.toList()..sort();
 
-    List<int> futureIntervals = ddayIntervals
-        .where(
-          (days) =>
-              _selectedDate.add(Duration(days: days)).isAfter(DateTime.now()),
-        )
-        .take(10)
-        .toList();
+    List<int> futureIntervals =
+        ddayIntervals
+            .where(
+              (days) => _selectedDate
+                  .add(Duration(days: days))
+                  .isAfter(DateTime.now()),
+            )
+            .take(10)
+            .toList();
 
     return Container(
       height: 385,
@@ -334,62 +346,65 @@ class _DdayPageState extends ConsumerState<DdayPage> {
       ),
       child: SingleChildScrollView(
         child: Column(
-          children: futureIntervals.map((days) {
-            final DateTime anniversaryDate = _selectedDate.add(
-              Duration(days: days),
-            );
-            final int remainingDays =
-                anniversaryDate.difference(DateTime.now()).inDays;
-            final bool isAnniversary = days % 365 == 0;
+          children:
+              futureIntervals.map((days) {
+                final DateTime anniversaryDate = _selectedDate.add(
+                  Duration(days: days),
+                );
+                final int remainingDays =
+                    anniversaryDate.difference(DateTime.now()).inDays;
+                final bool isAnniversary = days % 365 == 0;
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 9.5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isAnniversary ? '${days ~/ 365}주년' : '$days일',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: isAnniversary
-                          ? const Color(0xFFFC6383)
-                          : const Color(0xFF27282C),
-                    ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 9.5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        remainingDays == 0 ? '오늘' : 'D-$remainingDays',
+                        isAnniversary ? '${days ~/ 365}주년' : '$days일',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 18,
                           fontWeight: FontWeight.w600,
-                          letterSpacing: -0.4,
-                          height: 1.143,
-                          color: isAnniversary
-                              ? const Color(0xFFFC6383)
-                              : const Color(0xFF27282C),
+                          color:
+                              isAnniversary
+                                  ? const Color(0xFFFC6383)
+                                  : const Color(0xFF27282C),
                         ),
                       ),
-                      const SizedBox(height: 0),
-                      Text(
-                        DateFormat('yyyy. MM. dd.').format(anniversaryDate),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          height: 1.167,
-                          letterSpacing: -0.3,
-                          color: Color(0xFF27282C),
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            remainingDays == 0 ? '오늘' : 'D-$remainingDays',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.4,
+                              height: 1.143,
+                              color:
+                                  isAnniversary
+                                      ? const Color(0xFFFC6383)
+                                      : const Color(0xFF27282C),
+                            ),
+                          ),
+                          const SizedBox(height: 0),
+                          Text(
+                            DateFormat('yyyy. MM. dd.').format(anniversaryDate),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              height: 1.167,
+                              letterSpacing: -0.3,
+                              color: Color(0xFF27282C),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-            );
-          }).toList(),
+                );
+              }).toList(),
         ),
       ),
     );

@@ -2,7 +2,7 @@
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fCMViewModelHash() => r'6dc0abc3bd360809a89a7a5082c3a839db068614';
+String _$fCMViewModelHash() => r'd2b9a018dae3720803f236c4de5bcdc9ae773a8a';
 
 /// See also [FCMViewModel].
 @ProviderFor(FCMViewModel)

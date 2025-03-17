@@ -9,10 +9,13 @@ class CalendarRepositoryImpl implements CalendarRepository {
   CalendarRepositoryImpl(this._apiClient);
 
   @override
-  Future<Calendar> getCalendar(int year, int month, int? day) async {
+  Future<Calendar> getCalendar(int year, int month, [int? day]) async {
     try {
       print('Fetching calendar for $year-$month${day != null ? '-$day' : ''}');
-      final response = await _apiClient.getCalendar(year, month, day);
+      final response =
+          day != null
+              ? await _apiClient.getCalendar(year, month, day)
+              : await _apiClient.getCalendarWithoutDay(year, month);
       print('Response received: ${response.toString()}');
       if (response.result == null) {
         throw Exception('Calendar data not found in response');

@@ -19,6 +19,7 @@ mixin _$Letter {
   String get senderNickname => throw _privateConstructorUsedError;
   String get receiverNickname => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
+  String get sentDate => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $LetterCopyWith<Letter> get copyWith => throw _privateConstructorUsedError;
@@ -29,7 +30,11 @@ abstract class $LetterCopyWith<$Res> {
   factory $LetterCopyWith(Letter value, $Res Function(Letter) then) =
       _$LetterCopyWithImpl<$Res, Letter>;
   @useResult
-  $Res call({String senderNickname, String receiverNickname, String content});
+  $Res call(
+      {String senderNickname,
+      String receiverNickname,
+      String content,
+      String sentDate});
 }
 
 /// @nodoc
@@ -48,6 +53,7 @@ class _$LetterCopyWithImpl<$Res, $Val extends Letter>
     Object? senderNickname = null,
     Object? receiverNickname = null,
     Object? content = null,
+    Object? sentDate = null,
   }) {
     return _then(_value.copyWith(
       senderNickname: null == senderNickname
@@ -62,6 +68,10 @@ class _$LetterCopyWithImpl<$Res, $Val extends Letter>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      sentDate: null == sentDate
+          ? _value.sentDate
+          : sentDate // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -73,7 +83,11 @@ abstract class _$$LetterImplCopyWith<$Res> implements $LetterCopyWith<$Res> {
       __$$LetterImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String senderNickname, String receiverNickname, String content});
+  $Res call(
+      {String senderNickname,
+      String receiverNickname,
+      String content,
+      String sentDate});
 }
 
 /// @nodoc
@@ -90,6 +104,7 @@ class __$$LetterImplCopyWithImpl<$Res>
     Object? senderNickname = null,
     Object? receiverNickname = null,
     Object? content = null,
+    Object? sentDate = null,
   }) {
     return _then(_$LetterImpl(
       senderNickname: null == senderNickname
@@ -104,6 +119,10 @@ class __$$LetterImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      sentDate: null == sentDate
+          ? _value.sentDate
+          : sentDate // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -114,7 +133,8 @@ class _$LetterImpl implements _Letter {
   const _$LetterImpl(
       {required this.senderNickname,
       required this.receiverNickname,
-      required this.content});
+      required this.content,
+      required this.sentDate});
 
   @override
   final String senderNickname;
@@ -122,10 +142,12 @@ class _$LetterImpl implements _Letter {
   final String receiverNickname;
   @override
   final String content;
+  @override
+  final String sentDate;
 
   @override
   String toString() {
-    return 'Letter(senderNickname: $senderNickname, receiverNickname: $receiverNickname, content: $content)';
+    return 'Letter(senderNickname: $senderNickname, receiverNickname: $receiverNickname, content: $content, sentDate: $sentDate)';
   }
 
   @override
@@ -137,12 +159,14 @@ class _$LetterImpl implements _Letter {
                 other.senderNickname == senderNickname) &&
             (identical(other.receiverNickname, receiverNickname) ||
                 other.receiverNickname == receiverNickname) &&
-            (identical(other.content, content) || other.content == content));
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.sentDate, sentDate) ||
+                other.sentDate == sentDate));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, senderNickname, receiverNickname, content);
+  int get hashCode => Object.hash(
+      runtimeType, senderNickname, receiverNickname, content, sentDate);
 
   @JsonKey(ignore: true)
   @override
@@ -155,7 +179,8 @@ abstract class _Letter implements Letter {
   const factory _Letter(
       {required final String senderNickname,
       required final String receiverNickname,
-      required final String content}) = _$LetterImpl;
+      required final String content,
+      required final String sentDate}) = _$LetterImpl;
 
   @override
   String get senderNickname;
@@ -163,6 +188,8 @@ abstract class _Letter implements Letter {
   String get receiverNickname;
   @override
   String get content;
+  @override
+  String get sentDate;
   @override
   @JsonKey(ignore: true)
   _$$LetterImplCopyWith<_$LetterImpl> get copyWith =>

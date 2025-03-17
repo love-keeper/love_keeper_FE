@@ -42,6 +42,7 @@ Dio dio(DioRef ref) {
       },
 
       onResponse: (response, handler) async {
+        print('Response headers: ${response.headers}');
         final prefs = await SharedPreferences.getInstance();
         final accessToken = response.headers
             .value('Authorization')
