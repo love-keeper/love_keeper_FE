@@ -264,12 +264,11 @@ class _ProfileRegistrationPageState
     );
   }
 
-  // 비동기 작업을 별도 메서드로 분리
   Future<bool> _performRegistration(WidgetRef ref) async {
     try {
       final authViewModel = ref.read(authViewModelProvider.notifier);
+      final authState = ref.read(authStateNotifierProvider);
 
-      // authState 업데이트
       ref
           .read(authStateNotifierProvider.notifier)
           .updateAgreements(
@@ -282,11 +281,11 @@ class _ProfileRegistrationPageState
         'Signup params: email=$_email, nickname=${_nicknameController.text}, '
         'birthDate=${_birthdateController.text}, provider=$_provider, '
         'providerId=$_providerId, privacyPolicyAgreed=$required3, '
-        'marketingAgreed=$optional, termsOfServiceAgreed=$required2',
+        'marketingAgreed=$optional, termsOfServiceAgreed=$required2, '
+        'password=${authState.password}',
       );
 
-      // Signup 호출
-      final signupUser = await authViewModel.signup(
+      final user = await authViewModel.signup(
         email: _email ?? '',
         nickname: _nicknameController.text,
         birthDate: _birthdateController.text.replaceAll('.', '-'),
@@ -296,28 +295,28 @@ class _ProfileRegistrationPageState
         termsOfServiceAgreed: required2,
         providerId: _providerId,
         profileImage: _profileImage,
+        password: authState.password,
       );
-      debugPrint('Signup successful: ${signupUser.email}');
+      debugPrint('Signup successful: ${user.email}');
 
-      // Login 호출
       final loginUser = await authViewModel.login(
         email: _email ?? '',
         provider: _provider ?? 'LOCAL',
         providerId: _providerId,
+        password: authState.password, // 비밀번호 추가
       );
       debugPrint('Login successful: ${loginUser.email}');
 
-      // FCM 토큰 등록
       final fcmToken = await FirebaseMessaging.instance.getToken();
       if (fcmToken != null) {
         await ref.read(fCMViewModelProvider.notifier).registerToken(fcmToken);
         debugPrint('FCM token registered: $fcmToken');
       }
 
-      return true; // 성공 시 true 반환
+      return true;
     } catch (e) {
       debugPrint('Profile registration error: $e');
-      return false; // 실패 시 false 반환
+      return false;
     }
   }
 

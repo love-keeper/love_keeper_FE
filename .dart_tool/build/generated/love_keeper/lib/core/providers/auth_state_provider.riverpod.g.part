@@ -2,7 +2,7 @@
 // RiverpodGenerator
 // **************************************************************************
 
-String _$authStateNotifierHash() => r'6bde5d5a2aa708a9e61221fb22e0536642d1d2d2';
+String _$authStateNotifierHash() => r'9c5da671304d6551d61a0164bf48bbcc144beb4f';
 
 /// See also [AuthStateNotifier].
 @ProviderFor(AuthStateNotifier)

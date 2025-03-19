@@ -77,6 +77,9 @@ class AuthViewModel extends _$AuthViewModel {
   }) async {
     state = const AsyncValue.loading();
     try {
+      debugPrint(
+        'Login params: email=$email, provider=$provider, password=$password, providerId=$providerId',
+      );
       final user = await _repository.login(
         email: email,
         provider: provider,
@@ -97,7 +100,7 @@ class AuthViewModel extends _$AuthViewModel {
           e is DioException && e.response?.statusCode == 401
               ? '로그인 실패: 계정 정보가 잘못되었습니다.'
               : '로그인 중 오류 발생: $e';
-      print(errorMessage);
+      debugPrint(errorMessage);
       state = AsyncValue.error(errorMessage, StackTrace.current);
       rethrow;
     }

@@ -64,7 +64,7 @@ class AuthStateNotifier extends _$AuthStateNotifier {
     );
   }
 
-  void updateProviderId(String providerId) {
+  void updateProviderId(String? providerId) {
     debugPrint('Updating providerId to: $providerId');
     state = state.copyWith(providerId: providerId);
     debugPrint(
