@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:love_keeper/core/config/routes/app_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
@@ -87,32 +88,9 @@ class _ProfileRegistrationPageState
   }
 
   void _showTermsBottomSheet(BuildContext context, double scaleFactor) {
-    // Store a reference to the page's WidgetRef and context
-    final widgetRef = ref;
-    final mainContext = context;
-
-    // Store authState data locally before showing the bottom sheet
-    final authState = widgetRef.read(authStateNotifierProvider);
-    final localEmail = authState.email;
-    final localProvider = authState.provider;
-    final localProviderId = authState.providerId;
-
-    // Store checkbox states locally
-    final bool localRequired2 = required2;
-    final bool localRequired3 = required3;
-    final bool localOptional = optional;
-
-    // Store profile data locally
-    final String localNickname = _nicknameController.text;
-    final String localBirthdate = _birthdateController.text;
-    final File? localProfileImage = _profileImage;
-
     debugPrint('=== _showTermsBottomSheet called ===');
     debugPrint(
-      'authState before signup: email=${authState.email}, provider=${authState.provider}, providerId=${authState.providerId}',
-    );
-    debugPrint(
-      'Local state: email=$localEmail, provider=$localProvider, providerId=$localProviderId',
+      'Current state: required2=$required2, required3=$required3, optional=$optional',
     );
 
     showModalBottomSheet(
@@ -221,92 +199,35 @@ class _ProfileRegistrationPageState
                   GestureDetector(
                     onTap:
                         required2 && required3
-                            ? () {
-                              // First close the bottom sheet
-                              Navigator.pop(dialogContext);
+                            ? () async {
+                              Navigator.pop(dialogContext); // 모달 닫기
 
-                              // Use a post-frame callback to ensure the bottom sheet is fully closed
-                              WidgetsBinding.instance.addPostFrameCallback((
-                                _,
-                              ) async {
-                                if (!mounted) return;
-
+                              // 로딩 상태 업데이트
+                              if (mounted) {
                                 setState(() => _isLoading = true);
+                              }
 
-                                try {
-                                  // Update agreements using stored references
-                                  widgetRef
-                                      .read(authStateNotifierProvider.notifier)
-                                      .updateAgreements(
-                                        privacyPolicyAgreed: localRequired3,
-                                        marketingAgreed: localOptional,
-                                        termsOfServiceAgreed: localRequired2,
-                                      );
-
-                                  final authViewModel = widgetRef.read(
-                                    authViewModelProvider.notifier,
-                                  );
-
-                                  // Signup using locally stored data
-                                  final signupUser = await authViewModel.signup(
-                                    email: localEmail ?? '',
-                                    nickname: localNickname,
-                                    birthDate: localBirthdate.replaceAll(
-                                      '.',
-                                      '-',
-                                    ),
-                                    provider: localProvider ?? 'LOCAL',
-                                    privacyPolicyAgreed: localRequired3,
-                                    marketingAgreed: localOptional,
-                                    termsOfServiceAgreed: localRequired2,
-                                    providerId: localProviderId,
-                                    profileImage: localProfileImage,
-                                  );
-                                  debugPrint(
-                                    'Signup successful: ${signupUser.email}',
-                                  );
-
-                                  // Login using locally stored data
-                                  final loginUser = await authViewModel.login(
-                                    email: localEmail ?? '',
-                                    provider: localProvider ?? 'LOCAL',
-                                    providerId: localProviderId,
-                                  );
-                                  debugPrint(
-                                    'Login successful: ${loginUser.email}',
-                                  );
-
-                                  // FCM token registration
-                                  final fcmToken =
-                                      await FirebaseMessaging.instance
-                                          .getToken();
-                                  if (fcmToken != null) {
-                                    await widgetRef
-                                        .read(fCMViewModelProvider.notifier)
-                                        .registerToken(fcmToken);
+                              // 비동기 작업을 독립적으로 실행
+                              _performRegistration(ref)
+                                  .then((success) {
+                                    if (success && mounted) {
+                                      setState(() => _isLoading = false);
+                                      // context 대신 ref를 사용해 라우팅
+                                      ref
+                                          .read(appRouterProvider)
+                                          .go(RouteNames.codeConnectPage);
+                                    } else if (mounted) {
+                                      setState(() => _isLoading = false);
+                                    }
+                                  })
+                                  .catchError((e) {
                                     debugPrint(
-                                      'FCM token registered: $fcmToken',
+                                      'Profile registration error: $e',
                                     );
-                                  }
-
-                                  if (mounted) {
-                                    setState(() => _isLoading = false);
-                                    mainContext.go(RouteNames.codeConnectPage);
-                                  }
-                                } catch (e) {
-                                  debugPrint('Profile registration error: $e');
-                                  if (mounted) {
-                                    setState(() => _isLoading = false);
-                                    ScaffoldMessenger.of(
-                                      mainContext,
-                                    ).showSnackBar(
-                                      SnackBar(
-                                        content: Text('프로필 등록 중 오류: $e'),
-                                      ),
-                                    );
-                                  }
-                                }
-                              });
+                                    if (mounted) {
+                                      setState(() => _isLoading = false);
+                                    }
+                                  });
                             }
                             : null,
                     child: Container(
@@ -341,6 +262,63 @@ class _ProfileRegistrationPageState
         );
       },
     );
+  }
+
+  // 비동기 작업을 별도 메서드로 분리
+  Future<bool> _performRegistration(WidgetRef ref) async {
+    try {
+      final authViewModel = ref.read(authViewModelProvider.notifier);
+
+      // authState 업데이트
+      ref
+          .read(authStateNotifierProvider.notifier)
+          .updateAgreements(
+            privacyPolicyAgreed: required3,
+            marketingAgreed: optional,
+            termsOfServiceAgreed: required2,
+          );
+
+      debugPrint(
+        'Signup params: email=$_email, nickname=${_nicknameController.text}, '
+        'birthDate=${_birthdateController.text}, provider=$_provider, '
+        'providerId=$_providerId, privacyPolicyAgreed=$required3, '
+        'marketingAgreed=$optional, termsOfServiceAgreed=$required2',
+      );
+
+      // Signup 호출
+      final signupUser = await authViewModel.signup(
+        email: _email ?? '',
+        nickname: _nicknameController.text,
+        birthDate: _birthdateController.text.replaceAll('.', '-'),
+        provider: _provider ?? 'LOCAL',
+        privacyPolicyAgreed: required3,
+        marketingAgreed: optional,
+        termsOfServiceAgreed: required2,
+        providerId: _providerId,
+        profileImage: _profileImage,
+      );
+      debugPrint('Signup successful: ${signupUser.email}');
+
+      // Login 호출
+      final loginUser = await authViewModel.login(
+        email: _email ?? '',
+        provider: _provider ?? 'LOCAL',
+        providerId: _providerId,
+      );
+      debugPrint('Login successful: ${loginUser.email}');
+
+      // FCM 토큰 등록
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await ref.read(fCMViewModelProvider.notifier).registerToken(fcmToken);
+        debugPrint('FCM token registered: $fcmToken');
+      }
+
+      return true; // 성공 시 true 반환
+    } catch (e) {
+      debugPrint('Profile registration error: $e');
+      return false; // 실패 시 false 반환
+    }
   }
 
   void _showProfileBottomSheet(BuildContext context, double scaleFactor) {
