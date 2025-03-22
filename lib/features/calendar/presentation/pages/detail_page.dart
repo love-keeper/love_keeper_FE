@@ -1,64 +1,67 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+import 'package:love_keeper/features/letters/domain/entities/letter.dart';
+import 'package:love_keeper/features/letters/presentation/viewmodels/letters_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/letter_box_widget.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:love_keeper/features/promises/domain/entities/promise.dart';
+import 'package:love_keeper/features/promises/presentation/viewmodels/promises_viewmodel.dart';
 import 'package:love_keeper/features/promises/presentation/widgets/promise_box_widget.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends ConsumerStatefulWidget {
   final DateTime selectedDay;
   final String type; // "letter" 또는 "promise"
 
-  DetailPage({super.key, required this.selectedDay, required this.type});
+  const DetailPage({super.key, required this.selectedDay, required this.type});
 
-  // 샘플 데이터 (실제 프로젝트에서는 백엔드 데이터를 사용)
-  final List<Map<String, String>> sampleLetters = [
-    {
-      'user': '돌돌',
-      'content': '내가 너무 심했던 것 같아 용서해 줄 수 있어? 다시해와 엊꺼ㅜ우',
-      'date': '2025. 02. 01.',
-    },
-    {
-      'user': '미미',
-      'content': '예시 내용입니다. 이것은 긴 내용일 경우 생략됩니다. 어쩌라고',
-      'date': '2025. 02. 02.',
-    },
-    {
-      'user': '돌돌',
-      'content': '내가 너무 심했던 것 같아 용서해 줄 수 있어? 다시해와 엊꺼ㅜ우',
-      'date': '2025. 02. 01.',
-    },
-    {
-      'user': '미미',
-      'content': '예시 내용입니다. 이것은 긴 내용일 경우 생략됩니다. 어쩌라고',
-      'date': '2025. 02. 02.',
-    },
-    // 추가 데이터...
-  ];
+  @override
+  ConsumerState<DetailPage> createState() => _DetailPageState();
+}
 
-  final List<Map<String, String>> samplePromises = [
-    {
-      'title': '첫 번째 약속',
-      'content': '약속 내용이 이곳에 표시됩니다. 자세한 내용은 생략될 수 있습니다.',
-      'date': '2025. 03. 01.',
-    },
-    {
-      'title': '두 번째 약속',
-      'content': '또 다른 약속의 내용이 여기에 표시됩니다. 내용이 길 경우 ... 처리됩니다.',
-      'date': '2025. 03. 05.',
-    },
-    // 추가 데이터...
-  ];
+class _DetailPageState extends ConsumerState<DetailPage> {
+  List<Letter> _letters = [];
+  List<Promise> _promises = [];
+  bool _isLoading = true;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Future(() async {
+      final dateStr = DateFormat('yyyy-MM-dd').format(widget.selectedDay);
+      if (widget.type == 'letter') {
+        final result = await ref
+            .read(lettersViewModelProvider.notifier)
+            .getLettersByDate(dateStr, 0, 100);
+        setState(() {
+          _letters = result.letters;
+          _isLoading = false;
+        });
+      } else {
+        final result = await ref
+            .read(promisesViewModelProvider.notifier)
+            .getPromisesByDate(dateStr, 0, 100);
+        setState(() {
+          _promises = result.promiseList;
+          _isLoading = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // 앱바 제목: "n월 n일" (요일은 제외)
-    String title = '${selectedDay.month}월 ${selectedDay.day}일';
+    final screenWidth = MediaQuery.of(context).size.width;
+    final double boxWidth = (screenWidth - 55) / 2;
+    final double boxHeight = boxWidth * (160 / 156);
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // 앱바를 투명하게
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
-          title,
+          '${widget.selectedDay.month}월 ${widget.selectedDay.day}일',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -79,54 +82,64 @@ class DetailPage extends StatelessWidget {
           ),
         ),
         child:
-            type == 'letter'
-                ? _buildLetterGrid(context)
-                : _buildPromiseList(context),
+            _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : widget.type == 'letter'
+                ? _letters.isEmpty
+                    ? const Center(child: Text('해당 날짜에 편지가 없습니다.'))
+                    : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: GridView.builder(
+                        padding: const EdgeInsets.only(top: 140, bottom: 20),
+                        itemCount: _letters.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 15,
+                          mainAxisSpacing: 15,
+                          childAspectRatio: boxWidth / boxHeight,
+                        ),
+                        itemBuilder: (context, index) {
+                          final letter = _letters[index];
+                          final memberInfo =
+                              ref.read(membersViewModelProvider).value;
+                          final myNickname = memberInfo?.nickname ?? '나';
+                          final partnerNickname =
+                              memberInfo?.coupleNickname ?? '상대방';
+                          final title =
+                              letter.senderNickname == myNickname
+                                  ? '$myNickname의 편지'
+                                  : '$partnerNickname의 편지';
+                          final formattedDate = DateFormat(
+                            'yyyy. MM. dd.',
+                          ).format(DateTime.parse(letter.sentDate));
+                          return LetterBoxWidget(
+                            title: title,
+                            content: letter.content,
+                            date: formattedDate,
+                          );
+                        },
+                      ),
+                    )
+                : _promises.isEmpty
+                ? const Center(child: Text('해당 날짜에 약속이 없습니다.'))
+                : ListView.builder(
+                  padding: const EdgeInsets.only(left: 20, right: 20, top: 140),
+                  itemCount: _promises.length,
+                  itemBuilder: (context, index) {
+                    final promise = _promises[index];
+                    final formattedDate = DateFormat(
+                      'yyyy. MM. dd.',
+                    ).format(DateTime.parse(promise.promisedAt));
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: PromiseBoxWidget(
+                        content: promise.content,
+                        date: formattedDate,
+                      ),
+                    );
+                  },
+                ),
       ),
-    );
-  }
-
-  Widget _buildLetterGrid(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final double boxWidth = (screenWidth - 55) / 2;
-    final double boxHeight = boxWidth * (160 / 156);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: GridView.builder(
-        padding: const EdgeInsets.only(bottom: 20, top: 140),
-        itemCount: sampleLetters.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // 한 줄에 두 개의 박스
-          crossAxisSpacing: 15,
-          mainAxisSpacing: 15,
-          childAspectRatio: boxWidth / boxHeight,
-        ),
-        itemBuilder: (context, index) {
-          final letter = sampleLetters[index];
-          return LetterBoxWidget(
-            title: "${letter['user'] ?? '알 수 없음'}의 편지",
-            content: letter['content'] ?? '',
-            date: letter['date'] ?? '',
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildPromiseList(BuildContext context) {
-    return ListView.builder(
-      padding: const EdgeInsets.only(left: 20, right: 20, top: 140),
-      itemCount: samplePromises.length,
-      itemBuilder: (context, index) {
-        final promise = samplePromises[index];
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 15),
-          child: PromiseBoxWidget(
-            content: promise['content'] ?? '',
-            date: promise['date'] ?? '',
-          ),
-        );
-      },
     );
   }
 }

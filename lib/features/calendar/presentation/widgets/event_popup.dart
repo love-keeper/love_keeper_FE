@@ -13,7 +13,6 @@ class EventPopup extends StatelessWidget {
     required this.promiseCount,
   });
 
-  // 요일을 한국어로 반환하는 함수
   String _getKoreanWeekday(DateTime day) {
     switch (day.weekday) {
       case DateTime.monday:
@@ -58,7 +57,6 @@ class EventPopup extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 날짜 헤더: "n월 n일 n요일"
             Text(
               '${selectedDay.month}월 ${selectedDay.day}일 ${_getKoreanWeekday(selectedDay)}',
               style: const TextStyle(
@@ -70,174 +68,185 @@ class EventPopup extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 21),
-            // 첫 번째 박스: 편지 박스 (높이 90)
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => DetailPage(
-                          selectedDay: selectedDay,
-                          type: 'letter',
-                        ),
+
+            // 🔹 편지 박스
+            InkWell(
+              onTap:
+                  letterCount > 0
+                      ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => DetailPage(
+                                  selectedDay: selectedDay,
+                                  type: 'letter',
+                                ),
+                          ),
+                        );
+                      }
+                      : null,
+              borderRadius: BorderRadius.circular(20),
+              child: Opacity(
+                opacity: letterCount > 0 ? 1.0 : 0.4,
+                child: Container(
+                  height: 90,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffFFF5F7),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                );
-              },
-              child: Container(
-                height: 90,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xffFFF5F7),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    // 편지 아이콘: 동그라미 크기 60
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xffFDBBC9),
-                      ),
-                      child: Center(
-                        child: Image.asset(
-                          'assets/images/storage_page/C_letter.png',
-                          width: 37,
-                          height: 38,
-                          fit: BoxFit.contain,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xffFDBBC9),
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/storage_page/C_letter.png',
+                            width: 37,
+                            height: 38,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 13),
-                    // 텍스트 영역: 제목과 설명
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '편지 $letterCount건',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.4,
-                              height: 26 / 16,
-                              color: Color(0xFF27282C),
+                      const SizedBox(width: 13),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '편지 $letterCount건',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.4,
+                                height: 26 / 16,
+                                color: Color(0xFF27282C),
+                              ),
                             ),
-                          ),
-                          const Text(
-                            '그날의 진심을 다시 느껴 보세요',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: -0.35,
-                              height: 24 / 14,
-                              color: Color(0xff747784),
+                            const Text(
+                              '그날의 진심을 다시 느껴 보세요',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: -0.35,
+                                height: 24 / 14,
+                                color: Color(0xff747784),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Color(0xffFF859B),
-                      size: 24,
-                    ),
-                  ],
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Color(0xffFF859B),
+                        size: 24,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 12),
-            // 두 번째 박스: 약속 박스 (높이 90)
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => DetailPage(
-                          selectedDay: selectedDay,
-                          type: 'promise',
-                        ),
+
+            // 🔹 약속 박스
+            InkWell(
+              onTap:
+                  promiseCount > 0
+                      ? () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => DetailPage(
+                                  selectedDay: selectedDay,
+                                  type: 'promise',
+                                ),
+                          ),
+                        );
+                      }
+                      : null,
+              borderRadius: BorderRadius.circular(20),
+              child: Opacity(
+                opacity: promiseCount > 0 ? 1.0 : 0.4,
+                child: Container(
+                  height: 90,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: const Color(0xffFFF5F7),
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                );
-              },
-              child: Container(
-                height: 90,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: const Color(0xffFFF5F7),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    // 약속 아이콘: 동그라미 크기 60
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xffFDBBC9),
-                      ),
-                      child: Center(
-                        child: Image.asset(
-                          'assets/images/storage_page/C_promise.png',
-                          width: 50,
-                          height: 50,
-                          fit: BoxFit.contain,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xffFDBBC9),
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            'assets/images/storage_page/C_promise.png',
+                            width: 50,
+                            height: 50,
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 13),
-                    // 텍스트 영역: 제목과 설명
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '우리의 약속 $promiseCount건',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.4,
-                              height: 26 / 16,
-                              color: Color(0xFF27282C),
+                      const SizedBox(width: 13),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '우리의 약속 $promiseCount건',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.4,
+                                height: 26 / 16,
+                                color: Color(0xFF27282C),
+                              ),
                             ),
-                          ),
-                          const Text(
-                            '둘만의 다짐을 되새겨 보세요',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: -0.35,
-                              height: 24 / 14,
-                              color: Color(0xff747784),
+                            const Text(
+                              '둘만의 다짐을 되새겨 보세요',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                letterSpacing: -0.35,
+                                height: 24 / 14,
+                                color: Color(0xff747784),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      color: Color(0xffFF859B),
-                      size: 24,
-                    ),
-                  ],
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: Color(0xffFF859B),
+                        size: 24,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 21),
-            // 닫기 버튼
+
+            // 🔹 닫기 버튼
             SizedBox(
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
+                onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xffFF859B),
                   elevation: 0,

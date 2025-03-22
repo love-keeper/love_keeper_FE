@@ -23,11 +23,11 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_isFirstLoad) {
-      Future.microtask(
-        () => ref
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
             .read(calendarViewModelProvider.notifier)
-            .getCalendar(_focusedDay.year, _focusedDay.month),
-      );
+            .getCalendar(_focusedDay.year, _focusedDay.month);
+      });
       _isFirstLoad = false;
     }
   }

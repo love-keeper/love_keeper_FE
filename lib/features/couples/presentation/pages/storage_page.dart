@@ -11,7 +11,7 @@ import 'package:love_keeper/features/promises/presentation/widgets/promise_box_w
 import 'package:intl/intl.dart';
 
 class StoragePage extends ConsumerStatefulWidget {
-  final int initialTab; // 0: 편지, 1: 약속
+  final int initialTab;
   const StoragePage({super.key, this.initialTab = 0});
 
   @override
@@ -22,21 +22,54 @@ class _StoragePageState extends ConsumerState<StoragePage> {
   late int selectedIndex;
   bool _isEditingPromise = false;
   final TextEditingController _promiseController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final ScrollController _letterScrollController = ScrollController();
+  int _letterPage = 0;
+  final int _letterSize = 20;
+  bool _isFetchingLetters = false;
+  bool _letterHasNext = true;
 
   @override
   void initState() {
     super.initState();
     selectedIndex = widget.initialTab;
-    if (selectedIndex == 1) {
-      ref.read(promisesViewModelProvider.notifier).getPromises(0, 10);
-    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (selectedIndex == 1) {
+        ref.read(promisesViewModelProvider.notifier).fetchInitial();
+      } else {
+        ref
+            .read(lettersViewModelProvider.notifier)
+            .getLetterList(_letterPage, _letterSize);
+      }
+    });
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 100) {
+        ref.read(promisesViewModelProvider.notifier).fetchMore();
+      }
+    });
+
+    _letterScrollController.addListener(() async {
+      if (_letterScrollController.position.pixels >=
+              _letterScrollController.position.maxScrollExtent - 100 &&
+          !_isFetchingLetters &&
+          _letterHasNext) {
+        _isFetchingLetters = true;
+        _letterPage++;
+        final newList = await ref
+            .read(lettersViewModelProvider.notifier)
+            .getLetterList(_letterPage, _letterSize);
+        _letterHasNext = newList.hasNext;
+        _isFetchingLetters = false;
+      }
+    });
   }
 
   void _submitPromise() async {
     if (_promiseController.text.trim().isEmpty) return;
     try {
-      final now = DateTime.now();
-      print('Adding promise on: ${DateFormat('yyyy-MM-dd').format(now)}');
       await ref
           .read(promisesViewModelProvider.notifier)
           .createPromise(_promiseController.text.trim());
@@ -44,11 +77,6 @@ class _StoragePageState extends ConsumerState<StoragePage> {
         _promiseController.clear();
         _isEditingPromise = false;
       });
-      await ref.read(promisesViewModelProvider.notifier).getPromises(0, 10);
-      final updatedState = ref.read(promisesViewModelProvider).value;
-      print(
-        'Updated promises: ${updatedState?.promiseList.map((p) => p.toJson())}',
-      );
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -100,9 +128,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
     final promisesState = ref.watch(promisesViewModelProvider);
     return promisesState.when(
       data: (data) {
-        final PromiseList? promiseList = data is PromiseList ? data : null;
-        final promises = promiseList?.promiseList ?? [];
-
+        final promises = data?.promiseList ?? [];
         final sortedPromises = List.from(promises)..sort((a, b) {
           final dateCompare = DateTime.parse(
             b.promisedAt,
@@ -110,9 +136,12 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           if (dateCompare != 0) return dateCompare;
           return b.promiseId.compareTo(a.promiseId);
         });
-        int itemCount =
+
+        final hasNext = data?.hasNext ?? false;
+        final itemCount =
             sortedPromises.length +
-            (_isEditingPromise || promises.isEmpty ? 1 : 0);
+            (_isEditingPromise || sortedPromises.isEmpty ? 1 : 0) +
+            (hasNext ? 1 : 0);
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -120,6 +149,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
             children: [
               Expanded(
                 child: ListView.separated(
+                  controller: _scrollController,
                   padding: const EdgeInsets.only(top: 0),
                   itemCount: itemCount,
                   separatorBuilder:
@@ -128,7 +158,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                     if (_isEditingPromise && index == 0) {
                       return _buildPromiseEditingBox();
                     }
-                    if (promises.isEmpty && index == 0) {
+                    if (sortedPromises.isEmpty && index == 0) {
                       return Column(
                         children: [
                           _buildPromiseEditingBox(),
@@ -146,14 +176,14 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                         ],
                       );
                     }
-                    final int promiseIndex =
-                        _isEditingPromise ? index - 1 : index;
-                    if (promiseIndex >= sortedPromises.length)
-                      return const SizedBox.shrink();
+                    final promiseIndex = _isEditingPromise ? index - 1 : index;
+                    if (promiseIndex >= sortedPromises.length) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
                     final promise = sortedPromises[promiseIndex];
-                    print(
-                      'Promise at index $promiseIndex: ${promise.content}, ${promise.promisedAt}, ID: ${promise.promiseId}',
-                    );
                     return Dismissible(
                       key: Key(promise.promiseId.toString()),
                       direction: DismissDirection.endToStart,
@@ -168,10 +198,6 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                           await ref
                               .read(promisesViewModelProvider.notifier)
                               .deletePromise(promise.promiseId);
-                          ref
-                              .read(promisesViewModelProvider.notifier)
-                              .getPromises(0, 10);
-                          print('Promise deleted and list refreshed');
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('약속 삭제 실패: $e')),
@@ -320,9 +346,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                     selectedIndex = 1;
                     _isEditingPromise = false;
                     _promiseController.clear();
-                    ref
-                        .read(promisesViewModelProvider.notifier)
-                        .getPromises(0, 10);
+                    ref.read(promisesViewModelProvider.notifier).fetchInitial();
                   });
                 },
                 child: SizedBox(
@@ -353,14 +377,12 @@ class _StoragePageState extends ConsumerState<StoragePage> {
   @override
   void dispose() {
     _promiseController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print(
-      'Build - selectedIndex: $selectedIndex, _isEditingPromise: $_isEditingPromise',
-    );
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: false,
