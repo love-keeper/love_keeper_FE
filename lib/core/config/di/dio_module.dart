@@ -6,7 +6,7 @@ import 'package:love_keeper/core/network/client/api_client.dart';
 part 'dio_module.g.dart';
 
 @Riverpod(keepAlive: true)
-ApiClient apiClient(ApiClientRef ref) {
+Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: 'https://lovekeeper.site',
@@ -23,12 +23,13 @@ ApiClient apiClient(ApiClientRef ref) {
         final accessToken = prefs.getString('access_token');
         print('Requesting with Access Token: $accessToken for ${options.path}');
 
+        // /api/auth로 시작하는 경로 중 /api/auth/logout만 토큰 추가
         if (accessToken != null &&
             (options.path == '/api/auth/logout' ||
                 !options.path.startsWith('/api/auth'))) {
           options.headers['Authorization'] = 'Bearer $accessToken';
         }
-
+        // /api/auth/reissue 요청 시 refresh_token을 Cookie로 추가
         if (options.path == '/api/auth/reissue') {
           final refreshToken = prefs.getString('refresh_token');
           if (refreshToken != null) {
@@ -39,6 +40,7 @@ ApiClient apiClient(ApiClientRef ref) {
         }
         handler.next(options);
       },
+
       onResponse: (response, handler) async {
         final prefs = await SharedPreferences.getInstance();
         final accessToken = response.headers
@@ -66,12 +68,10 @@ ApiClient apiClient(ApiClientRef ref) {
           final refreshToken = prefs.getString('refresh_token');
           if (refreshToken != null) {
             try {
-              final response = await dio.post(
-                'https://lovekeeper.site/api/auth/reissue',
-                data: {'refreshToken': refreshToken},
-              );
-              final newAccessToken =
-                  response.data['result'] as String?; // 타입 명시
+              // body 없이 Cookie 헤더만 사용
+              final apiClient = ref.read(apiClientProvider);
+              final response = await apiClient.reissue(refreshToken);
+              final newAccessToken = response.result;
               if (newAccessToken != null) {
                 await prefs.setString('access_token', newAccessToken);
                 final options = error.requestOptions;
@@ -112,5 +112,11 @@ ApiClient apiClient(ApiClientRef ref) {
     ),
   );
 
+  return dio;
+}
+
+@Riverpod(keepAlive: true)
+ApiClient apiClient(ApiClientRef ref) {
+  final dio = ref.watch(dioProvider);
   return ApiClient(dio);
 }

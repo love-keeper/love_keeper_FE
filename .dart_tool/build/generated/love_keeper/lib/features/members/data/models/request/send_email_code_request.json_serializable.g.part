@@ -1,0 +1,15 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$SendEmailCodeRequestImpl _$$SendEmailCodeRequestImplFromJson(
+        Map<String, dynamic> json) =>
+    _$SendEmailCodeRequestImpl(
+      email: json['email'] as String,
+    );
+
+Map<String, dynamic> _$$SendEmailCodeRequestImplToJson(
+        _$SendEmailCodeRequestImpl instance) =>
+    <String, dynamic>{
+      'email': instance.email,
+    };

@@ -8,7 +8,6 @@ import 'package:love_keeper/features/couples/data/models/request/update_start_da
 import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
 import 'package:love_keeper/features/drafts/data/models/request/create_draft_request.dart';
 import 'package:love_keeper/features/drafts/data/models/response/draft_response.dart';
-import 'package:love_keeper/features/fcm/data/models/fcm_models.dart';
 import 'package:love_keeper/features/letters/data/models/request/create_letter_request.dart';
 import 'package:love_keeper/features/letters/data/models/response/letter_list_response.dart';
 import 'package:love_keeper/features/members/data/models/request/send_email_code_request.dart';
@@ -31,6 +30,7 @@ import '../../../features/auth/data/models/request/verify_code_request.dart';
 import '../../../features/auth/data/models/response/auth_response.dart';
 import '../../../features/couples/data/models/request/connect_request.dart';
 import '../../../features/couples/data/models/response/invite_code_response.dart';
+import '../../../features/fcm/data/models/fcm_models.dart';
 
 part 'api_client.g.dart';
 
@@ -46,7 +46,7 @@ abstract class ApiClient {
   );
 
   @POST('/api/auth/reissue')
-  Future<ApiResponse<String>> reissue(@Body() Map<String, dynamic> data);
+  Future<ApiResponse<String>> reissue(@Header('Cookie') String refreshToken);
 
   @MultiPart()
   @POST('/api/auth/signup')
@@ -159,7 +159,7 @@ abstract class ApiClient {
 
   // 드래프트 삭제
   @DELETE('/api/drafts/{order}')
-  Future<void> deleteDraft(@Path('order') int order);
+  Future<ApiResponse<String>> deleteDraft(@Path('order') int order);
 
   // LETTERS
 
@@ -231,5 +231,8 @@ abstract class ApiClient {
   Future<ApiResponse<String>> removeFCMToken(@Body() FCMTokenRequest request);
 
   @GET('/api/fcm/notifications')
-  Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications();
+  Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
+    @Query('page') int? page,
+    @Query('size') int? size,
+  );
 }

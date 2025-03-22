@@ -2,14 +2,17 @@ import 'package:love_keeper/core/config/di/dio_module.dart';
 import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:love_keeper/core/models/api_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../models/fcm_models.dart'; // 모델 파일 경로 확인 필요
+import '../models/fcm_models.dart';
 
 part 'fcm_repository.g.dart';
 
 abstract class FCMRepository {
   Future<void> registerToken(String token);
   Future<void> removeToken(String token);
-  Future<List<PushNotificationResponse>> getPushNotifications();
+  Future<List<PushNotificationResponse>> getPushNotifications({
+    int? page,
+    int? size,
+  });
 }
 
 class FCMRepositoryImpl implements FCMRepository {
@@ -32,10 +35,13 @@ class FCMRepositoryImpl implements FCMRepository {
   }
 
   @override
-  Future<List<PushNotificationResponse>> getPushNotifications() async {
-    final response = await _apiClient.getPushNotifications();
+  Future<List<PushNotificationResponse>> getPushNotifications({
+    int? page,
+    int? size,
+  }) async {
+    final response = await _apiClient.getPushNotifications(page, size);
     _handleResponse(response);
-    return response.result!;
+    return response.result ?? []; // null 안전성 추가
   }
 
   void _handleResponse(ApiResponse<dynamic> response) {

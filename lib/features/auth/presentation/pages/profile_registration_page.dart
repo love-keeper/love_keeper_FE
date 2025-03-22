@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -6,8 +8,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
+import 'package:love_keeper/features/fcm/presentation/viewmodels/fcm_viewmodel.dart';
 import 'package:love_keeper/features/members/presentation/widgets/edit_field_widget.dart';
 import 'package:love_keeper/features/members/presentation/widgets/save_button_widget.dart';
+import 'package:love_keeper/features/members/presentation/widgets/agreementbox.dart';
 import 'package:love_keeper/features/members/presentation/widgets/date_text_input_formatter.dart';
 
 class ProfileRegistrationPage extends ConsumerStatefulWidget {
@@ -41,6 +46,14 @@ class _ProfileRegistrationPageState
   String? _provider;
   String? _providerId;
 
+  // 체크박스 상태
+  bool required1 = false; // 전체 동의 (선택 포함)
+  bool required2 = false; // 러브키퍼 이용약관 동의 (필수)
+  bool required3 = false; // 개인정보수집 및 이용에 대한 안내 (필수)
+  bool optional = false; // 마케팅 정보 수신 (선택)
+
+  bool get allRequiredChecked => required2 && required3;
+
   @override
   void initState() {
     super.initState();
@@ -63,8 +76,278 @@ class _ProfileRegistrationPageState
     super.dispose();
   }
 
+  void _showTermsBottomSheet(BuildContext context, double scaleFactor) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: true,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return GestureDetector(
+              onTap: () => Navigator.pop(dialogContext),
+              behavior: HitTestBehavior.opaque,
+              child: Stack(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.transparent,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: 375 * scaleFactor,
+                        height: 354 * scaleFactor,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16 * scaleFactor),
+                            topRight: Radius.circular(16 * scaleFactor),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 6 * scaleFactor),
+                            Container(
+                              width: 50 * scaleFactor,
+                              height: 5 * scaleFactor,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFC3C6CF),
+                                borderRadius: BorderRadius.circular(
+                                  26 * scaleFactor,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 33 * scaleFactor),
+                            Center(
+                              child: Text(
+                                '약관동의',
+                                style: TextStyle(
+                                  fontSize: 18 * scaleFactor,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF27282C),
+                                  height: 26 / (18 * scaleFactor),
+                                  letterSpacing: -0.4 * scaleFactor,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 29 * scaleFactor),
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                buildAgreementRow(
+                                  '전체 동의 (선택 포함)',
+                                  scaleFactor,
+                                  isChecked: required1,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      required1 = value;
+                                      required2 = value;
+                                      required3 = value;
+                                      optional = value;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                                SizedBox(height: 10 * scaleFactor),
+                                buildAgreementRow(
+                                  '러브키퍼 이용약관 동의 (필수)',
+                                  scaleFactor,
+                                  isChecked: required2,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      required2 = value;
+                                      required1 =
+                                          required2 && required3 && optional;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                                SizedBox(height: 10 * scaleFactor),
+                                buildAgreementRow(
+                                  '개인정보수집 및 이용에 대한 안내 (필수)',
+                                  scaleFactor,
+                                  isChecked: required3,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      required3 = value;
+                                      required1 =
+                                          required2 && required3 && optional;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                                SizedBox(height: 10 * scaleFactor),
+                                buildAgreementRow(
+                                  '마케팅 정보 수신 (선택)',
+                                  scaleFactor,
+                                  required: false,
+                                  isChecked: optional,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      optional = value;
+                                    });
+                                    setModalState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 27 * scaleFactor),
+                            GestureDetector(
+                              onTap: () async {
+                                if (required2 && required3) {
+                                  if (!mounted) return;
+                                  setState(() => _isLoading = true);
+                                  Navigator.pop(dialogContext);
+
+                                  // 약관 동의 상태 업데이트
+                                  ref
+                                      .read(authStateNotifierProvider.notifier)
+                                      .updateAgreements(
+                                        privacyPolicyAgreed: required3,
+                                        marketingAgreed: optional,
+                                        termsOfServiceAgreed: required2,
+                                      );
+
+                                  try {
+                                    // 1. Signup 실행
+                                    final authViewModel = ref.read(
+                                      authViewModelProvider.notifier,
+                                    );
+                                    final signupUser = await authViewModel
+                                        .signup(
+                                          email: _email ?? '',
+                                          nickname: _nicknameController.text,
+                                          birthDate: _birthdateController.text
+                                              .replaceAll('.', '-'),
+                                          provider: _provider ?? 'LOCAL',
+                                          privacyPolicyAgreed: required3,
+                                          marketingAgreed: optional,
+                                          termsOfServiceAgreed: required2,
+                                          password:
+                                              ref
+                                                  .read(
+                                                    authStateNotifierProvider,
+                                                  )
+                                                  .password,
+                                          providerId: _providerId,
+                                          profileImage: _profileImage,
+                                        );
+                                    debugPrint(
+                                      'Signup successful: memberId=${signupUser.memberId}, email=${signupUser.email}',
+                                    );
+
+                                    // 2. Login 실행
+                                    final loginUser = await authViewModel.login(
+                                      email: _email ?? '',
+                                      provider: _provider ?? 'LOCAL',
+                                      password:
+                                          ref
+                                              .read(authStateNotifierProvider)
+                                              .password,
+                                      providerId: _providerId,
+                                    );
+                                    debugPrint(
+                                      'Login successful: memberId=${loginUser.memberId}, email=${loginUser.email}',
+                                    );
+
+                                    // 3. FCM 토큰 등록
+                                    final fcmViewModel = ref.read(
+                                      fCMViewModelProvider.notifier,
+                                    );
+                                    final fcmToken =
+                                        await FirebaseMessaging.instance
+                                            .getToken();
+                                    if (fcmToken != null) {
+                                      await fcmViewModel.registerToken(
+                                        fcmToken,
+                                      );
+                                      debugPrint(
+                                        'FCM token registered: $fcmToken',
+                                      );
+                                    }
+
+                                    // 4. 회원가입 및 로그인 완료 후 CodeConnectPage로 이동
+                                    if (mounted) {
+                                      debugPrint(
+                                        'Signup and login completed, navigating to CodeConnectPage',
+                                      );
+                                      context.go(RouteNames.codeConnectPage);
+                                    }
+                                  } on DioException catch (e) {
+                                    debugPrint(
+                                      'Registration error (DioException): $e',
+                                    );
+                                    if (mounted) {
+                                      if (e.response?.statusCode == 404) {
+                                        debugPrint(
+                                          'No couple info found (404), navigating to CodeConnectPage',
+                                        );
+                                        context.go(RouteNames.codeConnectPage);
+                                      } else {
+                                        debugPrint(
+                                          'Couple info fetch failed: $e, navigating to CodeConnectPage',
+                                        );
+                                        context.go(RouteNames.codeConnectPage);
+                                      }
+                                    }
+                                  } catch (e) {
+                                    debugPrint('Registration error: $e');
+                                  } finally {
+                                    if (mounted) {
+                                      setState(() => _isLoading = false);
+                                    }
+                                  }
+                                }
+                              },
+                              child: Container(
+                                width: 334 * scaleFactor,
+                                height: 52 * scaleFactor,
+                                decoration: BoxDecoration(
+                                  color:
+                                      (required2 && required3)
+                                          ? const Color(0xFFFF859B)
+                                          : const Color(0xFFC3C6CF),
+                                  borderRadius: BorderRadius.circular(
+                                    55 * scaleFactor,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '동의하고 계속하기',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 16 * scaleFactor,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                      height: 24 / (16 * scaleFactor),
+                                      letterSpacing:
+                                          -0.025 * (16 * scaleFactor),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 16 * scaleFactor),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _showProfileBottomSheet(BuildContext context, double scaleFactor) {
-    // 기존 코드 유지 (변경 없음)
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -245,7 +528,7 @@ class _ProfileRegistrationPageState
     final pickedFile = await ImagePicker().pickImage(
       source: ImageSource.gallery,
     );
-    if (pickedFile != null) {
+    if (pickedFile != null && mounted) {
       setState(() {
         _profileImage = File(pickedFile.path);
         _useDefaultProfile = false;
@@ -254,77 +537,9 @@ class _ProfileRegistrationPageState
   }
 
   Future<void> _registerProfile() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      final authState = ref.read(authStateNotifierProvider);
-      final email = _email ?? authState.email;
-      final provider = _provider ?? authState.provider ?? 'LOCAL';
-      final providerId = _providerId ?? authState.providerId;
-      final password = authState.password;
-
-      debugPrint(
-        'Registering with: email=$email, provider=$provider, providerId=$providerId, password=$password',
-      );
-
-      if (email == null || email.isEmpty) {
-        throw Exception('Email is missing or empty');
-      }
-      if (provider.isEmpty) {
-        throw Exception('Provider is missing or empty');
-      }
-      if (provider != 'LOCAL' && (providerId == null || providerId.isEmpty)) {
-        throw Exception('ProviderId is missing or empty for social login');
-      }
-
-      final formattedBirthdate = _birthdateController.text.replaceAll('.', '-');
-
-      // 1. Signup 호출
-      final signupUser = await ref
-          .read(authViewModelProvider.notifier)
-          .signup(
-            email: email,
-            nickname: _nicknameController.text,
-            birthDate: formattedBirthdate,
-            provider: provider,
-            privacyPolicyAgreed: authState.privacyPolicyAgreed,
-            marketingAgreed: authState.marketingAgreed,
-            termsOfServiceAgreed: authState.termsOfServiceAgreed,
-            password: provider == 'LOCAL' ? password : null,
-            providerId: provider != 'LOCAL' ? providerId : null,
-            profileImage: _profileImage,
-          );
-      debugPrint(
-        'Signup successful: memberId=${signupUser.memberId}, email=${signupUser.email}',
-      );
-
-      // 2. Login 호출 (context 추가)
-      final loginUser = await ref
-          .read(authViewModelProvider.notifier)
-          .login(
-            email: email,
-            provider: provider,
-            password: provider == 'LOCAL' ? password : null,
-            providerId: provider != 'LOCAL' ? providerId : null,
-            context: context, // 여기에 context 추가
-          );
-      debugPrint(
-        'Login successful: memberId=${loginUser.memberId}, email=${loginUser.email}',
-      );
-
-      setState(() {
-        _isLoading = false;
-      });
-      // login 메서드에서 라우팅 처리하므로 추가 이동 불필요
-    } catch (e) {
-      debugPrint('Profile registration error: $e');
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('프로필 등록 실패: $e')));
+    if (_nicknameController.text.isNotEmpty &&
+        _birthdateController.text.isNotEmpty) {
+      _showTermsBottomSheet(context, MediaQuery.of(context).size.width / 375.0);
     }
   }
 
