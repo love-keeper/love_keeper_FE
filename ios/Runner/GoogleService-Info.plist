@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyC7XztSWDu4UlGaEq_QmbmxU0r3XMEMHlY</string>
+	<string>AIzaSyAGxlC0sYHpEYIyY65Z68UA6Jrf4SEnTIc</string>
 	<key>GCM_SENDER_ID</key>
-	<string>774761664851</string>
+	<string>121259500616</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.loveKeeper</string>
+	<string>com.yourcompany.flavors.free</string>
 	<key>PROJECT_ID</key>
-	<string>lovekeeper-bebc0</string>
+	<string>test-87750</string>
 	<key>STORAGE_BUCKET</key>
-	<string>lovekeeper-bebc0.firebasestorage.app</string>
+	<string>test-87750.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:774761664851:ios:9d4567f8d6122160a691a6</string>
+	<string>1:121259500616:ios:85172c47194e574cad247d</string>
 </dict>
 </plist>

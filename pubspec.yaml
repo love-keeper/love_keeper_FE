@@ -68,7 +68,7 @@ dependencies:
 
   # Social Login
   flutter_naver_login: ^1.8.0
-  sign_in_with_apple: ^5.0.0
+  sign_in_with_apple: ^4.3.0
   kakao_flutter_sdk: ^1.9.6
 
   # Firebase
@@ -130,10 +130,3 @@ flutter:
         - asset: assets/fonts/Pretendard-Black.otf
           weight: 900
           
-dependency_overrides:
-  photo_manager:
-    path: /Users/flal/lovekeeper_flal/love_keeper/flutter_photo_manager
-  extended_image: 
-    path: /Users/flal/lovekeeper_flal/love_keeper/extended_image
-  wechat_assets_picker:
-    path: /Users/flal/lovekeeper_flal/love_keeper/flutter_wechat_assets_picker

@@ -3,8 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:photo_manager/photo_manager.dart';
-import 'package:wechat_assets_picker/wechat_assets_picker.dart';
+import 'package:image_picker/image_picker.dart'; // image_picker 패키지 추가
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 
@@ -222,62 +221,27 @@ class _MyPageState extends ConsumerState<MyPage> {
     );
   }
 
-  // 이미지 선택 함수 수정: 최신 wechat_assets_picker에서는 pickerConfig를 사용합니다.
+  // image_picker를 사용한 이미지 선택 함수
   Future<void> _pickImage() async {
     try {
-      // 권한 확인
-      final PermissionState ps = await PhotoManager.requestPermissionExtend();
-      if (!ps.isAuth) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('사진 접근 권한이 필요합니다.')));
-        return;
-      }
+      final ImagePicker picker = ImagePicker();
+      // 갤러리에서 이미지 선택
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
-      // 이미지 선택
-      final List<AssetEntity>? assets = await AssetPicker.pickAssets(
-        context,
-        pickerConfig: const AssetPickerConfig(
-          maxAssets: 1,
-          requestType: RequestType.image,
-        ),
-      );
-
-      if (assets != null && assets.isNotEmpty) {
-        final AssetEntity asset = assets.first;
-
-        // iCloud 이미지 다운로드 처리
-        File? file;
-        if (Platform.isIOS) {
-          print('iOS에서 이미지 처리 중...');
-          // iCloud에서 다운로드 대기
-          file = await asset.loadFile(
-            withSubtype: true, // iCloud 다운로드 포함
-          );
-        } else {
-          file = await asset.file;
-        }
-
-        if (file != null) {
-          setState(() {
-            _profileImage = file;
-          });
-          await ref
-              .read(membersViewModelProvider.notifier)
-              .updateProfileImage(file);
-          print('프로필 이미지가 성공적으로 업데이트되었습니다.');
-        } else {
-          print('선택한 이미지 파일을 불러오지 못했습니다.');
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('이미지 파일을 가져오지 못했습니다.')));
-        }
+      if (image != null) {
+        File file = File(image.path);
+        setState(() {
+          _profileImage = file;
+        });
+        await ref
+            .read(membersViewModelProvider.notifier)
+            .updateProfileImage(file);
+        print('프로필 이미지가 성공적으로 업데이트되었습니다.');
       } else {
         print('이미지가 선택되지 않았습니다.');
       }
-    } catch (e, stackTrace) {
+    } catch (e) {
       print('이미지 선택 중 오류 발생: $e');
-      print('스택 트레이스: $stackTrace');
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('이미지 선택 중 오류가 발생했습니다: $e')));
