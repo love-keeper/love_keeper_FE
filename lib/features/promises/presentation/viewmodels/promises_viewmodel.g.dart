@@ -6,12 +6,12 @@ part of 'promises_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$promisesViewModelHash() => r'a97b5aab5269b06e2335070c6eecfe8bd4b76ffb';
+String _$promisesViewModelHash() => r'a81c3368ae3688a99c5232bcbedf98a3d5f37c37';
 
 /// See also [PromisesViewModel].
 @ProviderFor(PromisesViewModel)
 final promisesViewModelProvider = AutoDisposeNotifierProvider<PromisesViewModel,
-    AsyncValue<dynamic>>.internal(
+    AsyncValue<PromiseList?>>.internal(
   PromisesViewModel.new,
   name: r'promisesViewModelProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -21,6 +21,6 @@ final promisesViewModelProvider = AutoDisposeNotifierProvider<PromisesViewModel,
   allTransitiveDependencies: null,
 );
 
-typedef _$PromisesViewModel = AutoDisposeNotifier<AsyncValue<dynamic>>;
+typedef _$PromisesViewModel = AutoDisposeNotifier<AsyncValue<PromiseList?>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
