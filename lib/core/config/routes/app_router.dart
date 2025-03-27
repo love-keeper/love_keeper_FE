@@ -91,9 +91,8 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,
-        builder: (context, state) {
-          return const ProfileRegistrationPage();
-        },
+        name: RouteNames.profileRegistrationPage, // 이름 추가
+        builder: (context, state) => const ProfileRegistrationPage(),
       ),
       GoRoute(
         path: RouteNames.codeConnectPage,
@@ -284,6 +283,22 @@ GoRouter appRouter(AppRouterRef ref) {
         builder: (context, state) => const MyPasswordEditPage(),
       ),
     ],
+    // 리디렉션 처리 추가
+    redirect: (context, state) {
+      final location = state.uri.toString();
+      print('Redirect called with location: $location');
+      // 카카오 리디렉션 URL 처리
+      if (location.contains('kakao')) {
+        print('Detected Kakao redirect, returning to onboarding');
+        return RouteNames.onboarding;
+      }
+      return null; // 기본 동작 유지
+    },
+    // 네비게이션 옵저버 추가
+    observers: [
+      // navigatorObservers -> observers로 수정
+      _CustomNavigatorObserver(),
+    ],
     errorPageBuilder:
         (context, state) => MaterialPage<void>(
           key: state.pageKey,
@@ -292,6 +307,24 @@ GoRouter appRouter(AppRouterRef ref) {
           ),
         ),
   );
+}
+
+// 커스텀 NavigatorObserver 추가
+class _CustomNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigator didPush: ${route.settings.name}');
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigator didPop: ${route.settings.name}');
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    print('Navigator didReplace: ${newRoute?.settings.name}');
+  }
 }
 
 int _calculateCurrentIndex(String location) {

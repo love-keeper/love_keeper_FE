@@ -272,6 +272,24 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "firebase_auth",
+      "rootUri": "file:///Users/parkdongkyu/.pub-cache/hosted/pub.dev/firebase_auth-5.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_auth_platform_interface",
+      "rootUri": "file:///Users/parkdongkyu/.pub-cache/hosted/pub.dev/firebase_auth_platform_interface-7.6.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_auth_web",
+      "rootUri": "file:///Users/parkdongkyu/.pub-cache/hosted/pub.dev/firebase_auth_web-5.14.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "firebase_core",
       "rootUri": "file:///Users/parkdongkyu/.pub-cache/hosted/pub.dev/firebase_core-3.12.1",
       "packageUri": "lib/",
@@ -1148,7 +1166,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-03-13T06:38:44.809321Z",
+  "generated": "2025-03-26T04:22:03.914194Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///opt/homebrew/Caskroom/flutter/3.24.5/flutter",
