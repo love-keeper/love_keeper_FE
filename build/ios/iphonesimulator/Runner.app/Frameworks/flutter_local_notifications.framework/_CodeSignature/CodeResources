@@ -6,11 +6,15 @@
 	<dict>
 		<key>Info.plist</key>
 		<data>
-		Q3pBwk0hofNtrsrbbDf1dVHkAJY=
+		RkjwmW/T3zQkcFKgJe4CgSyi7K0=
 		</data>
 		<key>flutter_local_notifications_privacy.bundle/Info.plist</key>
 		<data>
+<<<<<<< HEAD
 		dDj0iINJ2UhXGQm/OsYk4/oZJRA=
+=======
+		qDxnmGRWVL43TcxLK/5YML99wKc=
+>>>>>>> main
 		</data>
 		<key>flutter_local_notifications_privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -23,7 +27,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< HEAD
 			yApJIopSp5l0wL7oHzQF7x7Y8++K3vkkjNVIS16HpMM=
+=======
+			7CZrERhEX0OJcPsXs1zEuOwNr6wY+AbCsOEs/QCPAxw=
+>>>>>>> main
 			</data>
 		</dict>
 		<key>flutter_local_notifications_privacy.bundle/PrivacyInfo.xcprivacy</key>

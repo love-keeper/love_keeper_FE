@@ -397,6 +397,24 @@ GoRouter appRouter(AppRouterRef ref) {
   );
 }
 
+// 커스텀 NavigatorObserver 추가
+class _CustomNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigator didPush: ${route.settings.name}');
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigator didPop: ${route.settings.name}');
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    print('Navigator didReplace: ${newRoute?.settings.name}');
+  }
+}
+
 int _calculateCurrentIndex(String location) {
   if (location.startsWith(RouteNames.myPage)) return 2;
   if (location.startsWith('/storage')) return 1;

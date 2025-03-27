@@ -14,6 +14,11 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <true/>
+  </dict>
 	<key>CFBundleName</key>
 	<string>love_keeper</string>
 	<key>CFBundlePackageType</key>
@@ -39,7 +44,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>loveKeeper</string> <!-- 네이버 URL Scheme -->
+				<string>naverFFquqzHeG8Tb2cfhf5QW</string> <!-- 네이버 URL Scheme -->
 			</array>
 		</dict>
 	</array>
@@ -54,6 +59,7 @@
 		<!-- 네이버 관련 쿼리 스킴 -->
 		<string>naversearchapp</string>
 		<string>naversearchthirdlogin</string>
+    <string>naver</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

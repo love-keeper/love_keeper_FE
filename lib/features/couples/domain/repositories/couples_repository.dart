@@ -1,4 +1,4 @@
-import 'package:love_keeper/features/couples/data/models/response/couples_response.dart';
+import 'package:love_keeper/features/couples/data/models/response/couple_info.dart';
 
 import '../entities/invite_code.dart';
 

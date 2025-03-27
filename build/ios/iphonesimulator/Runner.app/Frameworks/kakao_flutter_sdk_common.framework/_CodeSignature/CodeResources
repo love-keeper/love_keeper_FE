@@ -6,11 +6,15 @@
 	<dict>
 		<key>Info.plist</key>
 		<data>
-		Qa8PIOjOPjTwSHOs/ESJiHey4qA=
+		dNhRmL63ptYk00ScK/rRI4wCWrA=
 		</data>
 		<key>kakao_flutter_sdk_common_privacy.bundle/Info.plist</key>
 		<data>
+<<<<<<< HEAD
 		BsgJSYknzKCRYJy2Nzn84WRM4d8=
+=======
+		rslGaDlKKh3yxHR7aCPwR1q3S4M=
+>>>>>>> main
 		</data>
 		<key>kakao_flutter_sdk_common_privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -23,7 +27,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< HEAD
 			wGEmO/01ZzTR9jyLBS0LaHyJnyFMZfCA5z7i1E7kow4=
+=======
+			7yJY9V7bMXVSUAJGl9Z1eDYXqcJsBZ1jtwsakSx1qaI=
+>>>>>>> main
 			</data>
 		</dict>
 		<key>kakao_flutter_sdk_common_privacy.bundle/PrivacyInfo.xcprivacy</key>

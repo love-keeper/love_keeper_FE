@@ -26,7 +26,7 @@ class _EmailPasswordInputPageState
     r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]).{8,}$',
   );
   bool showConfirmField = false;
-  final bool _isLoading = false;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -38,6 +38,11 @@ class _EmailPasswordInputPageState
     _confirmController.addListener(() => setState(() {}));
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _passwordFocusNode.requestFocus();
+      if (widget.email != null) {
+        ref.read(authStateNotifierProvider.notifier).updateEmail(widget.email!);
+      }
+      ref.read(authStateNotifierProvider.notifier).updateProvider('LOCAL');
+      ref.read(authStateNotifierProvider.notifier).updateProviderId(null);
     });
   }
 
@@ -48,6 +53,40 @@ class _EmailPasswordInputPageState
     _passwordFocusNode.dispose();
     _confirmFocusNode.dispose();
     super.dispose();
+  }
+
+  void _onNextPressed() async {
+    if (_isLoading) return;
+
+    debugPrint('Next button pressed: showConfirmField=$showConfirmField');
+    if (!showConfirmField) {
+      if (_passwordController.text.isNotEmpty &&
+          passwordRegex.hasMatch(_passwordController.text)) {
+        setState(() {
+          showConfirmField = true;
+        });
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _confirmFocusNode.requestFocus();
+        });
+      }
+    } else {
+      if (_passwordController.text == _confirmController.text &&
+          _passwordController.text.isNotEmpty) {
+        setState(() => _isLoading = true);
+        try {
+          ref
+              .read(authStateNotifierProvider.notifier)
+              .updatePassword(_passwordController.text);
+          context.push(RouteNames.profileRegistrationPage);
+        } finally {
+          if (mounted) {
+            setState(() => _isLoading = false);
+          }
+        }
+      } else {
+        debugPrint('Passwords do not match or are empty');
+      }
+    }
   }
 
   @override
@@ -161,52 +200,9 @@ class _EmailPasswordInputPageState
                   scaleFactor: scaleFactor,
                   enabled: isButtonEnabled,
                   buttonText: '다음',
-                  onPressed:
-                      _isLoading
-                          ? null
-                          : () async {
-                            debugPrint(
-                              'Next button pressed: showConfirmField=$showConfirmField',
-                            );
-                            if (!showConfirmField) {
-                              if (hasPassword &&
-                                  passwordRegex.hasMatch(
-                                    _passwordController.text,
-                                  )) {
-                                setState(() {
-                                  showConfirmField = true;
-                                });
-                                WidgetsBinding.instance.addPostFrameCallback((
-                                  _,
-                                ) {
-                                  _confirmFocusNode.requestFocus();
-                                });
-                              }
-                            } else {
-                              if (hasPassword &&
-                                  hasConfirm &&
-                                  _passwordController.text ==
-                                      _confirmController.text) {
-                                ref
-                                    .read(authStateNotifierProvider.notifier)
-                                    .updatePassword(_passwordController.text);
-                                if (widget.email != null) {
-                                  ref
-                                      .read(authStateNotifierProvider.notifier)
-                                      .updateEmail(widget.email!);
-                                }
-                                // context를 login에 전달하지 않음
-                                context.push(
-                                  '/profileRegistration',
-                                  extra: {
-                                    'email': widget.email,
-                                    'provider': 'LOCAL',
-                                    'providerId': null,
-                                  },
-                                );
-                              }
-                            }
-                          },
+                  onPressed: () async {
+                    _onNextPressed();
+                  },
                 ),
               ),
             ),

@@ -6,11 +6,19 @@
 	<dict>
 		<key>Info.plist</key>
 		<data>
+<<<<<<< HEAD
 		ti1WAD0y5I/hEq5AComxj5lob1A=
 		</data>
 		<key>webview_flutter_wkwebview_privacy.bundle/Info.plist</key>
 		<data>
 		OjqyMWJykkZU2rhTg5eIHiNYzbk=
+=======
+		WHjU1WLU6CEKezfUgC1TNk11jjw=
+		</data>
+		<key>webview_flutter_wkwebview_privacy.bundle/Info.plist</key>
+		<data>
+		QCQJFL8XGm2No5IuQtaTWgCnxbw=
+>>>>>>> main
 		</data>
 		<key>webview_flutter_wkwebview_privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -23,7 +31,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< HEAD
 			9PXKQmUfxuQiBLB+C7B7E8MyWyGkjBShOz8HxhHeMfc=
+=======
+			oCCkod/oOKQKlSGzqImNuWv6ImsBawRJm1UJHkA7jYc=
+>>>>>>> main
 			</data>
 		</dict>
 		<key>webview_flutter_wkwebview_privacy.bundle/PrivacyInfo.xcprivacy</key>

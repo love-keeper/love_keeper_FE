@@ -6,7 +6,11 @@
 	<dict>
 		<key>FirebaseInstallations_Privacy.bundle/Info.plist</key>
 		<data>
+<<<<<<< HEAD
 		MRYDAXTE4WXnxnhKD5s4fR2MEkk=
+=======
+		Ldiasear9teMtxWQTJMjG4jNN+A=
+>>>>>>> main
 		</data>
 		<key>FirebaseInstallations_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -34,7 +38,11 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
+<<<<<<< HEAD
 		9kAeCU9hhimgAlP91a+1jncM9hI=
+=======
+		IWyZ7HZfuBd3wgnpO1HsOuMm8Yo=
+>>>>>>> main
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -47,7 +55,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< HEAD
 			XlNScUiKMpq6SALol1Dj3b2vX0E5xwZthmcWIBsHU58=
+=======
+			64jyRDUaqUPxM4hSYknopeM20sLadZfmeLqlMztsOuk=
+>>>>>>> main
 			</data>
 		</dict>
 		<key>FirebaseInstallations_Privacy.bundle/PrivacyInfo.xcprivacy</key>

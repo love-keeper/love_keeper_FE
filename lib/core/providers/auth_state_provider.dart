@@ -43,21 +43,33 @@ class AuthState {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AuthStateNotifier extends _$AuthStateNotifier {
   @override
   AuthState build() => AuthState();
 
   void updateEmail(String email) {
+    debugPrint('Updating email to: $email');
     state = state.copyWith(email: email);
+    debugPrint(
+      'Current state: email=${state.email}, provider=${state.provider}, providerId=${state.providerId}',
+    );
   }
 
   void updateProvider(String provider) {
+    debugPrint('Updating provider to: $provider');
     state = state.copyWith(provider: provider);
+    debugPrint(
+      'Current state: email=${state.email}, provider=${state.provider}, providerId=${state.providerId}',
+    );
   }
 
-  void updateProviderId(String providerId) {
+  void updateProviderId(String? providerId) {
+    debugPrint('Updating providerId to: $providerId');
     state = state.copyWith(providerId: providerId);
+    debugPrint(
+      'Current state: email=${state.email}, provider=${state.provider}, providerId=${state.providerId}',
+    );
   }
 
   void updatePassword(String password) {
@@ -76,9 +88,9 @@ class AuthStateNotifier extends _$AuthStateNotifier {
     );
   }
 
-  // 상태를 초기화하는 clear 메서드 추가
+  // 상태를 초기화하는 clear 메서드 유지
   void clear() {
     debugPrint('AuthStateNotifier cleared');
-    state = AuthState(); // 모든 필드를 초기값으로 설정
+    state = AuthState();
   }
 }

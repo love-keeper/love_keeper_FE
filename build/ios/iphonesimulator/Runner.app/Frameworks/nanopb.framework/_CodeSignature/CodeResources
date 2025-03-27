@@ -6,11 +6,19 @@
 	<dict>
 		<key>Info.plist</key>
 		<data>
+<<<<<<< HEAD
 		U+1rX/CwPslx5qP9jc53gGcF+3Y=
 		</data>
 		<key>nanopb_Privacy.bundle/Info.plist</key>
 		<data>
 		txzlj1AkUpLeCyanNwCQTrrxewk=
+=======
+		gST1BX24ijF8vx3Oid3GKjC4YV8=
+		</data>
+		<key>nanopb_Privacy.bundle/Info.plist</key>
+		<data>
+		QOCIEUhhGCyOkFuqiJYB9b/uOQM=
+>>>>>>> main
 		</data>
 		<key>nanopb_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -23,7 +31,11 @@
 		<dict>
 			<key>hash2</key>
 			<data>
+<<<<<<< HEAD
 			uI4AWCxOBRg4gW1MVRMXjOLAEJz4im5xKFkRTDbkL4I=
+=======
+			GaDO6M8oIml9OC3AuPn4ZDW7jnw4yzCr+QxP1RUsSfQ=
+>>>>>>> main
 			</data>
 		</dict>
 		<key>nanopb_Privacy.bundle/PrivacyInfo.xcprivacy</key>
