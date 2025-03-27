@@ -28,6 +28,8 @@ class _StoragePageState extends ConsumerState<StoragePage> {
   final int _letterSize = 20;
   bool _isFetchingLetters = false;
   bool _letterHasNext = true;
+  bool _isFetchingPromises = false; // 약속 페칭 상태 추가
+  bool _promiseHasNext = true; // 약속 다음 페이지 여부 추가
 
   @override
   void initState() {
@@ -35,19 +37,20 @@ class _StoragePageState extends ConsumerState<StoragePage> {
     selectedIndex = widget.initialTab;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (selectedIndex == 1) {
-        ref.read(promisesViewModelProvider.notifier).fetchInitial();
-      } else {
-        ref
-            .read(lettersViewModelProvider.notifier)
-            .getLetterList(_letterPage, _letterSize);
-      }
+      _loadInitialData();
     });
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 100) {
-        ref.read(promisesViewModelProvider.notifier).fetchMore();
+              _scrollController.position.maxScrollExtent - 100 &&
+          !_isFetchingPromises &&
+          _promiseHasNext) {
+        _isFetchingPromises = true;
+        ref.read(promisesViewModelProvider.notifier).fetchMore().then((_) {
+          final state = ref.read(promisesViewModelProvider);
+          state.whenData((data) => _promiseHasNext = data?.hasNext ?? false);
+          _isFetchingPromises = false;
+        });
       }
     });
 
@@ -65,6 +68,21 @@ class _StoragePageState extends ConsumerState<StoragePage> {
         _isFetchingLetters = false;
       }
     });
+  }
+
+  void _loadInitialData() {
+    if (selectedIndex == 1) {
+      _promiseHasNext = true;
+      _isFetchingPromises = false;
+      ref.read(promisesViewModelProvider.notifier).fetchInitial();
+    } else {
+      _letterPage = 0;
+      _letterHasNext = true;
+      _isFetchingLetters = false;
+      ref
+          .read(lettersViewModelProvider.notifier)
+          .getLetterList(_letterPage, _letterSize);
+    }
   }
 
   void _submitPromise() async {
@@ -320,6 +338,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                     selectedIndex = 0;
                     _isEditingPromise = false;
                     _promiseController.clear();
+                    _loadInitialData(); // 편지 탭으로 전환 시 초기화
                   });
                 },
                 child: SizedBox(
@@ -346,7 +365,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                     selectedIndex = 1;
                     _isEditingPromise = false;
                     _promiseController.clear();
-                    ref.read(promisesViewModelProvider.notifier).fetchInitial();
+                    _loadInitialData(); // 약속 탭으로 전환 시 초기화
                   });
                 },
                 child: SizedBox(
@@ -378,7 +397,15 @@ class _StoragePageState extends ConsumerState<StoragePage> {
   void dispose() {
     _promiseController.dispose();
     _scrollController.dispose();
+    _letterScrollController.dispose();
     super.dispose();
+  }
+
+  // 캘린더 페이지로 이동 후 돌아올 때 호출
+  Future<void> _navigateToCalendar() async {
+    await context.push('/calendar');
+    // 디테일 페이지에서 돌아오면 데이터 초기화
+    _loadInitialData();
   }
 
   @override
@@ -402,7 +429,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
                 width: 24,
                 height: 24,
               ),
-              onPressed: () => context.push('/calendar'),
+              onPressed: _navigateToCalendar,
             ),
           ),
         ],

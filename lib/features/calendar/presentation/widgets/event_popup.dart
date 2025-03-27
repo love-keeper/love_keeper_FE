@@ -88,7 +88,7 @@ class EventPopup extends StatelessWidget {
                       : null,
               borderRadius: BorderRadius.circular(20),
               child: Opacity(
-                opacity: letterCount > 0 ? 1.0 : 0.4,
+                opacity: 1.0,
                 child: Container(
                   height: 90,
                   padding: const EdgeInsets.all(10),
