@@ -121,7 +121,6 @@ DEPENDENCIES:
   - flutter_naver_login (from `.symlinks/plugins/flutter_naver_login/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - kakao_flutter_sdk_common (from `.symlinks/plugins/kakao_flutter_sdk_common/ios`)
-  - naveridlogin-sdk-ios (~> 4.2.3)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -206,10 +205,6 @@ SPEC CHECKSUMS:
   sqflite_darwin: 20b2a3a3b70e43edae938624ce550a3cbf66a3d0
   webview_flutter_wkwebview: 1821ceac936eba6f7984d89a9f3bcb4dea99ebb2
 
-<<<<<<< HEAD
-PODFILE CHECKSUM: ad9d197eee630e484255a854762b3ca08ddf05c1
-=======
-PODFILE CHECKSUM: 4ccf74e7c5d3e4eaa9b99477a28f3c2dfb3bd6bb
->>>>>>> 502b048986ace6277840d4902766f0c9d6098838
+PODFILE CHECKSUM: c2d6b71f8d18812b2ce6f9b5bae4713559e1459f
 
 COCOAPODS: 1.16.2
