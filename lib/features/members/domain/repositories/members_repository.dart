@@ -10,7 +10,7 @@ abstract class MembersRepository {
     String newPassword,
     String newPasswordConfirm,
   );
-  Future<String> updateProfileImage(File profileImage);
+  Future<String> updateProfileImage(File? profileImage);
   Future<String> sendEmailCode(String email);
   Future<String> verifyEmailCode(String email, String code);
 }

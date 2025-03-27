@@ -9,27 +9,60 @@ part 'letters_viewmodel.g.dart';
 class LettersViewModel extends _$LettersViewModel {
   late final LettersRepository _repository;
 
+  int _page = 0;
+  final int _size = 20;
+  bool _hasNext = true;
+  bool _isFetching = false;
+
   @override
   AsyncValue<LetterList?> build() {
     _repository = ref.watch(lettersRepositoryProvider);
-    _fetchInitialLetters();
-    return const AsyncValue.data(null);
+    fetchInitialLetters(); // 첫 페이지 로드
+    return const AsyncValue.loading();
   }
 
-  Future<void> _fetchInitialLetters() async {
+  Future<void> fetchInitialLetters() async {
+    _page = 0;
+    _hasNext = true;
+    await fetchMoreLetters();
+  }
+
+  Future<void> refreshLetters() async {
+    _page = 0;
+    _hasNext = true;
+    await fetchMoreLetters();
+  }
+
+  Future<void> fetchMoreLetters() async {
+    if (_isFetching || !_hasNext) return;
+    _isFetching = true;
     try {
-      final letterList = await _repository.getLetterList(0, 10);
-      state = AsyncValue.data(letterList);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+      final newLetters = await _repository.getLetterList(_page, _size);
+      final current = state.value;
+      if (current != null) {
+        final merged = LetterList(
+          letters: [...current.letters, ...newLetters.letters],
+          isFirst: newLetters.isFirst,
+          isLast: newLetters.isLast,
+          hasNext: newLetters.hasNext,
+        );
+        state = AsyncValue.data(merged);
+      } else {
+        state = AsyncValue.data(newLetters);
+      }
+      _hasNext = newLetters.hasNext;
+      _page++;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+    } finally {
+      _isFetching = false;
     }
   }
 
   Future<String> createLetter(String content) async {
-    state = const AsyncValue.loading();
     try {
       final result = await _repository.createLetter(content);
-      await _fetchInitialLetters(); // 편지 생성 후 목록 갱신
+      await refreshLetters();
       return result;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);

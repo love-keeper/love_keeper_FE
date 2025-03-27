@@ -23,11 +23,11 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_isFirstLoad) {
-      Future.microtask(
-        () => ref
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref
             .read(calendarViewModelProvider.notifier)
-            .getCalendar(_focusedDay.year, _focusedDay.month),
-      );
+            .getCalendar(_focusedDay.year, _focusedDay.month);
+      });
       _isFirstLoad = false;
     }
   }
@@ -327,17 +327,36 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
                   : (isToday ? Colors.white : null),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Center(
-          child: Text(
-            '${day.day}',
-            style: TextStyle(
-              fontSize: 16,
-              letterSpacing: -0.4,
-              height: 24 / 16,
-              color: hasEvent ? Colors.white : Colors.black,
-              fontWeight: isToday ? FontWeight.bold : FontWeight.w600,
+        child: Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.center,
+          children: [
+            Positioned(
+              top: 8,
+              child: Text(
+                '${day.day}',
+                style: TextStyle(
+                  fontSize: 16,
+                  letterSpacing: -0.4,
+                  color: hasEvent ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
+            if (isToday)
+              const Positioned(
+                top: 38,
+                child: Text(
+                  '오늘',
+                  style: TextStyle(
+                    fontSize: 10,
+                    letterSpacing: -0.25,
+                    color: Color(0xFFFC6383),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );

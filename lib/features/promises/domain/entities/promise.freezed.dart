@@ -14,6 +14,10 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+Promise _$PromiseFromJson(Map<String, dynamic> json) {
+  return _Promise.fromJson(json);
+}
+
 /// @nodoc
 mixin _$Promise {
   int get memberId => throw _privateConstructorUsedError;
@@ -21,6 +25,7 @@ mixin _$Promise {
   String get content => throw _privateConstructorUsedError;
   String get promisedAt => throw _privateConstructorUsedError;
 
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $PromiseCopyWith<Promise> get copyWith => throw _privateConstructorUsedError;
 }
@@ -120,13 +125,16 @@ class __$$PromiseImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$PromiseImpl implements _Promise {
   const _$PromiseImpl(
       {required this.memberId,
       required this.promiseId,
       required this.content,
       required this.promisedAt});
+
+  factory _$PromiseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PromiseImplFromJson(json);
 
   @override
   final int memberId;
@@ -156,6 +164,7 @@ class _$PromiseImpl implements _Promise {
                 other.promisedAt == promisedAt));
   }
 
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
       Object.hash(runtimeType, memberId, promiseId, content, promisedAt);
@@ -165,6 +174,13 @@ class _$PromiseImpl implements _Promise {
   @pragma('vm:prefer-inline')
   _$$PromiseImplCopyWith<_$PromiseImpl> get copyWith =>
       __$$PromiseImplCopyWithImpl<_$PromiseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PromiseImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _Promise implements Promise {
@@ -173,6 +189,8 @@ abstract class _Promise implements Promise {
       required final int promiseId,
       required final String content,
       required final String promisedAt}) = _$PromiseImpl;
+
+  factory _Promise.fromJson(Map<String, dynamic> json) = _$PromiseImpl.fromJson;
 
   @override
   int get memberId;
