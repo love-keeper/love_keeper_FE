@@ -18,11 +18,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-<<<<<<< HEAD
 		sqCXqq47c5+WyTj5chfaYmeF6JE=
-=======
-		XTCmFJjCFE3B87Jy2XyYayvDIjA=
->>>>>>> main
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -30,11 +26,7 @@
 		</data>
 		<key>sqflite_darwin_privacy.bundle/Info.plist</key>
 		<data>
-<<<<<<< HEAD
 		T94XuImDh3FI+Fuxn/vnmxY/fZ0=
-=======
-		iqxcFCDrxkraWAEGJJ06WWDVHCM=
->>>>>>> main
 		</data>
 		<key>sqflite_darwin_privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -75,11 +67,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-<<<<<<< HEAD
 			S6f/Ry81j4sbaGD70fUbCZ3WXGOzBsN2JrkPj/zPi3Y=
-=======
-			1v0Pw2ZXidMDfg3fKTjZnNq/EWl2CMwLnj2gsgZaUeo=
->>>>>>> main
 			</data>
 		</dict>
 		<key>sqflite_darwin_privacy.bundle/PrivacyInfo.xcprivacy</key>

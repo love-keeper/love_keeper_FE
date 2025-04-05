@@ -60,8 +60,37 @@ class AuthViewModel extends _$AuthViewModel {
         profileImage: profileImage,
       );
       await _saveTokens(user);
-      state = AsyncValue.data(user);
-      return user;
+      final loggedInUser = await login(
+        email: email,
+        provider: provider,
+        password: password,
+        providerId: providerId,
+      );
+      state = AsyncValue.data(loggedInUser);
+      return loggedInUser;
+    } on DioException catch (e, stackTrace) {
+      final message = e.response?.data.toString();
+      if (e.response?.statusCode == 500 &&
+          message != null &&
+          message.contains('이미 사용 중인 이메일')) {
+        print('⚠️ 중복 이메일 감지됨 → 로그인 시도');
+        try {
+          final user = await login(
+            email: email,
+            provider: provider,
+            password: password,
+            providerId: providerId,
+          );
+          state = AsyncValue.data(user);
+          return user;
+        } catch (loginError, loginStack) {
+          state = AsyncValue.error(loginError, loginStack);
+          rethrow;
+        }
+      }
+      state = AsyncValue.error(e, stackTrace);
+      print('Signup error: $e');
+      rethrow;
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);
       print('Signup error: $e');
@@ -121,7 +150,6 @@ class AuthViewModel extends _$AuthViewModel {
         ref
             .read(authStateNotifierProvider.notifier)
             .updateProviderId(providerId);
-        // 회원가입 로직 추가 필요 (아래 참고)
       } on DioException catch (e) {
         if (e.response?.statusCode == 409) {
           await login(email: email, provider: provider, providerId: providerId);
@@ -190,6 +218,7 @@ class AuthViewModel extends _$AuthViewModel {
       await _repository.sendCode(email);
   Future<String> verifyCode(String email, int code) async =>
       await _repository.verifyCode(email, code);
+
   Future<String> logout() async {
     final result = await _repository.logout();
     await _clearTokens();

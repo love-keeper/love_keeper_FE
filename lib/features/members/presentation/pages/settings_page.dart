@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -91,7 +92,22 @@ class SettingsPage extends ConsumerWidget {
                   'dialogContent': '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
                   'dialogExitText': '연결 끊기',
                   'dialogSaveText': '돌아가기',
-                  'onDialogExit': () => context.go('/disconnected_SC'),
+                  'onDialogExit': () async {
+                    try {
+                      // CouplesViewModel의 deleteCouple 호출
+                      await ref
+                          .read(couplesViewModelProvider.notifier)
+                          .deleteCouple();
+                      // 인증 상태 초기화 (선택적)
+                      ref.read(authStateNotifierProvider.notifier).clear();
+                      // 성공 시 화면 이동
+                      context.go(RouteNames.disconnectedScreen);
+                    } catch (e) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('연결 끊기 실패: $e')));
+                    }
+                  },
                   'onDialogSave': () => context.pop(),
                 },
               );

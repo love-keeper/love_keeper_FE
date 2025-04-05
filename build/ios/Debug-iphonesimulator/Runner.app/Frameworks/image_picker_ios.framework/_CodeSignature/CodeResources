@@ -6,19 +6,11 @@
 	<dict>
 		<key>Info.plist</key>
 		<data>
-<<<<<<< HEAD
 		W4M6xd7gsqJJwmxGduyGv/SaGTs=
 		</data>
 		<key>image_picker_ios_privacy.bundle/Info.plist</key>
 		<data>
 		qHTsc+jOTeti16XKMTobnjmL+PE=
-=======
-		kJs7LHi9smubOP225MdgEyN1K6U=
-		</data>
-		<key>image_picker_ios_privacy.bundle/Info.plist</key>
-		<data>
-		bFIwesWtZE+AEvqng0gmfjMj6B4=
->>>>>>> main
 		</data>
 		<key>image_picker_ios_privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -31,11 +23,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-<<<<<<< HEAD
 			XrfkQErHFHB6tM2owb8E6ni2DUMk2ATf/EFNO5A7Y00=
-=======
-			YOip6+IWwLGSou6dDumNrpIM7QeIJ5IHKso9QXZknwc=
->>>>>>> main
 			</data>
 		</dict>
 		<key>image_picker_ios_privacy.bundle/PrivacyInfo.xcprivacy</key>

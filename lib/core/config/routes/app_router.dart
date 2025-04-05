@@ -284,7 +284,7 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.disconnectPage,
-        name: RouteNames.disconnectPage,
+        name: 'disconnectPage',
         pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           return NoTransitionPage(
@@ -321,7 +321,7 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.disconnectedScreen,
-        name: RouteNames.disconnectedScreen,
+        name: 'disconnectedScreen',
         pageBuilder:
             (context, state) => NoTransitionPage(
               key: state.pageKey,

@@ -26,8 +26,8 @@ class RouteNames {
   static const String myPage = '/my';
   static const String editFieldPage = '/editField';
   static const String settingsPage = '/settings';
-  static const String disconnectPage = '/disconnect';
-  static const String disconnectedScreen = '/disconnected';
+  static const String disconnectPage = '/disconnectPage';
+  static const String disconnectedScreen = '/disconnectedScreen';
   static const String nicknameEditPage = '/nicknameEdit';
   static const String birthdateEditPage = '/birthdateEdit';
   static const String relationshipStartEditPage = '/relationshipStartEdit';

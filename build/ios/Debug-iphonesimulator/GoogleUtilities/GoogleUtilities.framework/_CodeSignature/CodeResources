@@ -6,11 +6,7 @@
 	<dict>
 		<key>GoogleUtilities_Privacy.bundle/Info.plist</key>
 		<data>
-<<<<<<< HEAD
 		UxrHa1awUTdXA1yU2EZiwtDIaho=
-=======
-		nixbbgGhz7oXo3+/5wFclKrR9og=
->>>>>>> main
 		</data>
 		<key>GoogleUtilities_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -94,11 +90,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-<<<<<<< HEAD
 		PIZKpHh9Ccbj98WG6nVUpXqcRmQ=
-=======
-		20cbR9ZyPVaM5S15lvrJpAEaS00=
->>>>>>> main
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -111,11 +103,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-<<<<<<< HEAD
 			UAzQB2AwWG184y3M8DdGpPqsPv2uc2cGrfZIYCXbkcY=
-=======
-			fISMXcEjrXwzTDzjSDKHNOHuv9TS4xMGiQxJa45UL4g=
->>>>>>> main
 			</data>
 		</dict>
 		<key>GoogleUtilities_Privacy.bundle/PrivacyInfo.xcprivacy</key>

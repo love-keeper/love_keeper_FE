@@ -257,6 +257,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           (a, b) =>
               DateTime.parse(b.sentDate).compareTo(DateTime.parse(a.sentDate)),
         );
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: GridView.builder(

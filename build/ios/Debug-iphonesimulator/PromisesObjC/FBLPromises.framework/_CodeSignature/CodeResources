@@ -6,11 +6,7 @@
 	<dict>
 		<key>FBLPromises_Privacy.bundle/Info.plist</key>
 		<data>
-<<<<<<< HEAD
 		BccnjadmEh8jdMvrVh0kU3Xjn1Q=
-=======
-		JuOBPL8wzk2vdJtRzj6L8XK+y1o=
->>>>>>> main
 		</data>
 		<key>FBLPromises_Privacy.bundle/PrivacyInfo.xcprivacy</key>
 		<data>
@@ -102,11 +98,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-<<<<<<< HEAD
 		4tIsr5TmFwAmi6ua1QCIglK+f1o=
-=======
-		eCwjxiBu6BU+jZUXScWzFaoXues=
->>>>>>> main
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -121,19 +113,9 @@
 	<dict>
 		<key>FBLPromises_Privacy.bundle/Info.plist</key>
 		<dict>
-<<<<<<< HEAD
 			<key>hash2</key>
 			<data>
 			OHg7hY6bkot3IjNATVnKAZNQHW+XXI4XU2wd48J3Liw=
-=======
-			<key>hash</key>
-			<data>
-			JuOBPL8wzk2vdJtRzj6L8XK+y1o=
-			</data>
-			<key>hash2</key>
-			<data>
-			NQbhIxwJNyteM0MuB/rDHLUvLLOiGiciV8geFc9Sz8c=
->>>>>>> main
 			</data>
 		</dict>
 		<key>FBLPromises_Privacy.bundle/PrivacyInfo.xcprivacy</key>
