@@ -19,6 +19,7 @@ class PushNotificationResponse with _$PushNotificationResponse {
     required String body,
     required String relativeTime,
     required bool read,
+    Map<String, dynamic>? data,
   }) = _PushNotificationResponse;
 
   factory PushNotificationResponse.fromJson(Map<String, dynamic> json) =>

@@ -164,6 +164,7 @@ mixin _$PushNotificationResponse {
   String get body => throw _privateConstructorUsedError;
   String get relativeTime => throw _privateConstructorUsedError;
   bool get read => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get data => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -178,7 +179,12 @@ abstract class $PushNotificationResponseCopyWith<$Res> {
       _$PushNotificationResponseCopyWithImpl<$Res, PushNotificationResponse>;
   @useResult
   $Res call(
-      {int id, String title, String body, String relativeTime, bool read});
+      {int id,
+      String title,
+      String body,
+      String relativeTime,
+      bool read,
+      Map<String, dynamic>? data});
 }
 
 /// @nodoc
@@ -200,6 +206,7 @@ class _$PushNotificationResponseCopyWithImpl<$Res,
     Object? body = null,
     Object? relativeTime = null,
     Object? read = null,
+    Object? data = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -222,6 +229,10 @@ class _$PushNotificationResponseCopyWithImpl<$Res,
           ? _value.read
           : read // ignore: cast_nullable_to_non_nullable
               as bool,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ) as $Val);
   }
 }
@@ -236,7 +247,12 @@ abstract class _$$PushNotificationResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int id, String title, String body, String relativeTime, bool read});
+      {int id,
+      String title,
+      String body,
+      String relativeTime,
+      bool read,
+      Map<String, dynamic>? data});
 }
 
 /// @nodoc
@@ -257,6 +273,7 @@ class __$$PushNotificationResponseImplCopyWithImpl<$Res>
     Object? body = null,
     Object? relativeTime = null,
     Object? read = null,
+    Object? data = freezed,
   }) {
     return _then(_$PushNotificationResponseImpl(
       id: null == id
@@ -279,6 +296,10 @@ class __$$PushNotificationResponseImplCopyWithImpl<$Res>
           ? _value.read
           : read // ignore: cast_nullable_to_non_nullable
               as bool,
+      data: freezed == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ));
   }
 }
@@ -291,7 +312,9 @@ class _$PushNotificationResponseImpl implements _PushNotificationResponse {
       required this.title,
       required this.body,
       required this.relativeTime,
-      required this.read});
+      required this.read,
+      final Map<String, dynamic>? data})
+      : _data = data;
 
   factory _$PushNotificationResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$PushNotificationResponseImplFromJson(json);
@@ -306,10 +329,19 @@ class _$PushNotificationResponseImpl implements _PushNotificationResponse {
   final String relativeTime;
   @override
   final bool read;
+  final Map<String, dynamic>? _data;
+  @override
+  Map<String, dynamic>? get data {
+    final value = _data;
+    if (value == null) return null;
+    if (_data is EqualUnmodifiableMapView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
-    return 'PushNotificationResponse(id: $id, title: $title, body: $body, relativeTime: $relativeTime, read: $read)';
+    return 'PushNotificationResponse(id: $id, title: $title, body: $body, relativeTime: $relativeTime, read: $read, data: $data)';
   }
 
   @override
@@ -322,13 +354,14 @@ class _$PushNotificationResponseImpl implements _PushNotificationResponse {
             (identical(other.body, body) || other.body == body) &&
             (identical(other.relativeTime, relativeTime) ||
                 other.relativeTime == relativeTime) &&
-            (identical(other.read, read) || other.read == read));
+            (identical(other.read, read) || other.read == read) &&
+            const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, title, body, relativeTime, read);
+  int get hashCode => Object.hash(runtimeType, id, title, body, relativeTime,
+      read, const DeepCollectionEquality().hash(_data));
 
   @JsonKey(ignore: true)
   @override
@@ -351,7 +384,8 @@ abstract class _PushNotificationResponse implements PushNotificationResponse {
       required final String title,
       required final String body,
       required final String relativeTime,
-      required final bool read}) = _$PushNotificationResponseImpl;
+      required final bool read,
+      final Map<String, dynamic>? data}) = _$PushNotificationResponseImpl;
 
   factory _PushNotificationResponse.fromJson(Map<String, dynamic> json) =
       _$PushNotificationResponseImpl.fromJson;
@@ -366,6 +400,8 @@ abstract class _PushNotificationResponse implements PushNotificationResponse {
   String get relativeTime;
   @override
   bool get read;
+  @override
+  Map<String, dynamic>? get data;
   @override
   @JsonKey(ignore: true)
   _$$PushNotificationResponseImplCopyWith<_$PushNotificationResponseImpl>

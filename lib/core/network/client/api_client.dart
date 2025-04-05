@@ -30,6 +30,7 @@ import '../../../features/auth/data/models/request/verify_code_request.dart';
 import '../../../features/auth/data/models/response/auth_response.dart';
 import '../../../features/couples/data/models/request/connect_request.dart';
 import '../../../features/couples/data/models/response/invite_code_response.dart';
+import 'package:love_keeper/features/letters/data/models/response/letter_response.dart';
 import '../../../features/fcm/data/models/fcm_models.dart';
 
 part 'api_client.g.dart';
@@ -162,6 +163,9 @@ abstract class ApiClient {
   @POST('/api/letters')
   Future<ApiResponse<String>> createLetter(@Body() CreateLetterRequest request);
 
+  @GET('/api/letters/{letterId}')
+  Future<ApiResponse<LetterResponse>> getLetter(@Path('letterId') int letterId);
+
   @GET('/api/letters/list')
   Future<ApiResponse<LetterListResponse>> getLetterList(
     @Query('page') int page,
@@ -225,5 +229,10 @@ abstract class ApiClient {
   Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
     @Query('page') int page,
     @Query('size') int size,
+  );
+
+  @POST('/api/fcm/read/{notificationId}')
+  Future<ApiResponse<String>> markNotificationAsRead(
+    @Path('notificationId') int notificationId,
   );
 }

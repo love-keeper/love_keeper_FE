@@ -11,7 +11,9 @@ part 'fcm_repository.g.dart';
 abstract class FCMRepository {
   Future<void> registerToken(String token);
   Future<NotificationListResponse> getPushNotifications({int? page, int? size});
-  Future<void> markNotificationAsRead(int notificationId); // 추가
+  Future<ApiResponse<String>> markNotificationAsRead(
+    int notificationId,
+  ); // 반환 타입 변경
 }
 
 class FCMRepositoryImpl implements FCMRepository {
@@ -108,9 +110,10 @@ class FCMRepositoryImpl implements FCMRepository {
     return prefs.getString('access_token') ?? '';
   }
 
+  // 구현 클래스에서:
   @override
-  Future<void> markNotificationAsRead(int notificationId) async {
-    throw UnimplementedError('markNotificationAsRead API not implemented yet');
+  Future<ApiResponse<String>> markNotificationAsRead(int notificationId) async {
+    return await _apiClient.markNotificationAsRead(notificationId);
   }
 
   void _handleResponse(ApiResponse<dynamic> response) {

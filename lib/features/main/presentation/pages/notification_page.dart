@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:love_keeper/features/fcm/presentation/viewmodels/fcm_viewmodel.dart';
 import 'package:love_keeper/features/main/presentation/widgets/tab_bar.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:love_keeper/core/providers/api_provider.dart';
 
 class NotificationPage extends ConsumerStatefulWidget {
   const NotificationPage({super.key});
@@ -151,15 +152,60 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                     return Column(
                       children: [
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             // 알림 클릭 시 읽음 처리
                             if (!isRead) {
-                              ref
+                              await ref
                                   .read(fCMViewModelProvider.notifier)
                                   .markAsRead(notification.id);
                             }
+
+                            // 알림 제목으로 타입 구분
+                            final String title =
+                                notification.title.toLowerCase();
+
+                            if (title.contains("편지")) {
+                              try {
+                                // 임의의 편지 ID 설정 (테스트용)
+                                final int letterId = 10; // 테스트용 편지 ID
+
+                                final apiClient = ref.read(apiClientProvider);
+                                final letterResponse = await apiClient
+                                    .getLetter(letterId);
+
+                                if (letterResponse.code == "COMMON200" &&
+                                    letterResponse.result != null) {
+                                  final Map<String, dynamic> letterData = {
+                                    'id': letterId.toString(),
+                                    'sender':
+                                        letterResponse.result?.senderNickname ??
+                                        '알 수 없음',
+                                    'content':
+                                        letterResponse.result?.content ?? '',
+                                  };
+
+                                  // 편지 상세 페이지로 이동
+                                  context.go(
+                                    '/receivedLetter',
+                                    extra: letterData,
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('편지를 불러오는데 실패했습니다')),
+                                  );
+                                }
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('오류가 발생했습니다: $e')),
+                                );
+                              }
+                            } else if (title.contains("약속")) {
+                              // 약속 페이지로 이동
+                              context.go('/calendar'); // 또는 약속 목록 페이지
+                            }
                           },
                           child: Container(
+                            // 여기서부터는 기존 코드 그대로 유지
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
                               vertical: 12,
