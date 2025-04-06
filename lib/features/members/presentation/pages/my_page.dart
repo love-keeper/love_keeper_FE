@@ -1,9 +1,9 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:image_picker/image_picker.dart'; // image_picker 패키지 추가
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 
@@ -38,7 +38,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useRootNavigator: true, // 바텀시트 위로 올라가게
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {
@@ -135,11 +135,11 @@ class _MyPageState extends ConsumerState<MyPage> {
                                 onTap: () {
                                   Navigator.pop(dialogContext);
                                   setState(() {
-                                    _profileImage = null; // 로컬 초기화
+                                    _profileImage = null;
                                   });
                                   ref
                                       .read(membersViewModelProvider.notifier)
-                                      .updateProfileImage(null) // 서버에 null 전달
+                                      .updateProfileImage(null)
                                       .then((_) {
                                         print('Profile image set to default');
                                       })
@@ -222,22 +222,30 @@ class _MyPageState extends ConsumerState<MyPage> {
     );
   }
 
+  // image_picker를 사용한 이미지 선택 함수
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      final newImage = File(pickedFile.path);
-      setState(() {
-        _profileImage = newImage;
-      });
-      try {
+    try {
+      final ImagePicker picker = ImagePicker();
+      // 갤러리에서 이미지 선택
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        File file = File(image.path);
+        setState(() {
+          _profileImage = file;
+        });
         await ref
             .read(membersViewModelProvider.notifier)
-            .updateProfileImage(newImage);
-      } catch (e) {
-        print('Error updating profile image: $e');
+            .updateProfileImage(file);
+        print('프로필 이미지가 성공적으로 업데이트되었습니다.');
+      } else {
+        print('이미지가 선택되지 않았습니다.');
       }
+    } catch (e) {
+      print('이미지 선택 중 오류 발생: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('이미지 선택 중 오류가 발생했습니다: $e')));
     }
   }
 
@@ -259,6 +267,7 @@ class _MyPageState extends ConsumerState<MyPage> {
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
+<<<<<<< HEAD
           '연애 시작일',
           memberInfo?.relationshipStartDate ?? '',
           scaleFactor,
@@ -266,6 +275,8 @@ class _MyPageState extends ConsumerState<MyPage> {
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
+=======
+>>>>>>> origin/main
           '이메일',
           memberInfo?.email ?? '',
           scaleFactor,
@@ -434,6 +445,10 @@ class _MyPageState extends ConsumerState<MyPage> {
                 data:
                     (memberInfo) => Column(
                       children: [
+<<<<<<< HEAD
+=======
+                        // 프로필 사진
+>>>>>>> origin/main
                         Align(
                           alignment: Alignment.center,
                           child: ClipOval(
@@ -471,6 +486,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                                     ),
                           ),
                         ),
+<<<<<<< HEAD
                         SizedBox(height: 30 * scaleFactor),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -492,6 +508,14 @@ class _MyPageState extends ConsumerState<MyPage> {
                           child: _buildMenuSection(scaleFactor),
                         ),
                         SizedBox(height: 16 * scaleFactor),
+=======
+                        SizedBox(height: 20 * scaleFactor),
+                        // 정보 섹션 추가
+                        _buildInfoSection(scaleFactor, memberInfo),
+                        SizedBox(height: 20 * scaleFactor),
+                        // 메뉴 섹션 추가
+                        _buildMenuSection(scaleFactor),
+>>>>>>> origin/main
                       ],
                     ),
                 loading: () => const Center(child: CircularProgressIndicator()),

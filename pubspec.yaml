@@ -34,6 +34,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  
+ # 이미지 관련
+
  
   # 네트워크 및 관련 패키지 (http 버전을 dart_code_metrics와 호환되는 버전으로 낮춤)
   http: ^0.13.6
@@ -63,10 +66,10 @@ dependencies:
   fpdart: ^1.1.1
   flutter_svg: ^2.0.9   # 강제 다운그레이드 (충돌 방지)
   flex_color_scheme: ^7.3.1
-  image_picker: ^1.0.4
+  image_picker: ^1.0.7
 
   # Social Login
-  flutter_naver_login: ^1.8.0
+  flutter_naver_login: ^2.0.0
   sign_in_with_apple: ^5.0.0
   kakao_flutter_sdk: ^1.9.6
 
@@ -76,7 +79,11 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   cached_network_image: ^3.3.1
   kakao_flutter_sdk_user: ^1.9.6
+
   hooks_riverpod: ^2.6.1
+
+  firebase_auth: ^5.5.1
+
 
 
 
@@ -130,3 +137,4 @@ flutter:
           weight: 800
         - asset: assets/fonts/Pretendard-Black.otf
           weight: 900
+          

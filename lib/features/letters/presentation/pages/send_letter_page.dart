@@ -124,13 +124,16 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
           .read(lettersViewModelProvider.notifier)
           .createLetter(letterContent);
       if (result.contains('성공')) {
-        context.pushNamed('sendLetterScreen', extra: {
-          'letterData': {
-            'sender': userName,
-            'receiver': partnerName,
-            'content': letterContent,
+        context.pushNamed(
+          'sendLetterScreen',
+          extra: {
+            'letterData': {
+              'sender': userName,
+              'receiver': partnerName,
+              'content': letterContent,
+            },
           },
-        });
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(
@@ -235,11 +238,13 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
                   if (e is DioException) {
                     if (e.response?.statusCode == 404) {
                       debugPrint(
-                          '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 무시)');
+                        '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 무시)',
+                      );
                       continue;
                     } else {
                       debugPrint(
-                          '드래프트 삭제 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}');
+                        '드래프트 삭제 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}',
+                      );
                     }
                   } else {
                     debugPrint('드래프트 삭제 실패 - order: $draftOrder, Error: $e');
@@ -277,18 +282,21 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
   Widget build(BuildContext context) {
     final double scaleFactor = MediaQuery.of(context).size.width / 375.0;
     final List<double> lineLengths = getLineLengths(currentStep);
-    final String previewContent =
-        stepTexts.where((text) => text.isNotEmpty).join(' ');
+    final String previewContent = stepTexts
+        .where((text) => text.isNotEmpty)
+        .join(' ');
     final state = ref.watch(lettersViewModelProvider);
     final memberInfoState = ref.watch(membersViewModelProvider);
 
     if (isPreview) {
-      final userName = memberInfoState is AsyncData<MemberInfo?>
-          ? memberInfoState.value?.nickname ?? '나'
-          : '나';
-      final partnerName = memberInfoState is AsyncData<MemberInfo?>
-          ? memberInfoState.value?.coupleNickname ?? '상대방'
-          : '상대방';
+      final userName =
+          memberInfoState is AsyncData<MemberInfo?>
+              ? memberInfoState.value?.nickname ?? '나'
+              : '나';
+      final partnerName =
+          memberInfoState is AsyncData<MemberInfo?>
+              ? memberInfoState.value?.coupleNickname ?? '상대방'
+              : '상대방';
       return Scaffold(
         body: LetterPreview(
           partnerName: partnerName,
@@ -375,40 +383,47 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
                               return Row(
                                 children: [
                                   Container(
-                                    width: index == currentStep
-                                        ? 20.0 * scaleFactor
-                                        : 10.0 * scaleFactor,
-                                    height: index == currentStep
-                                        ? 20.0 * scaleFactor
-                                        : 10.0 * scaleFactor,
+                                    width:
+                                        index == currentStep
+                                            ? 20.0 * scaleFactor
+                                            : 10.0 * scaleFactor,
+                                    height:
+                                        index == currentStep
+                                            ? 20.0 * scaleFactor
+                                            : 10.0 * scaleFactor,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: index < currentStep
-                                          ? const Color(0xFFCCCCCC)
-                                          : index == currentStep
+                                      color:
+                                          index < currentStep
+                                              ? const Color(0xFFCCCCCC)
+                                              : index == currentStep
                                               ? const Color(0xFFFF859B)
                                               : Colors.transparent,
                                       border: Border.all(
-                                        color: index == currentStep
-                                            ? const Color(0xFFFF859B)
-                                            : const Color(0xFFC3C6CF),
+                                        color:
+                                            index == currentStep
+                                                ? const Color(0xFFFF859B)
+                                                : const Color(0xFFC3C6CF),
                                         width: 2.0 * scaleFactor,
                                       ),
                                     ),
                                     child: Center(
-                                      child: index == currentStep
-                                          ? Text(
-                                              '${index + 1}',
-                                              style: TextStyle(
-                                                fontSize: 12.0 * scaleFactor,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white,
-                                                height: 12 / (12 * scaleFactor),
-                                                letterSpacing:
-                                                    -0.025 * (12 * scaleFactor),
-                                              ),
-                                            )
-                                          : const SizedBox.shrink(),
+                                      child:
+                                          index == currentStep
+                                              ? Text(
+                                                '${index + 1}',
+                                                style: TextStyle(
+                                                  fontSize: 12.0 * scaleFactor,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Colors.white,
+                                                  height:
+                                                      12 / (12 * scaleFactor),
+                                                  letterSpacing:
+                                                      -0.025 *
+                                                      (12 * scaleFactor),
+                                                ),
+                                              )
+                                              : const SizedBox.shrink(),
                                     ),
                                   ),
                                   if (index < 3)
@@ -498,34 +513,37 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
                               width: 335.0 * scaleFactor,
                               height: 52.0 * scaleFactor,
                               child: ElevatedButton(
-                                onPressed: state.isLoading || !_isButtonActive
-                                    ? null
-                                    : _nextStep,
+                                onPressed:
+                                    state.isLoading || !_isButtonActive
+                                        ? null
+                                        : _nextStep,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: _isButtonActive
-                                      ? const Color(0xFFFF859B)
-                                      : const Color(0xFFC3C6CF),
+                                  backgroundColor:
+                                      _isButtonActive
+                                          ? const Color(0xFFFF859B)
+                                          : const Color(0xFFC3C6CF),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
                                       26.0 * scaleFactor,
                                     ),
                                   ),
                                 ),
-                                child: state.isLoading
-                                    ? const CircularProgressIndicator(
-                                        color: Colors.white,
-                                      )
-                                    : Text(
-                                        getButtonText(),
-                                        style: TextStyle(
-                                          fontSize: 16.0 * scaleFactor,
-                                          fontWeight: FontWeight.w600,
+                                child:
+                                    state.isLoading
+                                        ? const CircularProgressIndicator(
                                           color: Colors.white,
-                                          height: 24 / (16 * scaleFactor),
-                                          letterSpacing:
-                                              -0.025 * (16 * scaleFactor),
+                                        )
+                                        : Text(
+                                          getButtonText(),
+                                          style: TextStyle(
+                                            fontSize: 16.0 * scaleFactor,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                            height: 24 / (16 * scaleFactor),
+                                            letterSpacing:
+                                                -0.025 * (16 * scaleFactor),
+                                          ),
                                         ),
-                                      ),
                               ),
                             ),
                           ),

@@ -6,7 +6,7 @@ part of 'fcm_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$fCMViewModelHash() => r'95d6bbf5a82b5c378ca2d0a5352d2de767c902f7';
+String _$fCMViewModelHash() => r'93fa4bc724cc8c413e5c9a63fbb4f5b1e2719246';
 
 /// See also [FCMViewModel].
 @ProviderFor(FCMViewModel)
