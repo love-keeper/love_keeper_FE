@@ -9,6 +9,7 @@ import 'package:love_keeper/features/letters/presentation/widgets/letter_preview
 import 'package:love_keeper/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 import 'package:love_keeper/features/letters/data/letter_texts.dart';
+import 'package:love_keeper/features/drafts/data/models/request/create_draft_request.dart';
 import 'package:dio/dio.dart';
 
 class SendLetterPage extends ConsumerStatefulWidget {
@@ -142,27 +143,31 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
     }
   }
 
-  // 임시저장 로직: "저장하기" 버튼 클릭 시 0단계부터 4단계까지의 텍스트를 순회하며 POST 요청 실행.
   Future<void> _saveTemporaryLetter() async {
     setState(() {
       stepTexts[currentStep] = _textController.text;
     });
     // 0단계부터 4단계까지 모두 임시저장 (빈 문자열도 포함)
     for (int step = 0; step < 4; step++) {
-      final int draftOrder = step + 1;
+      final int order = step + 1; // 단계 순서 (1~4)
       try {
         final String content = stepTexts[step];
         final result = await ref
             .read(draftsViewModelProvider.notifier)
-            .createDraft(draftOrder, content);
-        debugPrint('Saved draftOrder $draftOrder with content: $content');
+            .createDraft(
+              order, // 단계 순서를 order로 전달
+              content,
+              draftType: DraftType.conciliation, // 화해 편지 타입 지정
+            );
+        debugPrint(
+          'Saved order $order with content: $content, type: CONCILIATION',
+        );
       } catch (e) {
+        // 에러 처리 코드
         if (e is DioException) {
           if (e.response?.statusCode == 400) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('드래프트 저장 실패: draftOrder는 1 이상이어야 합니다.'),
-              ),
+              const SnackBar(content: Text('드래프트 저장 실패: order는 1 이상이어야 합니다.')),
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -228,26 +233,31 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
             showSaveButton: true,
             onExit: () async {
               for (int step = 0; step <= 3; step++) {
-                final draftOrder = step + 1;
+                final order = step + 1; // 단계 순서 (1~4)
                 try {
                   await ref
                       .read(draftsViewModelProvider.notifier)
-                      .deleteDraft(draftOrder);
-                  debugPrint('드래프트 삭제 성공 - order: $draftOrder');
+                      .deleteDraft(
+                        order,
+                        draftType: DraftType.conciliation, // 화해 편지 타입 지정
+                      );
+                  debugPrint('드래프트 삭제 성공 - order: $order, type: CONCILIATION');
                 } catch (e) {
                   if (e is DioException) {
                     if (e.response?.statusCode == 404) {
                       debugPrint(
-                        '드래프트 없음 - order: $draftOrder (사용자 입력 없음, 무시)',
+                        '드래프트 없음 - order: $order, type: CONCILIATION (사용자 입력 없음, 무시)',
                       );
                       continue;
                     } else {
                       debugPrint(
-                        '드래프트 삭제 실패 - order: $draftOrder, Status: ${e.response?.statusCode}, Error: ${e.message}',
+                        '드래프트 삭제 실패 - order: $order, type: CONCILIATION, Status: ${e.response?.statusCode}, Error: ${e.message}',
                       );
                     }
                   } else {
-                    debugPrint('드래프트 삭제 실패 - order: $draftOrder, Error: $e');
+                    debugPrint(
+                      '드래프트 삭제 실패 - order: $order, type: CONCILIATION, Error: $e',
+                    );
                   }
                 }
               }

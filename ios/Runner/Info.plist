@@ -14,11 +14,6 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-  <key>NSAppTransportSecurity</key>
-  <dict>
-    <key>NSAllowsArbitraryLoads</key>
-    <true/>
-  </dict>
 	<key>CFBundleName</key>
 	<string>love_keeper</string>
 	<key>CFBundlePackageType</key>
@@ -29,37 +24,50 @@
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
-		<!-- 카카오 로그인 설정 -->
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kakao4082411ebc9c7d9b7612cc9c7bee8da8</string> <!-- 카카오 앱 키는 "kakao" 접두사와 함께 사용 -->
+				<string>kakao4082411ebc9c7d9b7612cc9c7bee8da8</string>
 			</array>
 		</dict>
-		<!-- 네이버 로그인 설정 -->
 		<dict>
-      <key>CFBundleURLSchemes</key>
-      <array>
-        <string>naverFFquqzHeG8Tb2cfhf5QW</string>
-      </array>
-    </dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>naverFFquqzHeG8Tb2cfhf5QW</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
+	<key>FirebaseMessagingAutoInitEnabled</key>
+	<true/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
-		<!-- 카카오 관련 쿼리 스킴 -->
 		<string>kakaokompassauth</string>
 		<string>kakaolink</string>
 		<string>kakaoplus</string>
-		<!-- 네이버 관련 쿼리 스킴 -->
 		<string>naversearchapp</string>
 		<string>naversearchthirdlogin</string>
-    <string>naver</string>
+		<string>naver</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>NSLocalNotificationUsageDescription</key>
+	<string>앱에서 중요한 알림을 보내기 위해 권한이 필요합니다.</string>
+	<key>NSUserNotificationAlertStyle</key>
+	<string>alert</string>
+	<key>NSUserNotificationEnabled</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
@@ -67,9 +75,9 @@
 	<array>
 		<string>fetch</string>
 		<string>remote-notification</string>
+		<string>processing</string>
+		<string>nearby-interaction</string>
 	</array>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -87,11 +95,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<!-- 네이버 로그인 설정 -->
 	<key>naverConsumerKey</key>
 	<string>FFquqzHeG8Tb2cfhf5QW</string>
 	<key>naverConsumerSecret</key>
-	<string>gBNxBTnHK1</string> <!-- 네이버 개발자 센터에서 발급받은 실제 시크릿으로 교체 -->
+	<string>gBNxBTnHK1</string>
 	<key>naverServiceAppName</key>
 	<string>Love Keeper</string>
 	<key>naverServiceAppUrlScheme</key>

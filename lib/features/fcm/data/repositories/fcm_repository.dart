@@ -2,7 +2,7 @@ import 'package:love_keeper/core/config/di/dio_module.dart';
 import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:love_keeper/core/models/api_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../models/fcm_models.dart'; // NotificationListResponse를 import
+import '../models/fcm_models.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,21 +11,60 @@ part 'fcm_repository.g.dart';
 abstract class FCMRepository {
   Future<void> registerToken(String token);
   Future<NotificationListResponse> getPushNotifications({int? page, int? size});
-  Future<ApiResponse<String>> markNotificationAsRead(
-    int notificationId,
-  ); // 반환 타입 변경
+  Future<ApiResponse<String>> markNotificationAsRead(int notificationId);
 }
 
 class FCMRepositoryImpl implements FCMRepository {
   final ApiClient _apiClient;
+  final Dio _dio;
 
-  FCMRepositoryImpl(this._apiClient);
+  FCMRepositoryImpl(this._apiClient) : _dio = Dio() {
+    // Dio 설정 - Content-Type 문제 해결
+    _dio.options.contentType = 'application/json';
+  }
 
   @override
   Future<void> registerToken(String token) async {
-    final request = FCMTokenRequest(token: token);
-    final response = await _apiClient.registerFCMToken(request);
-    _handleResponse(response);
+    try {
+      final request = FCMTokenRequest(token: token);
+
+      // 대안 1: 직접 JSON 맵을 만들어 사용 (Content-Type 문제 해결)
+      final jsonMap = {"token": token};
+
+      // 액세스 토큰 가져오기
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('access_token');
+      if (accessToken == null) {
+        throw Exception('액세스 토큰이 없습니다');
+      }
+
+      // Dio로 직접 요청
+      final dioResponse = await _dio.post(
+        'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/api/fcm/token',
+        data: jsonMap,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (dioResponse.statusCode != 200) {
+        throw Exception('FCM 토큰 등록 실패: ${dioResponse.statusCode}');
+      }
+
+      // 원래 방식도 시도 (백업)
+      try {
+        final response = await _apiClient.registerFCMToken(request);
+        _handleResponse(response);
+      } catch (e) {
+        print('원래 방식의 FCM 토큰 등록 실패 (무시됨): $e');
+      }
+    } catch (e) {
+      print('FCM 토큰 등록 중 오류: $e');
+      rethrow;
+    }
   }
 
   @override
@@ -47,7 +86,7 @@ class FCMRepositoryImpl implements FCMRepository {
       dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
       final rawResponse = await dio.get(
-        'https://lovekeeper.site/api/fcm/notifications',
+        'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/api/fcm/notifications',
         queryParameters: {'page': page ?? 0, 'size': size ?? 10},
       );
 
@@ -110,7 +149,6 @@ class FCMRepositoryImpl implements FCMRepository {
     return prefs.getString('access_token') ?? '';
   }
 
-  // 구현 클래스에서:
   @override
   Future<ApiResponse<String>> markNotificationAsRead(int notificationId) async {
     return await _apiClient.markNotificationAsRead(notificationId);
@@ -123,6 +161,7 @@ class FCMRepositoryImpl implements FCMRepository {
   }
 }
 
+// Factory 프로바이더로 변경 (순환 참조 문제 해결)
 @riverpod
 FCMRepository fcmRepository(FcmRepositoryRef ref) {
   final apiClient = ref.watch(apiClientProvider);

@@ -22,6 +22,8 @@ DraftResponse _$DraftResponseFromJson(Map<String, dynamic> json) {
 mixin _$DraftResponse {
   int get order => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _draftTypeFromJson, toJson: _draftTypeToJson)
+  DraftType get draftType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +37,11 @@ abstract class $DraftResponseCopyWith<$Res> {
           DraftResponse value, $Res Function(DraftResponse) then) =
       _$DraftResponseCopyWithImpl<$Res, DraftResponse>;
   @useResult
-  $Res call({int order, String content});
+  $Res call(
+      {int order,
+      String content,
+      @JsonKey(fromJson: _draftTypeFromJson, toJson: _draftTypeToJson)
+      DraftType draftType});
 }
 
 /// @nodoc
@@ -53,6 +59,7 @@ class _$DraftResponseCopyWithImpl<$Res, $Val extends DraftResponse>
   $Res call({
     Object? order = null,
     Object? content = null,
+    Object? draftType = null,
   }) {
     return _then(_value.copyWith(
       order: null == order
@@ -63,6 +70,10 @@ class _$DraftResponseCopyWithImpl<$Res, $Val extends DraftResponse>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      draftType: null == draftType
+          ? _value.draftType
+          : draftType // ignore: cast_nullable_to_non_nullable
+              as DraftType,
     ) as $Val);
   }
 }
@@ -75,7 +86,11 @@ abstract class _$$DraftResponseImplCopyWith<$Res>
       __$$DraftResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int order, String content});
+  $Res call(
+      {int order,
+      String content,
+      @JsonKey(fromJson: _draftTypeFromJson, toJson: _draftTypeToJson)
+      DraftType draftType});
 }
 
 /// @nodoc
@@ -91,6 +106,7 @@ class __$$DraftResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? order = null,
     Object? content = null,
+    Object? draftType = null,
   }) {
     return _then(_$DraftResponseImpl(
       order: null == order
@@ -101,6 +117,10 @@ class __$$DraftResponseImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      draftType: null == draftType
+          ? _value.draftType
+          : draftType // ignore: cast_nullable_to_non_nullable
+              as DraftType,
     ));
   }
 }
@@ -108,7 +128,11 @@ class __$$DraftResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$DraftResponseImpl implements _DraftResponse {
-  const _$DraftResponseImpl({required this.order, required this.content});
+  const _$DraftResponseImpl(
+      {required this.order,
+      required this.content,
+      @JsonKey(fromJson: _draftTypeFromJson, toJson: _draftTypeToJson)
+      required this.draftType});
 
   factory _$DraftResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$DraftResponseImplFromJson(json);
@@ -117,10 +141,13 @@ class _$DraftResponseImpl implements _DraftResponse {
   final int order;
   @override
   final String content;
+  @override
+  @JsonKey(fromJson: _draftTypeFromJson, toJson: _draftTypeToJson)
+  final DraftType draftType;
 
   @override
   String toString() {
-    return 'DraftResponse(order: $order, content: $content)';
+    return 'DraftResponse(order: $order, content: $content, draftType: $draftType)';
   }
 
   @override
@@ -129,12 +156,14 @@ class _$DraftResponseImpl implements _DraftResponse {
         (other.runtimeType == runtimeType &&
             other is _$DraftResponseImpl &&
             (identical(other.order, order) || other.order == order) &&
-            (identical(other.content, content) || other.content == content));
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.draftType, draftType) ||
+                other.draftType == draftType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, order, content);
+  int get hashCode => Object.hash(runtimeType, order, content, draftType);
 
   @JsonKey(ignore: true)
   @override
@@ -153,7 +182,9 @@ class _$DraftResponseImpl implements _DraftResponse {
 abstract class _DraftResponse implements DraftResponse {
   const factory _DraftResponse(
       {required final int order,
-      required final String content}) = _$DraftResponseImpl;
+      required final String content,
+      @JsonKey(fromJson: _draftTypeFromJson, toJson: _draftTypeToJson)
+      required final DraftType draftType}) = _$DraftResponseImpl;
 
   factory _DraftResponse.fromJson(Map<String, dynamic> json) =
       _$DraftResponseImpl.fromJson;
@@ -162,6 +193,9 @@ abstract class _DraftResponse implements DraftResponse {
   int get order;
   @override
   String get content;
+  @override
+  @JsonKey(fromJson: _draftTypeFromJson, toJson: _draftTypeToJson)
+  DraftType get draftType;
   @override
   @JsonKey(ignore: true)
   _$$DraftResponseImplCopyWith<_$DraftResponseImpl> get copyWith =>

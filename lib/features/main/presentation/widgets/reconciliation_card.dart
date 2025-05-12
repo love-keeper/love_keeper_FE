@@ -5,6 +5,7 @@ import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/features/drafts/presentation/viewmodels/drafts_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 import 'package:love_keeper/features/drafts/domain/entities/draft.dart';
+import 'package:love_keeper/features/drafts/data/models/request/create_draft_request.dart'; // DraftType enum 가져오기
 import 'package:dio/dio.dart';
 
 class ReconciliationCard extends ConsumerWidget {
@@ -19,9 +20,11 @@ class ReconciliationCard extends ConsumerWidget {
         for (int step = 0; step <= 3; step++) {
           final draftOrder = step + 1;
           try {
+            // draftType을 CONCILIATION으로 명시적으로 지정하여 화해 편지 임시저장만 조회
             final draft = await ref
                 .read(draftsViewModelProvider.notifier)
-                .getDraft(draftOrder);
+                .getDraft(draftOrder, draftType: DraftType.conciliation);
+
             debugPrint('Draft response for order $draftOrder: $draft');
             final content = draft.content ?? '';
             draftContents[step] = content;
@@ -154,10 +157,16 @@ class ReconciliationCard extends ConsumerWidget {
               for (int step = 0; step <= 3; step++) {
                 final draftOrder = step + 1;
                 try {
+                  // draftType을 명시적으로 지정하여 CONCILIATION 타입 임시저장만 삭제
                   await ref
                       .read(draftsViewModelProvider.notifier)
-                      .deleteDraft(draftOrder);
-                  debugPrint('드래프트 삭제 성공 - order: $draftOrder');
+                      .deleteDraft(
+                        draftOrder,
+                        draftType: DraftType.conciliation,
+                      );
+                  debugPrint(
+                    '드래프트 삭제 성공 - order: $draftOrder, type: CONCILIATION',
+                  );
                 } catch (e) {
                   if (e is DioException) {
                     if (e.response?.statusCode == 404) {

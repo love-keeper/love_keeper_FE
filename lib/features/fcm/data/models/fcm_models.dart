@@ -11,6 +11,13 @@ class FCMTokenRequest with _$FCMTokenRequest {
       _$FCMTokenRequestFromJson(json);
 }
 
+// toJson 메서드 확장 (Content-Type 문제 해결)
+extension FCMTokenRequestExtension on FCMTokenRequest {
+  Map<String, dynamic> toJsonMap() {
+    return {'token': token};
+  }
+}
+
 @freezed
 class PushNotificationResponse with _$PushNotificationResponse {
   const factory PushNotificationResponse({

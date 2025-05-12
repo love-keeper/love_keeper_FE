@@ -14,7 +14,8 @@ class _ApiClient implements ApiClient {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://lovekeeper.site';
+    baseUrl ??=
+        'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/';
   }
 
   final Dio _dio;
@@ -1008,7 +1009,10 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<DraftResponse>> getDraft(int order) async {
+  Future<ApiResponse<DraftResponse>> getDraft(
+    int order,
+    String draftType,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -1020,7 +1024,7 @@ class _ApiClient implements ApiClient {
     )
         .compose(
           _dio.options,
-          '/api/drafts/${order}',
+          '/api/drafts/${order}/${draftType}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1044,7 +1048,10 @@ class _ApiClient implements ApiClient {
   }
 
   @override
-  Future<ApiResponse<String>> deleteDraft(int order) async {
+  Future<ApiResponse<String>> deleteDraft(
+    int order,
+    String draftType,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -1056,7 +1063,7 @@ class _ApiClient implements ApiClient {
     )
         .compose(
           _dio.options,
-          '/api/drafts/${order}',
+          '/api/drafts/${order}/${draftType}',
           queryParameters: queryParameters,
           data: _data,
         )

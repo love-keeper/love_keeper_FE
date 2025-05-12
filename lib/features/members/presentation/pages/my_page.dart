@@ -267,7 +267,6 @@ class _MyPageState extends ConsumerState<MyPage> {
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
-<<<<<<< HEAD
           '연애 시작일',
           memberInfo?.relationshipStartDate ?? '',
           scaleFactor,
@@ -275,12 +274,10 @@ class _MyPageState extends ConsumerState<MyPage> {
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
-=======
->>>>>>> origin/main
           '이메일',
           memberInfo?.email ?? '',
           scaleFactor,
-          onTap: () => context.push('/emailEdit'),
+          //onTap: () => context.push('/emailEdit'),
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
@@ -445,10 +442,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                 data:
                     (memberInfo) => Column(
                       children: [
-<<<<<<< HEAD
-=======
                         // 프로필 사진
->>>>>>> origin/main
                         Align(
                           alignment: Alignment.center,
                           child: ClipOval(
@@ -486,7 +480,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                                     ),
                           ),
                         ),
-<<<<<<< HEAD
+
                         SizedBox(height: 30 * scaleFactor),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -508,14 +502,6 @@ class _MyPageState extends ConsumerState<MyPage> {
                           child: _buildMenuSection(scaleFactor),
                         ),
                         SizedBox(height: 16 * scaleFactor),
-=======
-                        SizedBox(height: 20 * scaleFactor),
-                        // 정보 섹션 추가
-                        _buildInfoSection(scaleFactor, memberInfo),
-                        SizedBox(height: 20 * scaleFactor),
-                        // 메뉴 섹션 추가
-                        _buildMenuSection(scaleFactor),
->>>>>>> origin/main
                       ],
                     ),
                 loading: () => const Center(child: CircularProgressIndicator()),

@@ -1,7 +1,12 @@
 import '../entities/draft.dart';
+import '../../data/models/request/create_draft_request.dart'; // DraftType enum 가져오기
 
 abstract class DraftsRepository {
-  Future<String> createDraft(int draftOrder, String content);
-  Future<Draft> getDraft(int order);
-  Future<void> deleteDraft(int order); // 임시저장 삭제하는 함수
+  Future<String> createDraft(
+    int draftOrder,
+    String content,
+    DraftType draftType,
+  );
+  Future<Draft> getDraft(int order, {required DraftType draftType});
+  Future<void> deleteDraft(int order, {required DraftType draftType});
 }

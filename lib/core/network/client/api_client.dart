@@ -35,7 +35,10 @@ import '../../../features/fcm/data/models/fcm_models.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'https://lovekeeper.site')
+@RestApi(
+  baseUrl:
+      'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/',
+)
 abstract class ApiClient {
   factory ApiClient(Dio dio) = _ApiClient;
 
@@ -149,15 +152,22 @@ abstract class ApiClient {
     @Body() VerifyEmailCodeRequest request,
   );
 
-  // DRAFTS
+  // DRAFTS -> 수정
+
   @POST('/api/drafts')
   Future<ApiResponse<String>> createDraft(@Body() CreateDraftRequest request);
 
-  @GET('/api/drafts/{order}')
-  Future<ApiResponse<DraftResponse>> getDraft(@Path('order') int order);
+  @GET('/api/drafts/{order}/{draftType}')
+  Future<ApiResponse<DraftResponse>> getDraft(
+    @Path('order') int order,
+    @Path('draftType') String draftType,
+  );
 
-  @DELETE('/api/drafts/{order}')
-  Future<ApiResponse<String>> deleteDraft(@Path('order') int order);
+  @DELETE('/api/drafts/{order}/{draftType}')
+  Future<ApiResponse<String>> deleteDraft(
+    @Path('order') int order,
+    @Path('draftType') String draftType,
+  );
 
   // LETTERS
   @POST('/api/letters')
