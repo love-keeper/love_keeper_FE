@@ -29533,7 +29533,7 @@
 [+120595 ms] flutter: Initial access token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDY2NSwiZXhwIjoxNzQyMDIyNDY1fQ.toWODOIdiV2Xj3NiF6JrIRXUHJan_jZQM3SA5U1njz6Iv1dAl5XAlXICpD4iyj2IUlCGVhf-o4pGpI-Tx07NkA
 [   +1 ms] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDY2NSwiZXhwIjoxNzQyMDIyNDY1fQ.toWODOIdiV2Xj3NiF6JrIRXUHJan_jZQM3SA5U1njz6Iv1dAl5XAlXICpD4iyj2IUlCGVhf-o4pGpI-Tx07NkA for /api/auth/email-duplication
 [        ] flutter: *** Request ***
-[   +1 ms] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/auth/email-duplication
+[   +1 ms] flutter: uri: https://dev.lovekeeper.site/api/auth/email-duplication
 [        ] flutter: method: POST
 [   +2 ms] flutter: responseType: ResponseType.json
 [   +1 ms] flutter: followRedirects: true
@@ -29550,12 +29550,12 @@
 [        ] flutter: EmailDuplicationRequest(email: hyerim6215@soongsil.ac.kr)
 [        ] flutter:
 [ +159 ms] flutter: *** DioException ***:
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/auth/email-duplication
+[        ] flutter: uri: https://dev.lovekeeper.site/api/auth/email-duplication
 [        ] flutter: DioException [bad response]: This exception was thrown because the response has a status code of 409 and RequestOptions.validateStatus was configured to throw for this status code.
            The status code of 409 has the following meaning: "Client error - the request contains bad syntax or cannot be fulfilled"
            Read more about status codes at https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
            In order to resolve this exception you typically have either to verify and fix your request code or you have to fix the server code.
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/auth/email-duplication
+[        ] flutter: uri: https://dev.lovekeeper.site/api/auth/email-duplication
 [        ] flutter: statusCode: 409
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive
@@ -29588,7 +29588,7 @@
 [+3135 ms] flutter: Initial access token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDY2NSwiZXhwIjoxNzQyMDIyNDY1fQ.toWODOIdiV2Xj3NiF6JrIRXUHJan_jZQM3SA5U1njz6Iv1dAl5XAlXICpD4iyj2IUlCGVhf-o4pGpI-Tx07NkA
 [  +13 ms] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDY2NSwiZXhwIjoxNzQyMDIyNDY1fQ.toWODOIdiV2Xj3NiF6JrIRXUHJan_jZQM3SA5U1njz6Iv1dAl5XAlXICpD4iyj2IUlCGVhf-o4pGpI-Tx07NkA for /api/auth/login
 [        ] flutter: *** Request ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/auth/login
+[        ] flutter: uri: https://dev.lovekeeper.site/api/auth/login
 [        ] flutter: method: POST
 [        ] flutter: responseType: ResponseType.json
 [        ] flutter: followRedirects: true
@@ -29607,7 +29607,7 @@
 [ +171 ms] flutter: Stored access token from response: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw
 [   +5 ms] flutter: Stored refresh token from response: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyNjI1Njk2fQ.VSoDTFzakZa4IwYknP03owOPa6fm-8ZLbgVTfZe7zORO8FrIx1SjvHBZ3-s4zzyUJQKhXg0RVCtOsA7JD612XQ
 [        ] flutter: *** Response ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/auth/login
+[        ] flutter: uri: https://dev.lovekeeper.site/api/auth/login
 [        ] flutter: statusCode: 200
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive
@@ -29634,7 +29634,7 @@
 [        ] flutter: Registering FCM token with access token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw
 [   +1 ms] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw for /api/fcm/token
 [   +1 ms] flutter: *** Request ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/fcm/token
+[        ] flutter: uri: https://dev.lovekeeper.site/api/fcm/token
 [        ] flutter: method: POST
 [        ] flutter: responseType: ResponseType.json
 [        ] flutter: followRedirects: true
@@ -29652,7 +29652,7 @@
 [        ] flutter: FCMTokenRequest(token: eaEf-3iha0OKoHkhSuzyXy:APA91bGFuO4vo7UOCW3DnTP4uEmbMwbdKiD8QiwJnx4VgBdTDW1J_dc0cOgPBlkSbcjw0GYeVyzmENvVmjHzRtby9YcUmjHrh4275TfGznK3J666_fQ7Xys)
 [        ] flutter:
 [  +83 ms] flutter: *** Response ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/fcm/token
+[        ] flutter: uri: https://dev.lovekeeper.site/api/fcm/token
 [   +2 ms] flutter: statusCode: 200
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive
@@ -29679,7 +29679,7 @@
 [   +2 ms] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw for /api/couples/info
 [        ] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw for /api/couples/info
 [        ] flutter: *** Request ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/couples/info
+[        ] flutter: uri: https://dev.lovekeeper.site/api/couples/info
 [        ] flutter: method: GET
 [        ] flutter: responseType: ResponseType.json
 [        ] flutter: followRedirects: true
@@ -29697,7 +29697,7 @@
 [        ] flutter: null
 [        ] flutter:
 [        ] flutter: *** Request ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/couples/info
+[        ] flutter: uri: https://dev.lovekeeper.site/api/couples/info
 [        ] flutter: method: GET
 [   +2 ms] flutter: responseType: ResponseType.json
 [        ] flutter: followRedirects: true
@@ -29715,7 +29715,7 @@
 [        ] flutter: null
 [        ] flutter:
 [  +33 ms] flutter: *** Response ***
-[   +1 ms] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/couples/info
+[   +1 ms] flutter: uri: https://dev.lovekeeper.site/api/couples/info
 [        ] flutter: statusCode: 200
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive
@@ -29741,7 +29741,7 @@
 [  +16 ms] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw for /api/couples/info
 [        ] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw for /api/members/me
 [        ] flutter: *** Request ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/couples/info
+[        ] flutter: uri: https://dev.lovekeeper.site/api/couples/info
 [        ] flutter: method: GET
 [        ] flutter: responseType: ResponseType.json
 [        ] flutter: followRedirects: true
@@ -29759,7 +29759,7 @@
 [        ] flutter: null
 [        ] flutter:
 [  +17 ms] flutter: *** Request ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/members/me
+[        ] flutter: uri: https://dev.lovekeeper.site/api/members/me
 [        ] flutter: method: GET
 [        ] flutter: responseType: ResponseType.json
 [        ] flutter: followRedirects: true
@@ -29777,7 +29777,7 @@
 [        ] flutter: null
 [        ] flutter:
 [        ] flutter: *** Response ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/couples/info
+[        ] flutter: uri: https://dev.lovekeeper.site/api/couples/info
 [        ] flutter: statusCode: 200
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive
@@ -29799,7 +29799,7 @@
 [        ] flutter:
 [        ] flutter: Fetched couple info: 2025-03-07
 [  +54 ms] flutter: *** Response ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/couples/info
+[        ] flutter: uri: https://dev.lovekeeper.site/api/couples/info
 [        ] flutter: statusCode: 200
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive
@@ -29821,7 +29821,7 @@
 [        ] flutter:
 [        ] flutter: Fetched couple info: 2025-03-07
 [  +25 ms] flutter: *** Response ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/members/me
+[        ] flutter: uri: https://dev.lovekeeper.site/api/members/me
 [        ] flutter: statusCode: 200
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive
@@ -29843,7 +29843,7 @@
 [        ] flutter:
 [ +684 ms] flutter: Requesting with Access Token: eyJhbGciOiJIUzUxMiJ9.eyJtZW1iZXJJZCI6NSwicm9sZSI6IlJPTEVfVVNFUiIsImlhdCI6MTc0MjAyMDg5NiwiZXhwIjoxNzQyMDIyNjk2fQ.ULyrBuw-G8HN752iG6sMknL0pprwzEFz0vk8aLgBZiO91dBZ61hSuiMAmKcBoXQXay3w7SnyFfwexgiSRWqpvw for /api/members/me
 [        ] flutter: *** Request ***
-[        ] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/members/me
+[        ] flutter: uri: https://dev.lovekeeper.site/api/members/me
 [        ] flutter: method: GET
 [        ] flutter: responseType: ResponseType.json
 [        ] flutter: followRedirects: true
@@ -29861,7 +29861,7 @@
 [        ] flutter: null
 [        ] flutter:
 [  +60 ms] flutter: *** Response ***
-[   +2 ms] flutter: uri: http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com//api/members/me
+[   +2 ms] flutter: uri: https://dev.lovekeeper.site/api/members/me
 [        ] flutter: statusCode: 200
 [        ] flutter: headers:
 [        ] flutter:  connection: keep-alive

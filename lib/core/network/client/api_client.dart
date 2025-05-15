@@ -35,10 +35,7 @@ import '../../../features/fcm/data/models/fcm_models.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(
-  baseUrl:
-      'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/',
-)
+@RestApi(baseUrl: 'https://dev.lovekeeper.site')
 abstract class ApiClient {
   factory ApiClient(Dio dio) = _ApiClient;
 

@@ -1,3 +1,4 @@
+// fcm_repository.dart 파일
 import 'package:love_keeper/core/config/di/dio_module.dart';
 import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:love_keeper/core/models/api_response.dart';
@@ -19,18 +20,42 @@ class FCMRepositoryImpl implements FCMRepository {
   final Dio _dio;
 
   FCMRepositoryImpl(this._apiClient) : _dio = Dio() {
-    // Dio 설정 - Content-Type 문제 해결
-    _dio.options.contentType = 'application/json';
+    // Dio 기본 설정
+    _dio.options.baseUrl = 'https://dev.lovekeeper.site/api';
+    _dio.options.contentType = Headers.jsonContentType;
+    _dio.options.responseType = ResponseType.json;
+    _dio.options.connectTimeout = const Duration(seconds: 30);
+    _dio.options.receiveTimeout = const Duration(seconds: 30);
+
+    // Content-Type 디버깅용 인터셉터 추가
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          print('📤 Dio 요청: ${options.method} ${options.path}');
+          print('📤 헤더: ${options.headers}');
+          print('📤 데이터: ${options.data}');
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          print('📥 Dio 응답: ${response.statusCode}');
+          print('📥 데이터: ${response.data}');
+          return handler.next(response);
+        },
+        onError: (error, handler) {
+          print('❌ Dio 오류: ${error.message}');
+          if (error.response != null) {
+            print('❌ 상태 코드: ${error.response?.statusCode}');
+            print('❌ 응답 데이터: ${error.response?.data}');
+          }
+          return handler.next(error);
+        },
+      ),
+    );
   }
 
   @override
   Future<void> registerToken(String token) async {
     try {
-      final request = FCMTokenRequest(token: token);
-
-      // 대안 1: 직접 JSON 맵을 만들어 사용 (Content-Type 문제 해결)
-      final jsonMap = {"token": token};
-
       // 액세스 토큰 가져오기
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('access_token');
@@ -38,31 +63,34 @@ class FCMRepositoryImpl implements FCMRepository {
         throw Exception('액세스 토큰이 없습니다');
       }
 
-      // Dio로 직접 요청
-      final dioResponse = await _dio.post(
-        'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/api/fcm/token',
+      // 1. 명시적으로 JSON 맵을 생성하여 사용
+      final jsonMap = {"token": token};
+
+      print('🔄 FCM 토큰 등록 시도: $token');
+      print('🔄 액세스 토큰: $accessToken');
+
+      // 2. 모든 헤더를 명시적으로 설정
+      final response = await _dio.post(
+        '/fcm/token',
         data: jsonMap,
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
           },
         ),
       );
 
-      if (dioResponse.statusCode != 200) {
-        throw Exception('FCM 토큰 등록 실패: ${dioResponse.statusCode}');
+      if (response.statusCode != 200) {
+        throw Exception('FCM 토큰 등록 실패: ${response.statusCode}');
       }
 
-      // 원래 방식도 시도 (백업)
-      try {
-        final response = await _apiClient.registerFCMToken(request);
-        _handleResponse(response);
-      } catch (e) {
-        print('원래 방식의 FCM 토큰 등록 실패 (무시됨): $e');
-      }
-    } catch (e) {
-      print('FCM 토큰 등록 중 오류: $e');
+      print('✅ FCM 토큰 등록 성공: $token');
+      print('✅ 서버 응답: ${response.data}');
+    } catch (e, stackTrace) {
+      print('❌ FCM 토큰 등록 오류: $e');
+      print('❌ 스택 트레이스: $stackTrace');
       rethrow;
     }
   }
@@ -73,25 +101,23 @@ class FCMRepositoryImpl implements FCMRepository {
     int? size,
   }) async {
     try {
-      // 기존 API 호출을 유지
-      final apiResponse = await _apiClient.getPushNotifications(
-        page ?? 0,
-        size ?? 10,
-      );
-      _handleResponse(apiResponse);
-
-      // Dio를 통해 직접 가져온 원본 응답 데이터 접근
-      final dio = Dio();
+      // 액세스 토큰 가져오기
       final accessToken = await _getAccessToken();
-      dio.options.headers['Authorization'] = 'Bearer $accessToken';
 
-      final rawResponse = await dio.get(
-        'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/api/fcm/notifications',
+      final response = await _dio.get(
+        '/fcm/notifications',
         queryParameters: {'page': page ?? 0, 'size': size ?? 10},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
       );
 
-      if (rawResponse.statusCode == 200) {
-        final responseData = rawResponse.data as Map<String, dynamic>;
+      if (response.statusCode == 200) {
+        final responseData = response.data as Map<String, dynamic>;
 
         if (responseData['code'] == 'COMMON200' &&
             responseData['result'] is Map<String, dynamic>) {
@@ -109,7 +135,7 @@ class FCMRepositoryImpl implements FCMRepository {
                     )
                     .toList();
 
-            print('직접 파싱한 알림 수: ${notifications.length}');
+            print('📋 알림 목록 가져오기 성공: ${notifications.length}개');
 
             return NotificationListResponse(
               notifications: notifications,
@@ -122,7 +148,7 @@ class FCMRepositoryImpl implements FCMRepository {
         }
       }
 
-      // 기본값 반환
+      print('⚠️ 알림 목록 가져오기: 응답 형식 불일치');
       return NotificationListResponse(
         notifications: [],
         page: page ?? 0,
@@ -131,8 +157,8 @@ class FCMRepositoryImpl implements FCMRepository {
         totalElementsFetched: 0,
       );
     } catch (e, stack) {
-      print('알림 가져오기 오류: $e');
-      print('스택 트레이스: $stack');
+      print('❌ 알림 목록 가져오기 오류: $e');
+      print('❌ 스택 트레이스: $stack');
       return NotificationListResponse(
         notifications: [],
         page: page ?? 0,
@@ -146,22 +172,48 @@ class FCMRepositoryImpl implements FCMRepository {
   // 액세스 토큰 가져오기
   Future<String> _getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('access_token') ?? '';
+    final token = prefs.getString('access_token') ?? '';
+    if (token.isEmpty) {
+      print('⚠️ 액세스 토큰이 없습니다');
+    }
+    return token;
   }
 
   @override
   Future<ApiResponse<String>> markNotificationAsRead(int notificationId) async {
-    return await _apiClient.markNotificationAsRead(notificationId);
-  }
+    try {
+      final accessToken = await _getAccessToken();
 
-  void _handleResponse(ApiResponse<dynamic> response) {
-    if (!['COMMON200', 'COMMON201'].contains(response.code)) {
-      throw Exception('${response.code}: ${response.message}');
+      final response = await _dio.put(
+        '/fcm/notifications/$notificationId/read',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = response.data as Map<String, dynamic>;
+        return ApiResponse<String>(
+          code: responseData['code'] as String,
+          message: responseData['message'] as String,
+          result: responseData['result'] as String?,
+          timestamp: responseData['timestamp'] as String,
+        );
+      }
+
+      throw Exception('알림 읽음 처리 실패: ${response.statusCode}');
+    } catch (e) {
+      print('❌ 알림 읽음 처리 오류: $e');
+      rethrow;
     }
   }
 }
 
-// Factory 프로바이더로 변경 (순환 참조 문제 해결)
+// Factory 프로바이더
 @riverpod
 FCMRepository fcmRepository(FcmRepositoryRef ref) {
   final apiClient = ref.watch(apiClientProvider);

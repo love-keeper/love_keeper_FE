@@ -20,7 +20,7 @@ class ReconciliationCard extends ConsumerWidget {
         for (int step = 0; step <= 3; step++) {
           final draftOrder = step + 1;
           try {
-            // draftType을 CONCILIATION으로 명시적으로 지정하여 화해 편지 임시저장만 조회
+            // CONCILIATION 타입으로 명시
             final draft = await ref
                 .read(draftsViewModelProvider.notifier)
                 .getDraft(draftOrder, draftType: DraftType.conciliation);
@@ -157,16 +157,14 @@ class ReconciliationCard extends ConsumerWidget {
               for (int step = 0; step <= 3; step++) {
                 final draftOrder = step + 1;
                 try {
-                  // draftType을 명시적으로 지정하여 CONCILIATION 타입 임시저장만 삭제
+                  // CONCILIATION 타입으로 명시
                   await ref
                       .read(draftsViewModelProvider.notifier)
                       .deleteDraft(
                         draftOrder,
                         draftType: DraftType.conciliation,
                       );
-                  debugPrint(
-                    '드래프트 삭제 성공 - order: $draftOrder, type: CONCILIATION',
-                  );
+                  debugPrint('드래프트 삭제 성공 - order: $draftOrder');
                 } catch (e) {
                   if (e is DioException) {
                     if (e.response?.statusCode == 404) {
@@ -193,7 +191,7 @@ class ReconciliationCard extends ConsumerWidget {
             onSave: () async {
               Navigator.pop(context);
               context.pushNamed(
-                'sendLetter',
+                '/sendLetter',
                 extra: {'draftContents': draftContents},
               );
             },

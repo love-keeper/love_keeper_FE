@@ -9,8 +9,7 @@ part 'dio_module.g.dart';
 Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl:
-          'http://love-keeper-prod-temp-env.eba-vmdes9x6.ap-northeast-2.elasticbeanstalk.com/',
+      baseUrl: 'https://dev.lovekeeper.site',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
       headers: {'Accept': 'application/json'},

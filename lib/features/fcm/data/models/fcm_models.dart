@@ -1,3 +1,4 @@
+// fcm_models.dart 파일
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'fcm_models.freezed.dart';
@@ -5,16 +6,17 @@ part 'fcm_models.g.dart';
 
 @freezed
 class FCMTokenRequest with _$FCMTokenRequest {
-  const factory FCMTokenRequest({required String token}) = _FCMTokenRequest;
+  const factory FCMTokenRequest({required String token}) =
+      _$FCMTokenRequestImpl;
 
   factory FCMTokenRequest.fromJson(Map<String, dynamic> json) =>
       _$FCMTokenRequestFromJson(json);
 }
 
-// toJson 메서드 확장 (Content-Type 문제 해결)
-extension FCMTokenRequestExtension on FCMTokenRequest {
-  Map<String, dynamic> toJsonMap() {
-    return {'token': token};
+// 모든 freezed 모델에 toMap 메서드 추가
+extension FCMModelExtensions on FCMTokenRequest {
+  Map<String, dynamic> toMap() {
+    return {"token": token};
   }
 }
 
@@ -33,41 +35,6 @@ class PushNotificationResponse with _$PushNotificationResponse {
       _$PushNotificationResponseFromJson(json);
 }
 
-// 일반 클래스로 변경
-class NotificationsResponse {
-  final List<PushNotificationResponse> notifications;
-  final int page;
-  final int size;
-  final bool hasNext;
-  final int totalElementsFetched;
-
-  NotificationsResponse({
-    required this.notifications,
-    required this.page,
-    required this.size,
-    required this.hasNext,
-    required this.totalElementsFetched,
-  });
-
-  factory NotificationsResponse.fromJson(Map<String, dynamic> json) {
-    return NotificationsResponse(
-      notifications:
-          (json['notifications'] as List)
-              .map(
-                (e) => PushNotificationResponse.fromJson(
-                  e as Map<String, dynamic>,
-                ),
-              )
-              .toList(),
-      page: json['page'] as int,
-      size: json['size'] as int,
-      hasNext: json['hasNext'] as bool,
-      totalElementsFetched: json['totalElementsFetched'] as int,
-    );
-  }
-}
-
-// 기존 NotificationListResponse 클래스는 유지
 class NotificationListResponse {
   final List<PushNotificationResponse> notifications;
   final int page;

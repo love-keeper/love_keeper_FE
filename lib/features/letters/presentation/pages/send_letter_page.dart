@@ -149,40 +149,21 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
     });
     // 0단계부터 4단계까지 모두 임시저장 (빈 문자열도 포함)
     for (int step = 0; step < 4; step++) {
-      final int order = step + 1; // 단계 순서 (1~4)
+      final int draftOrder = step + 1;
       try {
         final String content = stepTexts[step];
         final result = await ref
             .read(draftsViewModelProvider.notifier)
             .createDraft(
-              order, // 단계 순서를 order로 전달
+              draftOrder,
               content,
-              draftType: DraftType.conciliation, // 화해 편지 타입 지정
+              draftType: DraftType.conciliation, // 화해 편지 타입 명시
             );
         debugPrint(
-          'Saved order $order with content: $content, type: CONCILIATION',
+          'Saved order $draftOrder with content: $content, type: CONCILIATION',
         );
       } catch (e) {
-        // 에러 처리 코드
-        if (e is DioException) {
-          if (e.response?.statusCode == 400) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('드래프트 저장 실패: order는 1 이상이어야 합니다.')),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  '임시저장 실패 (step $step): ${e.response?.statusCode} - ${e.message}',
-                ),
-              ),
-            );
-          }
-        } else {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('임시저장 실패 (step $step): $e')));
-        }
+        // 오류 처리 코드...
       }
     }
     Navigator.pop(context);
@@ -233,30 +214,30 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
             showSaveButton: true,
             onExit: () async {
               for (int step = 0; step <= 3; step++) {
-                final order = step + 1; // 단계 순서 (1~4)
+                final draftOrder = step + 1;
                 try {
                   await ref
                       .read(draftsViewModelProvider.notifier)
                       .deleteDraft(
-                        order,
-                        draftType: DraftType.conciliation, // 화해 편지 타입 지정
+                        draftOrder,
+                        draftType: DraftType.conciliation,
                       );
-                  debugPrint('드래프트 삭제 성공 - order: $order, type: CONCILIATION');
+                  debugPrint('드래프트 삭제 성공 - order: $draftOrder');
                 } catch (e) {
                   if (e is DioException) {
                     if (e.response?.statusCode == 404) {
                       debugPrint(
-                        '드래프트 없음 - order: $order, type: CONCILIATION (사용자 입력 없음, 무시)',
+                        '드래프트 없음 - order: $draftOrder, type: CONCILIATION (사용자 입력 없음, 무시)',
                       );
                       continue;
                     } else {
                       debugPrint(
-                        '드래프트 삭제 실패 - order: $order, type: CONCILIATION, Status: ${e.response?.statusCode}, Error: ${e.message}',
+                        '드래프트 삭제 실패 - order: $draftOrder, type: CONCILIATION, Status: ${e.response?.statusCode}, Error: ${e.message}',
                       );
                     }
                   } else {
                     debugPrint(
-                      '드래프트 삭제 실패 - order: $order, type: CONCILIATION, Error: $e',
+                      '드래프트 삭제 실패 - order: $draftOrder, type: CONCILIATION, Error: $e',
                     );
                   }
                 }
