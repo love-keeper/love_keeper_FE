@@ -255,24 +255,25 @@ GoRouter appRouter(AppRouterRef ref) {
               child: const ReplyLetterPage(),
             ),
       ),
+
       GoRoute(
         path: RouteNames.sendLetterScreen,
         name: RouteNames.sendLetterScreen,
         pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final letterData = extra['letterData'] as Map<String, dynamic>? ?? {};
-          final Future<void> Function() onComplete =
-              extra['onComplete'] as Future<void> Function()? ?? () async {};
+          final onComplete = extra['onComplete'] as VoidCallback? ?? () {};
+
           return NoTransitionPage(
             key: state.pageKey,
             child: SendLetterScreen(
               receiverName: (letterData['receiver'] as String?) ?? '상대방',
+              letterContent: (letterData['content'] as String?) ?? '',
               onComplete: onComplete,
             ),
           );
         },
       ),
-
       GoRoute(
         name: RouteNames.receivedLetterPage,
         path: RouteNames.receivedLetterPage,

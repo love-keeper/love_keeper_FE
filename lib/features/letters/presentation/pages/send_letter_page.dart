@@ -11,6 +11,14 @@ import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_
 import 'package:love_keeper/features/letters/data/letter_texts.dart';
 import 'package:love_keeper/features/drafts/data/models/request/create_draft_request.dart';
 import 'package:dio/dio.dart';
+import 'dart:async';
+
+class ApiResult {
+  final bool isSuccess;
+  final String? errorMessage;
+
+  ApiResult({required this.isSuccess, this.errorMessage});
+}
 
 class SendLetterPage extends ConsumerStatefulWidget {
   const SendLetterPage({super.key});
@@ -95,7 +103,6 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
     context.go('/main');
   }
 
-  // 편지 전송 로직 (별도 API 사용; 임시저장과는 별개)
   Future<void> _sendLetter() async {
     final memberInfoState = ref.watch(membersViewModelProvider);
     if (memberInfoState is AsyncLoading) {
@@ -120,27 +127,21 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
     final userName = memberInfo.nickname;
     final partnerName = memberInfo.coupleNickname ?? '상대방';
     String letterContent = stepTexts.where((text) => text.isNotEmpty).join(' ');
-    try {
-      final result = await ref
-          .read(lettersViewModelProvider.notifier)
-          .createLetter(letterContent);
-      if (result.contains('성공')) {
-        context.pushNamed(
-          'sendLetterScreen',
-          extra: {
-            'letterData': {
-              'sender': userName,
-              'receiver': partnerName,
-              'content': letterContent,
-            },
-          },
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('편지 전송 실패: $e')));
-    }
+
+    // SendLetterScreen으로 이동
+    context.pushNamed(
+      '/sendLetterScreen',
+      extra: {
+        'letterData': {
+          'sender': userName,
+          'receiver': partnerName,
+          'content': letterContent,
+        },
+        'onComplete': () {
+          // 성공 시 onComplete 콜백 (기존 코드와 호환성 유지)
+        },
+      },
+    );
   }
 
   Future<void> _saveTemporaryLetter() async {
