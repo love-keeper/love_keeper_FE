@@ -25,6 +25,8 @@ _$PushNotificationResponseImpl _$$PushNotificationResponseImplFromJson(
       title: json['title'] as String,
       body: json['body'] as String,
       relativeTime: json['relativeTime'] as String,
+      read: json['read'] as bool,
+      data: json['data'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$$PushNotificationResponseImplToJson(
@@ -34,4 +36,6 @@ Map<String, dynamic> _$$PushNotificationResponseImplToJson(
       'title': instance.title,
       'body': instance.body,
       'relativeTime': instance.relativeTime,
+      'read': instance.read,
+      'data': instance.data,
     };

@@ -1,8 +1,9 @@
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:image_picker/image_picker.dart'; // image_picker 패키지 추가
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 
@@ -23,7 +24,10 @@ class _MyPageState extends ConsumerState<MyPage> {
   @override
   void initState() {
     super.initState();
-    ref.read(membersViewModelProvider.notifier); // 초기 데이터는 build에서 로드
+    // incoming 코드처럼 initState에서 fetchMemberInfo() 호출
+    Future(() {
+      ref.read(membersViewModelProvider.notifier).fetchMemberInfo();
+    });
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -34,7 +38,7 @@ class _MyPageState extends ConsumerState<MyPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      useRootNavigator: true, // 바텀시트 위로 올라가게
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       isDismissible: true,
       builder: (BuildContext dialogContext) {
@@ -135,9 +139,15 @@ class _MyPageState extends ConsumerState<MyPage> {
                                   });
                                   ref
                                       .read(membersViewModelProvider.notifier)
-                                      .updateProfileImage(
-                                        File(_defaultImagePath),
-                                      );
+                                      .updateProfileImage(null)
+                                      .then((_) {
+                                        print('Profile image set to default');
+                                      })
+                                      .catchError((e) {
+                                        print(
+                                          'Error setting default image: $e',
+                                        );
+                                      });
                                 },
                                 child: Container(
                                   width: 168 * scaleFactor,
@@ -212,17 +222,30 @@ class _MyPageState extends ConsumerState<MyPage> {
     );
   }
 
+  // image_picker를 사용한 이미지 선택 함수
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _profileImage = File(pickedFile.path);
-      });
-      await ref
-          .read(membersViewModelProvider.notifier)
-          .updateProfileImage(_profileImage!);
+    try {
+      final ImagePicker picker = ImagePicker();
+      // 갤러리에서 이미지 선택
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        File file = File(image.path);
+        setState(() {
+          _profileImage = file;
+        });
+        await ref
+            .read(membersViewModelProvider.notifier)
+            .updateProfileImage(file);
+        print('프로필 이미지가 성공적으로 업데이트되었습니다.');
+      } else {
+        print('이미지가 선택되지 않았습니다.');
+      }
+    } catch (e) {
+      print('이미지 선택 중 오류 발생: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('이미지 선택 중 오류가 발생했습니다: $e')));
     }
   }
 
@@ -233,32 +256,29 @@ class _MyPageState extends ConsumerState<MyPage> {
           '닉네임',
           memberInfo?.nickname ?? '',
           scaleFactor,
-          onTap: () => context.push('/nickname'),
+          onTap: () => context.push('/nicknameEdit'),
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
           '생년월일',
           memberInfo?.birthday ?? '',
           scaleFactor,
-          onTap: () => context.push('/birthdate'),
+          onTap: () => context.push('/birthdateEdit'),
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
           '연애 시작일',
           memberInfo?.relationshipStartDate ?? '',
           scaleFactor,
-          onTap: () => context.push('/relationship'),
+          onTap: () => context.push('/relationshipStartEdit'),
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
           '이메일',
           memberInfo?.email ?? '',
           scaleFactor,
-          onTap: () => context.push('/emailEdit'),
+          //onTap: () => context.push('/emailEdit'),
         ),
-        // SizedBox(height: 18 * scaleFactor),
-        // _buildBoxedRow(
-        //     '커플 닉네임', memberInfo?.coupleNickname ?? '', scaleFactor), // 추가
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
           '비밀번호 변경',
@@ -422,6 +442,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                 data:
                     (memberInfo) => Column(
                       children: [
+                        // 프로필 사진
                         Align(
                           alignment: Alignment.center,
                           child: ClipOval(
@@ -433,6 +454,24 @@ class _MyPageState extends ConsumerState<MyPage> {
                                       height: 84 * scaleFactor,
                                       fit: BoxFit.cover,
                                     )
+                                    : memberInfo?.profileImageUrl != null &&
+                                        memberInfo!.profileImageUrl!.isNotEmpty
+                                    ? CachedNetworkImage(
+                                      imageUrl: memberInfo.profileImageUrl!,
+                                      width: 84 * scaleFactor,
+                                      height: 84 * scaleFactor,
+                                      fit: BoxFit.cover,
+                                      placeholder:
+                                          (context, url) =>
+                                              const CircularProgressIndicator(),
+                                      errorWidget:
+                                          (context, url, error) => Image.asset(
+                                            _defaultImagePath,
+                                            width: 84 * scaleFactor,
+                                            height: 84 * scaleFactor,
+                                            fit: BoxFit.cover,
+                                          ),
+                                    )
                                     : Image.asset(
                                       _defaultImagePath,
                                       width: 84 * scaleFactor,
@@ -441,6 +480,7 @@ class _MyPageState extends ConsumerState<MyPage> {
                                     ),
                           ),
                         ),
+
                         SizedBox(height: 30 * scaleFactor),
                         Padding(
                           padding: EdgeInsets.symmetric(

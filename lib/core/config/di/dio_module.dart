@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../network/client/api_client.dart';
+import 'package:love_keeper/core/network/client/api_client.dart';
 
 part 'dio_module.g.dart';
 
@@ -9,7 +9,7 @@ part 'dio_module.g.dart';
 Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://lovekeeper.site',
+      baseUrl: 'https://dev.lovekeeper.site',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
       headers: {'Accept': 'application/json'},
@@ -29,7 +29,6 @@ Dio dio(DioRef ref) {
                 !options.path.startsWith('/api/auth'))) {
           options.headers['Authorization'] = 'Bearer $accessToken';
         }
-
         // /api/auth/reissue 요청 시 refresh_token을 Cookie로 추가
         if (options.path == '/api/auth/reissue') {
           final refreshToken = prefs.getString('refresh_token');
@@ -41,7 +40,9 @@ Dio dio(DioRef ref) {
         }
         handler.next(options);
       },
+
       onResponse: (response, handler) async {
+        print('Response headers: ${response.headers}');
         final prefs = await SharedPreferences.getInstance();
         final accessToken = response.headers
             .value('Authorization')
@@ -51,8 +52,9 @@ Dio dio(DioRef ref) {
           print('Stored access token from response: $accessToken');
         }
         final refreshTokenCookie = response.headers['set-cookie']?.firstWhere(
-            (cookie) => cookie.contains('refresh_token'),
-            orElse: () => '');
+          (cookie) => cookie.contains('refresh_token'),
+          orElse: () => '',
+        );
         if (refreshTokenCookie != null) {
           final refreshToken =
               refreshTokenCookie.split(';').first.split('=')[1];
@@ -67,10 +69,10 @@ Dio dio(DioRef ref) {
           final refreshToken = prefs.getString('refresh_token');
           if (refreshToken != null) {
             try {
+              // body 없이 Cookie 헤더만 사용
               final apiClient = ref.read(apiClientProvider);
               final response = await apiClient.reissue(refreshToken);
-              final newAccessToken =
-                  response.result; // '토큰 재발급 성공'이 아닌 헤더에서 가져옴
+              final newAccessToken = response.result;
               if (newAccessToken != null) {
                 await prefs.setString('access_token', newAccessToken);
                 final options = error.requestOptions;
@@ -100,14 +102,16 @@ Dio dio(DioRef ref) {
     ),
   );
 
-  dio.interceptors.add(LogInterceptor(
-    request: true,
-    requestHeader: true,
-    requestBody: true,
-    responseHeader: true,
-    responseBody: true,
-    logPrint: print,
-  ));
+  dio.interceptors.add(
+    LogInterceptor(
+      request: true,
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      logPrint: print,
+    ),
+  );
 
   return dio;
 }

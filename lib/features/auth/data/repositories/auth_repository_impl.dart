@@ -24,15 +24,27 @@ class AuthRepositoryImpl implements AuthRepository {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed,
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage,
   }) async {
+    print(
+      'Signup params: email=$email, nickname=$nickname, birthDate=$birthDate, '
+      'provider=$provider, privacyPolicyAgreed=$privacyPolicyAgreed, '
+      'marketingAgreed=$marketingAgreed, termsOfServiceAgreed=$termsOfServiceAgreed, '
+      'password=$password, providerId=$providerId',
+    );
     final response = await apiClient.signup(
       email: email,
       nickname: nickname,
       birthDate: birthDate,
       provider: provider,
+      privacyPolicyAgreed: privacyPolicyAgreed,
+      marketingAgreed: marketingAgreed,
+      termsOfServiceAgreed: termsOfServiceAgreed,
       password: password,
       providerId: providerId,
       profileImage: profileImage,

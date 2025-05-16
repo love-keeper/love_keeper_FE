@@ -21,13 +21,13 @@ import '../../../features/main/presentation/widgets/tab_bar.dart';
 import '../../../features/letters/presentation/pages/send_letter_screen.dart';
 import '../../../features/letters/presentation/pages/send_letter_page.dart';
 import '../../../features/letters/presentation/pages/reply_letter_page.dart';
+import 'package:love_keeper/features/letters/presentation/pages/received_letter_page.dart';
 import '../../../features/members/presentation/pages/my_page.dart';
 import '../../../features/members/presentation/pages/settings_page.dart';
 import '../../../features/couples/presentation/pages/disconnect_page.dart';
 import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
 import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
-//import '../../../features/members/presentation/pages/email_edit_page.dart'; // 사용 안함
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
 import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
@@ -38,60 +38,103 @@ part 'app_router.g.dart';
 @riverpod
 GoRouter appRouter(AppRouterRef ref) {
   return GoRouter(
-    initialLocation: RouteNames.splashScreen,
+    initialLocation: RouteNames.onboarding,
     debugLogDiagnostics: true,
     routes: [
       // Onboarding Routes
       GoRoute(
         path: RouteNames.splashScreen,
         name: RouteNames.splashScreen,
-        builder: (context, state) => const SplashScreen(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SplashScreen(),
+            ),
       ),
       GoRoute(
         path: RouteNames.onboarding,
         name: RouteNames.onboarding,
-        builder: (context, state) => const LoginPage(),
+        pageBuilder:
+            (context, state) =>
+                NoTransitionPage(key: state.pageKey, child: const LoginPage()),
       ),
 
       // Auth Routes
       GoRoute(
         path: RouteNames.emailLoginPage,
         name: RouteNames.emailLoginPage,
-        builder: (context, state) => const EmailLoginPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const EmailLoginPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.pwFindingPage,
         name: RouteNames.pwFindingPage,
-        builder: (context, state) => const PwFindingPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const PwFindingPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.passwordEditPage,
         name: RouteNames.passwordEditPage,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final email = state.uri.queryParameters['email'] ?? '';
           final code = state.uri.queryParameters['code'] ?? '';
-          return PasswordEditPage(email: email, code: code);
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: PasswordEditPage(email: email, code: code),
+          );
         },
       ),
       GoRoute(
         path: RouteNames.signupPage,
-        name: RouteNames.signupPage,
-        builder: (context, state) => const SignupPage(),
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: SignupPage(extraEmail: extra?['email'] as String?),
+          );
+        },
       ),
       GoRoute(
         path: RouteNames.emailPasswordInputPage,
-        name: RouteNames.emailPasswordInputPage,
-        builder: (context, state) => const EmailPasswordInputPage(),
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: EmailPasswordInputPage(email: extra?['email'] as String?),
+          );
+        },
       ),
       GoRoute(
         path: RouteNames.profileRegistrationPage,
-        name: RouteNames.profileRegistrationPage,
-        builder: (context, state) => const ProfileRegistrationPage(),
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          debugPrint('GoRouter received extra: $extra');
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: ProfileRegistrationPage(
+              email: extra?['email'] as String?,
+              provider: extra?['provider'] as String?,
+              providerId: extra?['providerId'] as String?,
+            ),
+          );
+        },
       ),
       GoRoute(
         path: RouteNames.codeConnectPage,
         name: RouteNames.codeConnectPage,
-        builder: (context, state) => const CodeConnectPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const CodeConnectPage(),
+            ),
       ),
 
       // ShellRoute: Main, Storage, My Page with TabBar
@@ -127,17 +170,27 @@ GoRouter appRouter(AppRouterRef ref) {
           GoRoute(
             path: RouteNames.mainPage,
             name: RouteNames.mainPage,
-            builder: (context, state) => const MainPage(),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const MainPage(),
+                ),
           ),
           GoRoute(
             path: '/storage',
             name: 'storage',
-            builder: (context, state) => const StoragePage(),
+            pageBuilder:
+                (context, state) => NoTransitionPage(
+                  key: state.pageKey,
+                  child: const StoragePage(),
+                ),
           ),
           GoRoute(
             path: RouteNames.myPage,
             name: RouteNames.myPage,
-            builder: (context, state) => const MyPage(),
+            pageBuilder:
+                (context, state) =>
+                    NoTransitionPage(key: state.pageKey, child: const MyPage()),
           ),
         ],
       ),
@@ -146,54 +199,92 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: RouteNames.notificationPage,
         name: RouteNames.notificationPage,
-        builder: (context, state) => const NotificationPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const NotificationPage(),
+            ),
       ),
       GoRoute(
         path: '/calendar',
         name: 'calendar',
-        builder: (context, state) => const CalendarPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const CalendarPage(),
+            ),
       ),
       GoRoute(
         path: '/dday',
         name: 'dday',
-        builder: (context, state) => const DdayPage(),
+        pageBuilder:
+            (context, state) =>
+                NoTransitionPage(key: state.pageKey, child: const DdayPage()),
       ),
       GoRoute(
         path: '/detail/:type/:month/:day',
         name: 'detail',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final type = state.pathParameters['type']!;
           final month = int.parse(state.pathParameters['month']!);
           final day = int.parse(state.pathParameters['day']!);
           final selectedDay = DateTime(DateTime.now().year, month, day);
-          return DetailPage(selectedDay: selectedDay, type: type);
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: DetailPage(selectedDay: selectedDay, type: type),
+          );
         },
       ),
 
       // Letter Routes
       GoRoute(
-        // SendLetterPage에서 전달받은 extra 값(예: draftContents)을 SendLetterPage 내부에서 GoRouterState.of(context).extra로 읽을 수 있도록 함
         path: RouteNames.sendLetter,
         name: RouteNames.sendLetter,
-        builder: (context, state) => const SendLetterPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SendLetterPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.replyLetter,
         name: RouteNames.replyLetter,
-        builder: (context, state) => const ReplyLetterPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const ReplyLetterPage(),
+            ),
       ),
+
       GoRoute(
         path: RouteNames.sendLetterScreen,
         name: RouteNames.sendLetterScreen,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final letterData = extra['letterData'] as Map<String, dynamic>? ?? {};
-          final Future<void> Function() onComplete =
-              extra['onComplete'] as Future<void> Function()? ?? () async {};
-          return SendLetterScreen(
-            receiverName: (letterData['receiver'] as String?) ?? '상대방',
-            onComplete: onComplete,
+          final onComplete = extra['onComplete'] as VoidCallback? ?? () {};
+
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: SendLetterScreen(
+              receiverName: (letterData['receiver'] as String?) ?? '상대방',
+              letterContent: (letterData['content'] as String?) ?? '',
+              onComplete: onComplete,
+            ),
           );
+        },
+      ),
+      GoRoute(
+        name: RouteNames.receivedLetterPage,
+        path: RouteNames.receivedLetterPage,
+        builder: (context, state) {
+          final Map<String, dynamic>? letterData =
+              state.extra as Map<String, dynamic>?;
+          if (letterData == null) {
+            // 오류 처리: 편지 데이터가 없는 경우
+            return Scaffold(body: Center(child: Text('편지 데이터를 찾을 수 없습니다.')));
+          }
+          return ReceivedLetterPage(letterData: letterData);
         },
       ),
 
@@ -201,90 +292,143 @@ GoRouter appRouter(AppRouterRef ref) {
       GoRoute(
         path: RouteNames.settingsPage,
         name: RouteNames.settingsPage,
-        builder: (context, state) => const SettingsPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SettingsPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.disconnectPage,
         name: RouteNames.disconnectPage,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
-          return DisconnectPage(
-            appBarTitle: extra['appBarTitle'] as String? ?? '연결끊기',
-            richTextPrefix: extra['richTextPrefix'] as String? ?? '상대방',
-            richTextSuffix:
-                extra['richTextSuffix'] as String? ?? ' 님과\n연결을 끊으시겠어요?',
-            imagePath:
-                extra['imagePath'] as String? ??
-                'assets/images/my_page/Img_Disconnect.png',
-            imageWidth: extra['imageWidth'] as double? ?? 223.0,
-            imageHeight: extra['imageHeight'] as double? ?? 176.0,
-            bottomText:
-                extra['bottomText'] as String? ??
-                '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
-            actionButtonText: extra['actionButtonText'] as String? ?? '연결 끊기',
-            gapBetweenImageAndText1:
-                extra['gapBetweenImageAndText1'] as double? ?? 78,
-            gapBetweenImageAndText2:
-                extra['gapBetweenImageAndText2'] as double? ?? 69,
-            dialogTitle: extra['dialogTitle'] as String? ?? '정말 연결을 끊으시겠어요?',
-            dialogContent:
-                extra['dialogContent'] as String? ??
-                '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
-            dialogExitText: extra['dialogExitText'] as String? ?? '연결 끊기',
-            dialogSaveText: extra['dialogSaveText'] as String? ?? '돌아가기',
-            onDialogExit: extra['onDialogExit'] as VoidCallback? ?? () {},
-            onDialogSave: extra['onDialogSave'] as VoidCallback? ?? () {},
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: DisconnectPage(
+              appBarTitle: extra['appBarTitle'] as String? ?? '연결끊기',
+              richTextPrefix: extra['richTextPrefix'] as String? ?? '상대방',
+              richTextSuffix:
+                  extra['richTextSuffix'] as String? ?? ' 님과\n연결을 끊으시겠어요?',
+              imagePath:
+                  extra['imagePath'] as String? ??
+                  'assets/images/my_page/Img_Disconnect.png',
+              imageWidth: extra['imageWidth'] as double? ?? 223.0,
+              imageHeight: extra['imageHeight'] as double? ?? 176.0,
+              bottomText:
+                  extra['bottomText'] as String? ??
+                  '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+              actionButtonText: extra['actionButtonText'] as String? ?? '연결 끊기',
+              gapBetweenImageAndText1:
+                  extra['gapBetweenImageAndText1'] as double? ?? 78,
+              gapBetweenImageAndText2:
+                  extra['gapBetweenImageAndText2'] as double? ?? 69,
+              dialogTitle: extra['dialogTitle'] as String? ?? '정말 연결을 끊으시겠어요?',
+              dialogContent:
+                  extra['dialogContent'] as String? ??
+                  '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
+              dialogExitText: extra['dialogExitText'] as String? ?? '연결 끊기',
+              dialogSaveText: extra['dialogSaveText'] as String? ?? '돌아가기',
+              onDialogExit: extra['onDialogExit'] as VoidCallback? ?? () {},
+              onDialogSave: extra['onDialogSave'] as VoidCallback? ?? () {},
+            ),
           );
         },
       ),
       GoRoute(
         path: RouteNames.disconnectedScreen,
         name: RouteNames.disconnectedScreen,
-        builder: (context, state) => const DisconnectedScreen(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const DisconnectedScreen(),
+            ),
       ),
       GoRoute(
         path: RouteNames.nicknameEditPage,
         name: RouteNames.nicknameEditPage,
-        builder: (context, state) => const NicknameEditPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const NicknameEditPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.birthdateEditPage,
         name: RouteNames.birthdateEditPage,
-        builder: (context, state) => const BirthdateEditPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const BirthdateEditPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.relationshipStartEditPage,
         name: RouteNames.relationshipStartEditPage,
-        builder: (context, state) => const RelationshipStartEditPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const RelationshipStartEditPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.newEmailInputPage,
         name: RouteNames.newEmailInputPage,
-        builder: (context, state) => const NewEmailInputPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const NewEmailInputPage(),
+            ),
       ),
       GoRoute(
         path: RouteNames.newEmailCertification,
         name: RouteNames.newEmailCertification,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final email = extra['email'] as String? ?? '';
-          return NewEmailCertification(email: email);
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: NewEmailCertification(email: email),
+          );
         },
       ),
       GoRoute(
         path: RouteNames.myPasswordEditPage,
         name: RouteNames.myPasswordEditPage,
-        builder: (context, state) => const MyPasswordEditPage(),
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const MyPasswordEditPage(),
+            ),
       ),
     ],
+
     errorPageBuilder:
-        (context, state) => MaterialPage<void>(
+        (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: Scaffold(
             body: Center(child: Text('페이지를 찾을 수 없습니다: ${state.error}')),
           ),
         ),
   );
+}
+
+// 커스텀 NavigatorObserver 추가
+class _CustomNavigatorObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigator didPush: ${route.settings.name}');
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    print('Navigator didPop: ${route.settings.name}');
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    print('Navigator didReplace: ${newRoute?.settings.name}');
+  }
 }
 
 int _calculateCurrentIndex(String location) {

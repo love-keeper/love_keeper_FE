@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:love_keeper/core/network/client/api_client.dart';
 import 'package:love_keeper/features/members/data/models/request/send_email_code_request.dart';
 import 'package:love_keeper/features/members/data/models/request/verify_email_code_request.dart';
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 import '../../../../core/config/di/dio_module.dart';
 import '../../../../core/models/api_response.dart';
 import '../../domain/repositories/members_repository.dart';
@@ -29,8 +32,8 @@ class MembersRepositoryImpl implements MembersRepository {
           birthday: '',
           relationshipStartDate: '',
           email: '',
-          profileImageUrl: null,
-          coupleNickname: null,
+          profileImageUrl: '',
+          coupleNickname: '',
         );
   }
 
@@ -67,10 +70,36 @@ class MembersRepositoryImpl implements MembersRepository {
   }
 
   @override
-  Future<String> updateProfileImage(File profileImage) async {
-    final response = await apiClient.updateProfileImage(profileImage);
-    _handleResponse(response);
-    return response.result!;
+  Future<String> updateProfileImage(File? profileImage) async {
+    try {
+      final fileToUpload = profileImage ?? await _uploadDefaultImage();
+      print(
+        'Uploading file: ${fileToUpload.path} (Size: ${await fileToUpload.length()} bytes)',
+      );
+
+      // 바로 File 객체를 전달합니다.
+      final response = await apiClient.updateProfileImage(fileToUpload);
+      print('Server response: ${response.toString()}');
+      _handleResponse(response);
+      return response.result ?? 'Profile image updated';
+    } catch (e, stackTrace) {
+      print('Error in updateProfileImage: $e');
+      if (e is DioException) {
+        print('Response data: ${e.response?.data}');
+        print('Status code: ${e.response?.statusCode}');
+      }
+      rethrow;
+    }
+  }
+
+  Future<File> _uploadDefaultImage() async {
+    final byteData = await rootBundle.load(
+      'assets/images/my_page/Img_Profile.png',
+    );
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/default_profile.png');
+    await file.writeAsBytes(byteData.buffer.asUint8List());
+    return file;
   }
 
   @override

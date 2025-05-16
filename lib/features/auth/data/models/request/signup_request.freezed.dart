@@ -24,6 +24,9 @@ mixin _$SignupRequest {
   String get nickname => throw _privateConstructorUsedError;
   String get birthDate => throw _privateConstructorUsedError;
   String get provider => throw _privateConstructorUsedError;
+  bool get privacyPolicyAgreed => throw _privateConstructorUsedError;
+  bool? get marketingAgreed => throw _privateConstructorUsedError; // 필수 아님
+  bool get termsOfServiceAgreed => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
   String? get providerId => throw _privateConstructorUsedError;
   String? get profileImage => throw _privateConstructorUsedError;
@@ -45,6 +48,9 @@ abstract class $SignupRequestCopyWith<$Res> {
       String nickname,
       String birthDate,
       String provider,
+      bool privacyPolicyAgreed,
+      bool? marketingAgreed,
+      bool termsOfServiceAgreed,
       String? password,
       String? providerId,
       String? profileImage});
@@ -67,6 +73,9 @@ class _$SignupRequestCopyWithImpl<$Res, $Val extends SignupRequest>
     Object? nickname = null,
     Object? birthDate = null,
     Object? provider = null,
+    Object? privacyPolicyAgreed = null,
+    Object? marketingAgreed = freezed,
+    Object? termsOfServiceAgreed = null,
     Object? password = freezed,
     Object? providerId = freezed,
     Object? profileImage = freezed,
@@ -88,6 +97,18 @@ class _$SignupRequestCopyWithImpl<$Res, $Val extends SignupRequest>
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
               as String,
+      privacyPolicyAgreed: null == privacyPolicyAgreed
+          ? _value.privacyPolicyAgreed
+          : privacyPolicyAgreed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      marketingAgreed: freezed == marketingAgreed
+          ? _value.marketingAgreed
+          : marketingAgreed // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      termsOfServiceAgreed: null == termsOfServiceAgreed
+          ? _value.termsOfServiceAgreed
+          : termsOfServiceAgreed // ignore: cast_nullable_to_non_nullable
+              as bool,
       password: freezed == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
@@ -117,6 +138,9 @@ abstract class _$$SignupRequestImplCopyWith<$Res>
       String nickname,
       String birthDate,
       String provider,
+      bool privacyPolicyAgreed,
+      bool? marketingAgreed,
+      bool termsOfServiceAgreed,
       String? password,
       String? providerId,
       String? profileImage});
@@ -137,6 +161,9 @@ class __$$SignupRequestImplCopyWithImpl<$Res>
     Object? nickname = null,
     Object? birthDate = null,
     Object? provider = null,
+    Object? privacyPolicyAgreed = null,
+    Object? marketingAgreed = freezed,
+    Object? termsOfServiceAgreed = null,
     Object? password = freezed,
     Object? providerId = freezed,
     Object? profileImage = freezed,
@@ -158,6 +185,18 @@ class __$$SignupRequestImplCopyWithImpl<$Res>
           ? _value.provider
           : provider // ignore: cast_nullable_to_non_nullable
               as String,
+      privacyPolicyAgreed: null == privacyPolicyAgreed
+          ? _value.privacyPolicyAgreed
+          : privacyPolicyAgreed // ignore: cast_nullable_to_non_nullable
+              as bool,
+      marketingAgreed: freezed == marketingAgreed
+          ? _value.marketingAgreed
+          : marketingAgreed // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      termsOfServiceAgreed: null == termsOfServiceAgreed
+          ? _value.termsOfServiceAgreed
+          : termsOfServiceAgreed // ignore: cast_nullable_to_non_nullable
+              as bool,
       password: freezed == password
           ? _value.password
           : password // ignore: cast_nullable_to_non_nullable
@@ -182,6 +221,9 @@ class _$SignupRequestImpl implements _SignupRequest {
       required this.nickname,
       required this.birthDate,
       required this.provider,
+      required this.privacyPolicyAgreed,
+      this.marketingAgreed,
+      required this.termsOfServiceAgreed,
       this.password,
       this.providerId,
       this.profileImage});
@@ -198,6 +240,13 @@ class _$SignupRequestImpl implements _SignupRequest {
   @override
   final String provider;
   @override
+  final bool privacyPolicyAgreed;
+  @override
+  final bool? marketingAgreed;
+// 필수 아님
+  @override
+  final bool termsOfServiceAgreed;
+  @override
   final String? password;
   @override
   final String? providerId;
@@ -206,7 +255,7 @@ class _$SignupRequestImpl implements _SignupRequest {
 
   @override
   String toString() {
-    return 'SignupRequest(email: $email, nickname: $nickname, birthDate: $birthDate, provider: $provider, password: $password, providerId: $providerId, profileImage: $profileImage)';
+    return 'SignupRequest(email: $email, nickname: $nickname, birthDate: $birthDate, provider: $provider, privacyPolicyAgreed: $privacyPolicyAgreed, marketingAgreed: $marketingAgreed, termsOfServiceAgreed: $termsOfServiceAgreed, password: $password, providerId: $providerId, profileImage: $profileImage)';
   }
 
   @override
@@ -221,6 +270,12 @@ class _$SignupRequestImpl implements _SignupRequest {
                 other.birthDate == birthDate) &&
             (identical(other.provider, provider) ||
                 other.provider == provider) &&
+            (identical(other.privacyPolicyAgreed, privacyPolicyAgreed) ||
+                other.privacyPolicyAgreed == privacyPolicyAgreed) &&
+            (identical(other.marketingAgreed, marketingAgreed) ||
+                other.marketingAgreed == marketingAgreed) &&
+            (identical(other.termsOfServiceAgreed, termsOfServiceAgreed) ||
+                other.termsOfServiceAgreed == termsOfServiceAgreed) &&
             (identical(other.password, password) ||
                 other.password == password) &&
             (identical(other.providerId, providerId) ||
@@ -231,8 +286,18 @@ class _$SignupRequestImpl implements _SignupRequest {
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, email, nickname, birthDate,
-      provider, password, providerId, profileImage);
+  int get hashCode => Object.hash(
+      runtimeType,
+      email,
+      nickname,
+      birthDate,
+      provider,
+      privacyPolicyAgreed,
+      marketingAgreed,
+      termsOfServiceAgreed,
+      password,
+      providerId,
+      profileImage);
 
   @JsonKey(ignore: true)
   @override
@@ -254,6 +319,9 @@ abstract class _SignupRequest implements SignupRequest {
       required final String nickname,
       required final String birthDate,
       required final String provider,
+      required final bool privacyPolicyAgreed,
+      final bool? marketingAgreed,
+      required final bool termsOfServiceAgreed,
       final String? password,
       final String? providerId,
       final String? profileImage}) = _$SignupRequestImpl;
@@ -269,6 +337,12 @@ abstract class _SignupRequest implements SignupRequest {
   String get birthDate;
   @override
   String get provider;
+  @override
+  bool get privacyPolicyAgreed;
+  @override
+  bool? get marketingAgreed;
+  @override // 필수 아님
+  bool get termsOfServiceAgreed;
   @override
   String? get password;
   @override

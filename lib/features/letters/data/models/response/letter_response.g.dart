@@ -11,6 +11,7 @@ _$LetterResponseImpl _$$LetterResponseImplFromJson(Map<String, dynamic> json) =>
       senderNickname: json['senderNickname'] as String,
       receiverNickname: json['receiverNickname'] as String,
       content: json['content'] as String,
+      sentDate: json['sentDate'] as String,
     );
 
 Map<String, dynamic> _$$LetterResponseImplToJson(
@@ -19,4 +20,5 @@ Map<String, dynamic> _$$LetterResponseImplToJson(
       'senderNickname': instance.senderNickname,
       'receiverNickname': instance.receiverNickname,
       'content': instance.content,
+      'sentDate': instance.sentDate,
     };

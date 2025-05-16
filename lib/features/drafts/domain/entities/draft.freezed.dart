@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Draft {
   int get order => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
+  DraftType get draftType => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $DraftCopyWith<Draft> get copyWith => throw _privateConstructorUsedError;
@@ -28,7 +29,7 @@ abstract class $DraftCopyWith<$Res> {
   factory $DraftCopyWith(Draft value, $Res Function(Draft) then) =
       _$DraftCopyWithImpl<$Res, Draft>;
   @useResult
-  $Res call({int order, String content});
+  $Res call({int order, String content, DraftType draftType});
 }
 
 /// @nodoc
@@ -46,6 +47,7 @@ class _$DraftCopyWithImpl<$Res, $Val extends Draft>
   $Res call({
     Object? order = null,
     Object? content = null,
+    Object? draftType = null,
   }) {
     return _then(_value.copyWith(
       order: null == order
@@ -56,6 +58,10 @@ class _$DraftCopyWithImpl<$Res, $Val extends Draft>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      draftType: null == draftType
+          ? _value.draftType
+          : draftType // ignore: cast_nullable_to_non_nullable
+              as DraftType,
     ) as $Val);
   }
 }
@@ -67,7 +73,7 @@ abstract class _$$DraftImplCopyWith<$Res> implements $DraftCopyWith<$Res> {
       __$$DraftImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int order, String content});
+  $Res call({int order, String content, DraftType draftType});
 }
 
 /// @nodoc
@@ -83,6 +89,7 @@ class __$$DraftImplCopyWithImpl<$Res>
   $Res call({
     Object? order = null,
     Object? content = null,
+    Object? draftType = null,
   }) {
     return _then(_$DraftImpl(
       order: null == order
@@ -93,6 +100,10 @@ class __$$DraftImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      draftType: null == draftType
+          ? _value.draftType
+          : draftType // ignore: cast_nullable_to_non_nullable
+              as DraftType,
     ));
   }
 }
@@ -100,16 +111,19 @@ class __$$DraftImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$DraftImpl implements _Draft {
-  const _$DraftImpl({required this.order, required this.content});
+  const _$DraftImpl(
+      {required this.order, required this.content, required this.draftType});
 
   @override
   final int order;
   @override
   final String content;
+  @override
+  final DraftType draftType;
 
   @override
   String toString() {
-    return 'Draft(order: $order, content: $content)';
+    return 'Draft(order: $order, content: $content, draftType: $draftType)';
   }
 
   @override
@@ -118,11 +132,13 @@ class _$DraftImpl implements _Draft {
         (other.runtimeType == runtimeType &&
             other is _$DraftImpl &&
             (identical(other.order, order) || other.order == order) &&
-            (identical(other.content, content) || other.content == content));
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.draftType, draftType) ||
+                other.draftType == draftType));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, order, content);
+  int get hashCode => Object.hash(runtimeType, order, content, draftType);
 
   @JsonKey(ignore: true)
   @override
@@ -133,12 +149,16 @@ class _$DraftImpl implements _Draft {
 
 abstract class _Draft implements Draft {
   const factory _Draft(
-      {required final int order, required final String content}) = _$DraftImpl;
+      {required final int order,
+      required final String content,
+      required final DraftType draftType}) = _$DraftImpl;
 
   @override
   int get order;
   @override
   String get content;
+  @override
+  DraftType get draftType;
   @override
   @JsonKey(ignore: true)
   _$$DraftImplCopyWith<_$DraftImpl> get copyWith =>

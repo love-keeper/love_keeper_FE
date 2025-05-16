@@ -75,7 +75,7 @@ class SettingsPage extends ConsumerWidget {
             scaleFactor,
             onTap: () {
               context.pushNamed(
-                'disconnectPage',
+                '/disconnect',
                 extra: {
                   'appBarTitle': '연결끊기',
                   'richTextPrefix': '상대방',

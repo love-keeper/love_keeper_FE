@@ -38,6 +38,9 @@ class AuthViewModel extends _$AuthViewModel {
     required String nickname,
     required String birthDate,
     required String provider,
+    required bool privacyPolicyAgreed,
+    bool? marketingAgreed,
+    required bool termsOfServiceAgreed,
     String? password,
     String? providerId,
     File? profileImage,
@@ -49,12 +52,14 @@ class AuthViewModel extends _$AuthViewModel {
         nickname: nickname,
         birthDate: birthDate,
         provider: provider,
+        privacyPolicyAgreed: privacyPolicyAgreed,
+        marketingAgreed: marketingAgreed,
+        termsOfServiceAgreed: termsOfServiceAgreed,
         password: password,
         providerId: providerId,
         profileImage: profileImage,
       );
       await _saveTokens(user);
-      await _updateFCMToken(); // 토큰 저장 후 FCM 업데이트
       state = AsyncValue.data(user);
       return user;
     } catch (e, stackTrace) {
@@ -72,6 +77,9 @@ class AuthViewModel extends _$AuthViewModel {
   }) async {
     state = const AsyncValue.loading();
     try {
+      debugPrint(
+        'Login params: email=$email, provider=$provider, password=$password, providerId=$providerId',
+      );
       final user = await _repository.login(
         email: email,
         provider: provider,
@@ -79,15 +87,20 @@ class AuthViewModel extends _$AuthViewModel {
         providerId: providerId,
       );
       await _saveTokens(user);
-      await _updateFCMToken(); // 토큰 저장 후 FCM 업데이트
+      final prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('access_token');
+      if (accessToken == null) {
+        throw Exception('Access token not stored after login');
+      }
+      await _updateFCMToken();
       state = AsyncValue.data(user);
       return user;
     } catch (e) {
       String errorMessage =
           e is DioException && e.response?.statusCode == 401
-              ? '로그인 실패: 계정이 등록되지 않았거나 비밀번호가 잘못되었습니다.'
+              ? '로그인 실패: 계정 정보가 잘못되었습니다.'
               : '로그인 중 오류 발생: $e';
-      print(errorMessage);
+      debugPrint(errorMessage);
       state = AsyncValue.error(errorMessage, StackTrace.current);
       rethrow;
     }
@@ -108,42 +121,17 @@ class AuthViewModel extends _$AuthViewModel {
         ref
             .read(authStateNotifierProvider.notifier)
             .updateProviderId(providerId);
-
-        context.pushNamed(
-          RouteNames.profileRegistrationPage,
-          extra: {
-            'email': email,
-            'provider': provider,
-            'providerId': providerId,
-          },
-        );
+        // 회원가입 로직 추가 필요 (아래 참고)
       } on DioException catch (e) {
         if (e.response?.statusCode == 409) {
-          final user = await login(
-            email: email,
-            provider: provider,
-            providerId: providerId,
-          );
-          print('Logged in user: ${user.memberId}, ${user.email}');
-          try {
-            final coupleInfo =
-                await ref
-                    .read(couplesViewModelProvider.notifier)
-                    .getCoupleInfo();
-            print(
-              'Navigating to main page with couple info: ${coupleInfo.coupleId}',
-            );
-            context.go(RouteNames.mainPage);
-          } on DioException catch (e) {
-            print(
-              'Couple info fetch failed - Status: ${e.response?.statusCode}, Data: ${e.response?.data}, Error: $e',
-            );
-            context.go(RouteNames.codeConnectPage);
-          }
-        } else {
+          await login(email: email, provider: provider, providerId: providerId);
+          final prefs = await SharedPreferences.getInstance();
+          final accessToken = prefs.getString('access_token');
           print(
-            'Email duplication check failed: ${e.response?.statusCode}, ${e.response?.data}',
+            'Social login successful: email=$email, accessToken=$accessToken',
           );
+        } else {
+          print('Email duplication check failed: ${e.response?.statusCode}');
           rethrow;
         }
       }
@@ -182,7 +170,6 @@ class AuthViewModel extends _$AuthViewModel {
   Future<void> _saveTokens(User user) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('memberId', user.memberId);
-    // Dio 인터셉터가 응답에서 access_token을 저장하므로, 여기서는 확인만
     final accessToken = prefs.getString('access_token');
     if (accessToken == null) {
       print('Warning: access_token not found after login/signup');
@@ -199,7 +186,6 @@ class AuthViewModel extends _$AuthViewModel {
     await prefs.remove('memberId');
   }
 
-  // 나머지 메서드 (sendCode, verifyCode, logout 등) 유지
   Future<String> sendCode(String email) async =>
       await _repository.sendCode(email);
   Future<String> verifyCode(String email, int code) async =>
@@ -213,11 +199,13 @@ class AuthViewModel extends _$AuthViewModel {
 
   Future<String> resetPasswordRequest(String email) async =>
       await _repository.resetPasswordRequest(email);
+
   Future<String> resetPassword(
     String email,
     String password,
     String passwordConfirm,
   ) async => await _repository.resetPassword(email, password, passwordConfirm);
+
   Future<bool> checkToken(String token) async {
     try {
       return await _repository.checkToken(token);
@@ -232,6 +220,13 @@ class AuthViewModel extends _$AuthViewModel {
     }
   }
 
-  Future<String> emailDuplication(String email) async =>
-      await _repository.emailDuplication(email);
+  Future<String> emailDuplication(String email) async {
+    try {
+      final result = await _repository.emailDuplication(email);
+      return result;
+    } catch (e) {
+      print('Email duplication check error: $e');
+      rethrow;
+    }
+  }
 }
