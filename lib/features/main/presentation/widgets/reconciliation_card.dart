@@ -184,7 +184,7 @@ class ReconciliationCard extends ConsumerWidget {
               }
               Navigator.pop(context);
               context.pushNamed(
-                'sendLetter',
+                '/sendLetter',
                 extra: {'draftContents': List.filled(4, '')},
               );
             },
