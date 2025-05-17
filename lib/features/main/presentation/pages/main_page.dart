@@ -91,7 +91,7 @@ class MainPage extends StatelessWidget {
             ),
             onPressed: () {
               // NotificationPage로 이동
-              context.push('/notificationPage');
+              context.push('/notification');
             },
           ),
           const SizedBox(width: 10),

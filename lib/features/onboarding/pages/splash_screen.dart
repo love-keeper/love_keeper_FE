@@ -5,6 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// FCM 관련 import 추가
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:love_keeper/features/fcm/presentation/viewmodels/fcm_viewmodel.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -36,6 +39,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             .read(authViewModelProvider.notifier)
             .checkToken(accessToken);
         if (isValid && mounted) {
+          // 자동 로그인 성공 - FCM 토큰 등록 추가
+          await _registerFCMToken();
           print('Token valid, navigating to MainPage');
           _navigateTo(RouteNames.mainPage);
         } else if (mounted) {
@@ -47,6 +52,21 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         _navigateToLogin();
       }
     });
+  }
+
+  // FCM 토큰 등록 함수 추가
+  Future<void> _registerFCMToken() async {
+    try {
+      final fcmViewModel = ref.read(fCMViewModelProvider.notifier);
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await fcmViewModel.registerToken(fcmToken);
+        debugPrint('FCM token registered on auto-login: $fcmToken');
+      }
+    } catch (e) {
+      debugPrint('Error registering FCM token: $e');
+      // 토큰 등록에 실패해도 앱 사용에는 지장이 없도록 함
+    }
   }
 
   void _navigateTo(String route) {
@@ -63,6 +83,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 기존 build 메서드 유지
     return Scaffold(
       body: AnimatedOpacity(
         opacity: _opacity,

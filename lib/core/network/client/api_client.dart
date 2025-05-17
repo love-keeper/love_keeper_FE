@@ -30,16 +30,16 @@ import '../../../features/auth/data/models/request/verify_code_request.dart';
 import '../../../features/auth/data/models/response/auth_response.dart';
 import '../../../features/couples/data/models/request/connect_request.dart';
 import '../../../features/couples/data/models/response/invite_code_response.dart';
+import 'package:love_keeper/features/letters/data/models/response/letter_response.dart';
 import '../../../features/fcm/data/models/fcm_models.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'https://lovekeeper.site')
+@RestApi(baseUrl: 'https://dev.lovekeeper.site')
 abstract class ApiClient {
   factory ApiClient(Dio dio) = _ApiClient;
 
   // AUTH
-
   @POST('/api/auth/email-duplication')
   Future<ApiResponse<String>> emailDuplication(
     @Body() EmailDuplicationRequest request,
@@ -56,7 +56,7 @@ abstract class ApiClient {
     @Part(name: 'birthDate') required String birthDate,
     @Part(name: 'provider') required String provider,
     @Part(name: 'privacyPolicyAgreed') required bool privacyPolicyAgreed,
-    @Part(name: 'marketingAgreed') bool? marketingAgreed, // 필수 아님
+    @Part(name: 'marketingAgreed') bool? marketingAgreed,
     @Part(name: 'termsOfServiceAgreed') required bool termsOfServiceAgreed,
     @Part(name: 'password') String? password,
     @Part(name: 'providerId') String? providerId,
@@ -149,22 +149,29 @@ abstract class ApiClient {
     @Body() VerifyEmailCodeRequest request,
   );
 
-  // DRAFTS
+  // DRAFTS -> 수정
 
   @POST('/api/drafts')
   Future<ApiResponse<String>> createDraft(@Body() CreateDraftRequest request);
 
-  @GET('/api/drafts/{order}')
-  Future<ApiResponse<DraftResponse>> getDraft(@Path('order') int order);
+  @GET('/api/drafts/{order}/{draftType}')
+  Future<ApiResponse<DraftResponse>> getDraft(
+    @Path('order') int order,
+    @Path('draftType') String draftType,
+  );
 
-  // 드래프트 삭제
-  @DELETE('/api/drafts/{order}')
-  Future<ApiResponse<String>> deleteDraft(@Path('order') int order);
+  @DELETE('/api/drafts/{order}/{draftType}')
+  Future<ApiResponse<String>> deleteDraft(
+    @Path('order') int order,
+    @Path('draftType') String draftType,
+  );
 
   // LETTERS
-
   @POST('/api/letters')
   Future<ApiResponse<String>> createLetter(@Body() CreateLetterRequest request);
+
+  @GET('/api/letters/{letterId}')
+  Future<ApiResponse<LetterResponse>> getLetter(@Path('letterId') int letterId);
 
   @GET('/api/letters/list')
   Future<ApiResponse<LetterListResponse>> getLetterList(
@@ -182,7 +189,6 @@ abstract class ApiClient {
   );
 
   // PROMISES
-
   @POST('/api/promises')
   Future<ApiResponse<String>> createPromise(
     @Body() CreatePromiseRequest request,
@@ -208,8 +214,7 @@ abstract class ApiClient {
   );
 
   // CALENDARS
-
-  @GET('/api/calendar') // 엔드포인트는 실제 백엔드에 맞게 조정
+  @GET('/api/calendar')
   Future<ApiResponse<CalendarResponse>> getCalendar(
     @Query('year') int year,
     @Query('month') int month,
@@ -226,13 +231,15 @@ abstract class ApiClient {
 
   @POST('/api/fcm/token')
   Future<ApiResponse<String>> registerFCMToken(@Body() FCMTokenRequest request);
-
-  @DELETE('/api/fcm/token')
-  Future<ApiResponse<String>> removeFCMToken(@Body() FCMTokenRequest request);
-
+  //원래 맵 형태로 해야하는데 g 파일 오류가 해결이 안되어서 일단은 리스트로 받고 레퍼지토리 코드에서 처리하게 해둠.
   @GET('/api/fcm/notifications')
   Future<ApiResponse<List<PushNotificationResponse>>> getPushNotifications(
-    @Query('page') int? page,
-    @Query('size') int? size,
+    @Query('page') int page,
+    @Query('size') int size,
+  );
+
+  @POST('/api/fcm/read/{notificationId}')
+  Future<ApiResponse<String>> markNotificationAsRead(
+    @Path('notificationId') int notificationId,
   );
 }

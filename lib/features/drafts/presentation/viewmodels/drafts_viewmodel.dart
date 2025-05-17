@@ -2,6 +2,7 @@ import 'package:love_keeper/features/drafts/data/repositories/drafts_repository_
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/draft.dart';
 import '../../domain/repositories/drafts_repository.dart';
+import '../../data/models/request/create_draft_request.dart';
 
 part 'drafts_viewmodel.g.dart';
 
@@ -15,10 +16,18 @@ class DraftsViewModel extends _$DraftsViewModel {
     return const AsyncValue.data(null);
   }
 
-  Future<String> createDraft(int draftOrder, String content) async {
+  Future<String> createDraft(
+    int draftOrder,
+    String content, {
+    required DraftType draftType,
+  }) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.createDraft(draftOrder, content);
+      final result = await _repository.createDraft(
+        draftOrder,
+        content,
+        draftType,
+      );
       state = AsyncValue.data(result);
       return result;
     } catch (e, stackTrace) {
@@ -27,10 +36,10 @@ class DraftsViewModel extends _$DraftsViewModel {
     }
   }
 
-  Future<Draft> getDraft(int order) async {
+  Future<Draft> getDraft(int order, {required DraftType draftType}) async {
     state = const AsyncValue.loading();
     try {
-      final draft = await _repository.getDraft(order);
+      final draft = await _repository.getDraft(order, draftType: draftType);
       state = AsyncValue.data(draft);
       return draft;
     } catch (e, stackTrace) {
@@ -39,11 +48,10 @@ class DraftsViewModel extends _$DraftsViewModel {
     }
   }
 
-  // 새로 추가: 드래프트 삭제
-  Future<void> deleteDraft(int order) async {
+  Future<void> deleteDraft(int order, {required DraftType draftType}) async {
     state = const AsyncValue.loading();
     try {
-      await _repository.deleteDraft(order);
+      await _repository.deleteDraft(order, draftType: draftType);
       state = const AsyncValue.data(null);
     } catch (e, stackTrace) {
       state = AsyncValue.error(e, stackTrace);

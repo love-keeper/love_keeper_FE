@@ -20,6 +20,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   late FocusNode _emailFocusNode;
+  late FocusNode _passwordFocusNode;
   bool showPasswordField = false;
   bool showPasswordGuide = false;
   bool _isLoading = false;
@@ -28,6 +29,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
   void initState() {
     super.initState();
     _emailFocusNode = FocusNode();
+    _passwordFocusNode = FocusNode();
     _emailController.addListener(() {
       setState(() {
         showPasswordGuide = false;
@@ -38,6 +40,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
         showPasswordGuide = false;
       });
     });
+    // 초기에는 이메일 필드에 포커스
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _emailFocusNode.requestFocus();
     });
@@ -48,6 +51,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
     _emailController.dispose();
     _passwordController.dispose();
     _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
     super.dispose();
   }
 
@@ -83,8 +87,14 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
             );
           }
         } else {
+          // 이메일이 이미 등록되어 있으면 비밀번호 필드를 보여주고,
+          // 먼저 이메일 필드의 포커스를 해제한 후 비밀번호 필드로 이동
           setState(() {
             showPasswordField = true;
+          });
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _emailFocusNode.unfocus();
+            _passwordFocusNode.requestFocus();
           });
         }
       } else {
@@ -94,12 +104,10 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           password: _passwordController.text,
           providerId: null,
         );
-        // 로그인 성공 후 커플 상태 체크 및 라우팅
         if (!mounted) return;
         setState(() {
           _isLoading = false;
         });
-
         try {
           final coupleInfo =
               await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
@@ -213,7 +221,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                             hintText: '이메일 주소를 입력해 주세요.',
                             controller: _emailController,
                             scaleFactor: scaleFactor,
-                            autofocus: true,
+                            autofocus: !showPasswordField,
                             guideMessage: emailGuideMessage,
                             readOnly: showPasswordField,
                             focusNode: _emailFocusNode,
@@ -225,12 +233,13 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
                               hintText: '비밀번호를 입력해 주세요.',
                               controller: _passwordController,
                               scaleFactor: scaleFactor,
-                              autofocus: false,
+                              autofocus: true,
                               guideMessage:
                                   showPasswordGuide
                                       ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
                                       : '',
                               obscureText: true,
+                              focusNode: _passwordFocusNode,
                             ),
                           ],
                         ],
