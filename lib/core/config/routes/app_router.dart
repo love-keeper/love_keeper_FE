@@ -21,6 +21,7 @@ import '../../../features/main/presentation/widgets/tab_bar.dart';
 import '../../../features/letters/presentation/pages/send_letter_screen.dart';
 import '../../../features/letters/presentation/pages/send_letter_page.dart';
 import '../../../features/letters/presentation/pages/reply_letter_page.dart';
+import 'package:love_keeper/features/letters/presentation/pages/received_letter_page.dart';
 import '../../../features/members/presentation/pages/my_page.dart';
 import '../../../features/members/presentation/pages/settings_page.dart';
 import '../../../features/couples/presentation/pages/disconnect_page.dart';
@@ -254,21 +255,36 @@ GoRouter appRouter(AppRouterRef ref) {
               child: const ReplyLetterPage(),
             ),
       ),
+
       GoRoute(
         path: RouteNames.sendLetterScreen,
         name: RouteNames.sendLetterScreen,
         pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           final letterData = extra['letterData'] as Map<String, dynamic>? ?? {};
-          final Future<void> Function() onComplete =
-              extra['onComplete'] as Future<void> Function()? ?? () async {};
+          final onComplete = extra['onComplete'] as VoidCallback? ?? () {};
+
           return NoTransitionPage(
             key: state.pageKey,
             child: SendLetterScreen(
               receiverName: (letterData['receiver'] as String?) ?? '상대방',
+              letterContent: (letterData['content'] as String?) ?? '',
               onComplete: onComplete,
             ),
           );
+        },
+      ),
+      GoRoute(
+        name: RouteNames.receivedLetterPage,
+        path: RouteNames.receivedLetterPage,
+        builder: (context, state) {
+          final Map<String, dynamic>? letterData =
+              state.extra as Map<String, dynamic>?;
+          if (letterData == null) {
+            // 오류 처리: 편지 데이터가 없는 경우
+            return Scaffold(body: Center(child: Text('편지 데이터를 찾을 수 없습니다.')));
+          }
+          return ReceivedLetterPage(letterData: letterData);
         },
       ),
 

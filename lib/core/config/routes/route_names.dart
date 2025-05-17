@@ -21,6 +21,7 @@ class RouteNames {
   static const String sendLetter = '/sendLetter';
   static const String replyLetter = '/replyLetter';
   static const String sendLetterScreen = '/sendLetterScreen';
+  static const String receivedLetterPage = '/receivedLetter';
 
   // My Page Routes
   static const String myPage = '/my';

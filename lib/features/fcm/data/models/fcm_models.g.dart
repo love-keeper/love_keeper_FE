@@ -6,14 +6,14 @@ part of 'fcm_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$FCMTokenRequestImpl _$$FCMTokenRequestImplFromJson(
+_$$FCMTokenRequestImplImpl _$$$FCMTokenRequestImplImplFromJson(
         Map<String, dynamic> json) =>
-    _$FCMTokenRequestImpl(
+    _$$FCMTokenRequestImplImpl(
       token: json['token'] as String,
     );
 
-Map<String, dynamic> _$$FCMTokenRequestImplToJson(
-        _$FCMTokenRequestImpl instance) =>
+Map<String, dynamic> _$$$FCMTokenRequestImplImplToJson(
+        _$$FCMTokenRequestImplImpl instance) =>
     <String, dynamic>{
       'token': instance.token,
     };
@@ -25,6 +25,8 @@ _$PushNotificationResponseImpl _$$PushNotificationResponseImplFromJson(
       title: json['title'] as String,
       body: json['body'] as String,
       relativeTime: json['relativeTime'] as String,
+      read: json['read'] as bool,
+      data: json['data'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$$PushNotificationResponseImplToJson(
@@ -34,4 +36,6 @@ Map<String, dynamic> _$$PushNotificationResponseImplToJson(
       'title': instance.title,
       'body': instance.body,
       'relativeTime': instance.relativeTime,
+      'read': instance.read,
+      'data': instance.data,
     };

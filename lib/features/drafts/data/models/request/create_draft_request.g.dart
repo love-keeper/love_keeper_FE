@@ -11,6 +11,7 @@ _$CreateDraftRequestImpl _$$CreateDraftRequestImplFromJson(
     _$CreateDraftRequestImpl(
       draftOrder: (json['draftOrder'] as num).toInt(),
       content: json['content'] as String,
+      draftType: $enumDecode(_$DraftTypeEnumMap, json['draftType']),
     );
 
 Map<String, dynamic> _$$CreateDraftRequestImplToJson(
@@ -18,4 +19,10 @@ Map<String, dynamic> _$$CreateDraftRequestImplToJson(
     <String, dynamic>{
       'draftOrder': instance.draftOrder,
       'content': instance.content,
+      'draftType': _$DraftTypeEnumMap[instance.draftType]!,
     };
+
+const _$DraftTypeEnumMap = {
+  DraftType.conciliation: 'CONCILIATION',
+  DraftType.answer: 'ANSWER',
+};

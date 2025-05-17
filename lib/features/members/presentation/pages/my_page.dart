@@ -24,6 +24,7 @@ class _MyPageState extends ConsumerState<MyPage> {
   @override
   void initState() {
     super.initState();
+    // incoming 코드처럼 initState에서 fetchMemberInfo() 호출
     Future(() {
       ref.read(membersViewModelProvider.notifier).fetchMemberInfo();
     });
@@ -266,10 +267,17 @@ class _MyPageState extends ConsumerState<MyPage> {
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
+          '연애 시작일',
+          memberInfo?.relationshipStartDate ?? '',
+          scaleFactor,
+          onTap: () => context.push('/relationshipStartEdit'),
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
           '이메일',
           memberInfo?.email ?? '',
           scaleFactor,
-          onTap: () => context.push('/emailEdit'),
+          //onTap: () => context.push('/emailEdit'),
         ),
         SizedBox(height: 18 * scaleFactor),
         _buildBoxedRow(
@@ -472,12 +480,28 @@ class _MyPageState extends ConsumerState<MyPage> {
                                     ),
                           ),
                         ),
-                        SizedBox(height: 20 * scaleFactor),
-                        // 정보 섹션 추가
-                        _buildInfoSection(scaleFactor, memberInfo),
-                        SizedBox(height: 20 * scaleFactor),
-                        // 메뉴 섹션 추가
-                        _buildMenuSection(scaleFactor),
+
+                        SizedBox(height: 30 * scaleFactor),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20 * scaleFactor,
+                          ),
+                          child: _buildInfoSection(scaleFactor, memberInfo),
+                        ),
+                        SizedBox(height: 16 * scaleFactor),
+                        Container(
+                          width: deviceWidth,
+                          height: 16 * scaleFactor,
+                          color: const Color(0xFFF7F8FB),
+                        ),
+                        SizedBox(height: 16 * scaleFactor),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20 * scaleFactor,
+                          ),
+                          child: _buildMenuSection(scaleFactor),
+                        ),
+                        SizedBox(height: 16 * scaleFactor),
                       ],
                     ),
                 loading: () => const Center(child: CircularProgressIndicator()),

@@ -15,10 +15,15 @@ class DraftsRepositoryImpl implements DraftsRepository {
   DraftsRepositoryImpl(this.apiClient);
 
   @override
-  Future<String> createDraft(int draftOrder, String content) async {
+  Future<String> createDraft(
+    int draftOrder,
+    String content,
+    DraftType draftType,
+  ) async {
     final request = CreateDraftRequest(
-      draftOrder: draftOrder,
+      draftOrder: draftOrder, // 편지 인덱스
       content: content,
+      draftType: draftType,
     );
     final response = await apiClient.createDraft(request);
     _handleResponse(response);
@@ -26,20 +31,34 @@ class DraftsRepositoryImpl implements DraftsRepository {
   }
 
   @override
-  Future<Draft> getDraft(int order) async {
-    final response = await apiClient.getDraft(order);
-    _handleResponse(response);
-    return Draft(
-      order: response.result!.order,
-      content: response.result!.content,
-    );
+  Future<Draft> getDraft(int order, {required DraftType draftType}) async {
+    try {
+      // draftType을 String으로 변환 (enum의 값을 대문자 문자열로)
+      final draftTypeStr = draftType.toString().split('.').last.toUpperCase();
+
+      final response = await apiClient.getDraft(order, draftTypeStr);
+      _handleResponse(response);
+
+      return Draft(
+        order: response.result!.order, // 단계 순서 (1~4)
+        content: response.result!.content,
+        draftType: response.result!.draftType,
+      );
+    } catch (e) {
+      // 오류 로깅
+      print('getDraft 오류: $e');
+      rethrow;
+    }
   }
 
-  // 드래프트 삭제 (void 반환 처리)
   @override
-  Future<void> deleteDraft(int order) async {
+  Future<void> deleteDraft(int order, {required DraftType draftType}) async {
     try {
-      await apiClient.deleteDraft(order); // void 반환, 에러만 처리
+      // draftType을 String으로 변환 (enum의 값을 대문자 문자열로)
+      final draftTypeStr = draftType.toString().split('.').last.toUpperCase();
+
+      final response = await apiClient.deleteDraft(order, draftTypeStr);
+      _handleResponse(response);
     } on DioException catch (e) {
       if (e.response?.statusCode != 200) {
         throw Exception('드래프트 삭제 실패: ${e.response?.statusCode} - ${e.message}');

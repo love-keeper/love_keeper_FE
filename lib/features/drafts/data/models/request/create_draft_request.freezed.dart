@@ -22,6 +22,7 @@ CreateDraftRequest _$CreateDraftRequestFromJson(Map<String, dynamic> json) {
 mixin _$CreateDraftRequest {
   int get draftOrder => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
+  DraftType get draftType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -35,7 +36,7 @@ abstract class $CreateDraftRequestCopyWith<$Res> {
           CreateDraftRequest value, $Res Function(CreateDraftRequest) then) =
       _$CreateDraftRequestCopyWithImpl<$Res, CreateDraftRequest>;
   @useResult
-  $Res call({int draftOrder, String content});
+  $Res call({int draftOrder, String content, DraftType draftType});
 }
 
 /// @nodoc
@@ -53,6 +54,7 @@ class _$CreateDraftRequestCopyWithImpl<$Res, $Val extends CreateDraftRequest>
   $Res call({
     Object? draftOrder = null,
     Object? content = null,
+    Object? draftType = null,
   }) {
     return _then(_value.copyWith(
       draftOrder: null == draftOrder
@@ -63,6 +65,10 @@ class _$CreateDraftRequestCopyWithImpl<$Res, $Val extends CreateDraftRequest>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      draftType: null == draftType
+          ? _value.draftType
+          : draftType // ignore: cast_nullable_to_non_nullable
+              as DraftType,
     ) as $Val);
   }
 }
@@ -75,7 +81,7 @@ abstract class _$$CreateDraftRequestImplCopyWith<$Res>
       __$$CreateDraftRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int draftOrder, String content});
+  $Res call({int draftOrder, String content, DraftType draftType});
 }
 
 /// @nodoc
@@ -91,6 +97,7 @@ class __$$CreateDraftRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? draftOrder = null,
     Object? content = null,
+    Object? draftType = null,
   }) {
     return _then(_$CreateDraftRequestImpl(
       draftOrder: null == draftOrder
@@ -101,6 +108,10 @@ class __$$CreateDraftRequestImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
+      draftType: null == draftType
+          ? _value.draftType
+          : draftType // ignore: cast_nullable_to_non_nullable
+              as DraftType,
     ));
   }
 }
@@ -109,7 +120,9 @@ class __$$CreateDraftRequestImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CreateDraftRequestImpl implements _CreateDraftRequest {
   const _$CreateDraftRequestImpl(
-      {required this.draftOrder, required this.content});
+      {required this.draftOrder,
+      required this.content,
+      required this.draftType});
 
   factory _$CreateDraftRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$CreateDraftRequestImplFromJson(json);
@@ -118,10 +131,12 @@ class _$CreateDraftRequestImpl implements _CreateDraftRequest {
   final int draftOrder;
   @override
   final String content;
+  @override
+  final DraftType draftType;
 
   @override
   String toString() {
-    return 'CreateDraftRequest(draftOrder: $draftOrder, content: $content)';
+    return 'CreateDraftRequest(draftOrder: $draftOrder, content: $content, draftType: $draftType)';
   }
 
   @override
@@ -131,12 +146,14 @@ class _$CreateDraftRequestImpl implements _CreateDraftRequest {
             other is _$CreateDraftRequestImpl &&
             (identical(other.draftOrder, draftOrder) ||
                 other.draftOrder == draftOrder) &&
-            (identical(other.content, content) || other.content == content));
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.draftType, draftType) ||
+                other.draftType == draftType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, draftOrder, content);
+  int get hashCode => Object.hash(runtimeType, draftOrder, content, draftType);
 
   @JsonKey(ignore: true)
   @override
@@ -156,7 +173,8 @@ class _$CreateDraftRequestImpl implements _CreateDraftRequest {
 abstract class _CreateDraftRequest implements CreateDraftRequest {
   const factory _CreateDraftRequest(
       {required final int draftOrder,
-      required final String content}) = _$CreateDraftRequestImpl;
+      required final String content,
+      required final DraftType draftType}) = _$CreateDraftRequestImpl;
 
   factory _CreateDraftRequest.fromJson(Map<String, dynamic> json) =
       _$CreateDraftRequestImpl.fromJson;
@@ -165,6 +183,8 @@ abstract class _CreateDraftRequest implements CreateDraftRequest {
   int get draftOrder;
   @override
   String get content;
+  @override
+  DraftType get draftType;
   @override
   @JsonKey(ignore: true)
   _$$CreateDraftRequestImplCopyWith<_$CreateDraftRequestImpl> get copyWith =>

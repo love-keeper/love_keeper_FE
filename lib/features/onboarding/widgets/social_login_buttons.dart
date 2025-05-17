@@ -72,6 +72,9 @@ class SocialLoginButtons extends ConsumerWidget {
           context,
         );
       } else {
+        print(
+          'Naver login failed with status: ${result.status}, message: ${result.errorMessage}',
+        );
         throw Exception('Naver login failed: ${result.errorMessage}');
       }
     } catch (e) {
@@ -217,11 +220,11 @@ class SocialLoginButtons extends ConsumerWidget {
             onTap: () => _loginWithKakao(context, ref),
             child: _buildButton('assets/images/onboarding/Btn_Kakao_Login.png'),
           ),
-          const SizedBox(width: 18),
-          GestureDetector(
-            onTap: () => _loginWithNaver(context, ref),
-            child: _buildButton('assets/images/onboarding/Btn_Naver_Login.png'),
-          ),
+          // const SizedBox(width: 18),
+          // GestureDetector(
+          //   onTap: () => _loginWithNaver(context, ref),
+          //   child: _buildButton('assets/images/onboarding/Btn_Naver_Login.png'),
+          // ),
         ],
       ),
     );
