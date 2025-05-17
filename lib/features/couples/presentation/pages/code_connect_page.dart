@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // 클립보드 기능을 위해 추가
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
@@ -22,6 +23,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
   String generatedInviteCode = '';
   bool _isLoading = false;
   bool _connectionFailed = false; // 연결 실패 여부
+  bool _copied = false; // 복사 상태 추적을 위한 변수 추가
 
   @override
   void initState() {
@@ -62,6 +64,33 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('초대 코드 생성 실패: $e')));
+    }
+  }
+
+  // 클립보드에 복사하는 함수 추가
+  Future<void> _copyToClipboard() async {
+    if (generatedInviteCode.isNotEmpty) {
+      await Clipboard.setData(ClipboardData(text: generatedInviteCode));
+      setState(() {
+        _copied = true;
+      });
+
+      // 스낵바로 복사 완료 메시지 표시
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('클립보드에 복사되었습니다.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // 3초 후 복사 상태 초기화
+      Future.delayed(const Duration(seconds: 3), () {
+        if (mounted) {
+          setState(() {
+            _copied = false;
+          });
+        }
+      });
     }
   }
 
@@ -172,23 +201,31 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                generatedInviteCode.isEmpty
-                                    ? '로딩 중...'
-                                    : generatedInviteCode,
-                                style: TextStyle(
-                                  fontSize: 18 * scaleFactor,
-                                  fontWeight: FontWeight.w600,
-                                  height: 26 / 18,
-                                  letterSpacing: -0.025 * (18 * scaleFactor),
-                                  color: const Color(0xFFFF859B),
+                              // 텍스트를 GestureDetector로 감싸 클릭 가능하게 함
+                              GestureDetector(
+                                onTap: _copyToClipboard,
+                                child: Text(
+                                  generatedInviteCode.isEmpty
+                                      ? '로딩 중...'
+                                      : generatedInviteCode,
+                                  style: TextStyle(
+                                    fontSize: 18 * scaleFactor,
+                                    fontWeight: FontWeight.w600,
+                                    height: 26 / 18,
+                                    letterSpacing: -0.025 * (18 * scaleFactor),
+                                    color: const Color(0xFFFF859B),
+                                  ),
                                 ),
                               ),
                               SizedBox(width: 2 * scaleFactor),
-                              Image.asset(
-                                'assets/images/login_page/Ic_Copy.png',
-                                width: 16 * scaleFactor,
-                                height: 16 * scaleFactor,
+                              // 복사 아이콘을 GestureDetector로 감싸 클릭 가능하게 함
+                              GestureDetector(
+                                onTap: _copyToClipboard,
+                                child: Image.asset(
+                                  'assets/images/login_page/Ic_Copy.png',
+                                  width: 16 * scaleFactor,
+                                  height: 16 * scaleFactor,
+                                ),
                               ),
                             ],
                           ),
