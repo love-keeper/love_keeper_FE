@@ -3,6 +3,7 @@ import 'package:love_keeper/features/members/domain/entities/member_info.dart'; 
 
 abstract class MembersRepository {
   Future<MemberInfo> getMemberInfo(); // 추가
+  Future<String> deleteMember();
   Future<String> updateNickname(String nickname);
   Future<String> updateBirthday(String birthday);
   Future<String> updatePassword(

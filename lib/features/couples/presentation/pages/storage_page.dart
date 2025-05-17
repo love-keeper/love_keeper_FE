@@ -14,6 +14,12 @@ class StoragePage extends ConsumerStatefulWidget {
   final int initialTab;
   const StoragePage({super.key, this.initialTab = 0});
 
+  static StoragePage fromState(GoRouterState state) {
+    final tab =
+        int.tryParse(state.uri.queryParameters['initialTab'] ?? '') ?? 0;
+    return StoragePage(initialTab: tab);
+  }
+
   @override
   ConsumerState<StoragePage> createState() => _StoragePageState();
 }

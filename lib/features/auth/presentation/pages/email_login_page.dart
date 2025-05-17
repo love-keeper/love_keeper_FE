@@ -93,6 +93,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           provider: 'LOCAL',
           password: _passwordController.text,
           providerId: null,
+          context: context,
         );
         // 로그인 성공 후 커플 상태 체크 및 라우팅
         if (!mounted) return;

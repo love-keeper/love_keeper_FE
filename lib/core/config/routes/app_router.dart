@@ -181,7 +181,7 @@ GoRouter appRouter(AppRouterRef ref) {
             pageBuilder:
                 (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const StoragePage(),
+                  child: StoragePage.fromState(state),
                 ),
           ),
           GoRoute(

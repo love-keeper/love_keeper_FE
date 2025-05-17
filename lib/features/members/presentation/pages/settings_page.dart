@@ -6,6 +6,7 @@ import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -137,7 +138,20 @@ class SettingsPage extends ConsumerWidget {
                       '탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.',
                   'dialogExitText': '탈퇴하기',
                   'dialogSaveText': '돌아가기',
-                  'onDialogExit': () => context.go('/onboarding'),
+                  'onDialogExit': () async {
+                    try {
+                      await ref
+                          .read(membersViewModelProvider.notifier)
+                          .deleteMember(); // ← 실제 탈퇴
+                      ref.read(authStateNotifierProvider.notifier).clear();
+                      context.go('/onboarding');
+                    } catch (e) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('회원 탈퇴 실패: $e')));
+                    }
+                  },
+
                   'onDialogSave': () => context.pop(),
                 },
               );

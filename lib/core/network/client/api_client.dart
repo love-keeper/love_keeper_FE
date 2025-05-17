@@ -34,7 +34,7 @@ import '../../../features/fcm/data/models/fcm_models.dart';
 
 part 'api_client.g.dart';
 
-@RestApi(baseUrl: 'https://lovekeeper.site')
+@RestApi(baseUrl: 'https://dev.lovekeeper.site')
 abstract class ApiClient {
   factory ApiClient(Dio dio) = _ApiClient;
 
@@ -148,6 +148,9 @@ abstract class ApiClient {
   Future<ApiResponse<String>> verifyEmailCode(
     @Body() VerifyEmailCodeRequest request,
   );
+
+  @DELETE('/api/members')
+  Future<ApiResponse<String>> deleteMember();
 
   // DRAFTS
 

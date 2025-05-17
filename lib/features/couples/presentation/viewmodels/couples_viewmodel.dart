@@ -12,12 +12,34 @@ part 'couples_viewmodel.g.dart';
 @riverpod
 class CouplesViewModel extends _$CouplesViewModel {
   late final CouplesRepository _repository;
+  bool _initialized = false;
 
   @override
   AsyncValue<CoupleInfo?> build() {
     _repository = ref.watch(couplesRepositoryProvider);
-    Future.microtask(() => getCoupleInfo());
-    return const AsyncValue.loading(); // 초기 상태를 로딩으로 설정
+
+    if (!_initialized) {
+      _initialized = true;
+      _fetchInitialCoupleInfo();
+    }
+
+    return const AsyncValue.loading();
+  }
+
+  Future<void> _fetchInitialCoupleInfo() async {
+    try {
+      final coupleInfo = await _repository.getCoupleInfo();
+      state = AsyncValue.data(coupleInfo);
+      print('Fetched couple info: ${coupleInfo.startedAt}');
+    } catch (e, stackTrace) {
+      if (e is DioException && e.response?.statusCode == 404) {
+        print('No couple info found (404), setting state to null');
+        state = const AsyncValue.data(null);
+        return;
+      }
+      print('Get couple info failed: $e');
+      state = AsyncValue.error(e, stackTrace);
+    }
   }
 
   Future<CoupleInfo?> getCoupleInfo({bool forceRefresh = false}) async {
@@ -26,19 +48,15 @@ class CouplesViewModel extends _$CouplesViewModel {
     }
     state = const AsyncValue.loading();
     try {
-      print('Fetching couple info...');
       final coupleInfo = await _repository.getCoupleInfo();
       state = AsyncValue.data(coupleInfo);
-      print('Fetched couple info: ${coupleInfo.startedAt}');
       return coupleInfo;
     } catch (e, stackTrace) {
       if (e is DioException && e.response?.statusCode == 404) {
-        print('No couple info found (404), setting state to null');
         state = const AsyncValue.data(null);
         return null;
       }
       state = AsyncValue.error(e, stackTrace);
-      print('Get couple info failed: $e');
       rethrow;
     }
   }
@@ -46,10 +64,10 @@ class CouplesViewModel extends _$CouplesViewModel {
   String getDday() {
     final coupleInfo = state.value;
     if (coupleInfo == null || coupleInfo.startedAt.isEmpty) {
-      return '0'; // 기본값
+      return '0';
     }
     final startedAt = DateTime.parse(coupleInfo.startedAt);
-    final days = DateTime.now().difference(startedAt).inDays + 1; // +1 추가
+    final days = DateTime.now().difference(startedAt).inDays + 1;
     return '$days';
   }
 
@@ -85,7 +103,6 @@ class CouplesViewModel extends _$CouplesViewModel {
   }
 
   Future<String> updateStartDate(String newStartDate) async {
-    print('Updating start date: $newStartDate');
     try {
       final result = await _repository.updateStartDate(newStartDate);
       final updatedCoupleInfo = await _repository.getCoupleInfo();

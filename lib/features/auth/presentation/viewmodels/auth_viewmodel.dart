@@ -44,6 +44,7 @@ class AuthViewModel extends _$AuthViewModel {
     String? password,
     String? providerId,
     File? profileImage,
+    required BuildContext context,
   }) async {
     state = const AsyncValue.loading();
     try {
@@ -65,6 +66,7 @@ class AuthViewModel extends _$AuthViewModel {
         provider: provider,
         password: password,
         providerId: providerId,
+        context: context,
       );
       state = AsyncValue.data(loggedInUser);
       return loggedInUser;
@@ -80,6 +82,7 @@ class AuthViewModel extends _$AuthViewModel {
             provider: provider,
             password: password,
             providerId: providerId,
+            context: context,
           );
           state = AsyncValue.data(user);
           return user;
@@ -103,25 +106,67 @@ class AuthViewModel extends _$AuthViewModel {
     required String provider,
     String? password,
     String? providerId,
+    required BuildContext context,
   }) async {
     state = const AsyncValue.loading();
+
     try {
       debugPrint(
         'Login params: email=$email, provider=$provider, password=$password, providerId=$providerId',
       );
+
       final user = await _repository.login(
         email: email,
         provider: provider,
         password: password,
         providerId: providerId,
       );
+
       await _saveTokens(user);
+
       final prefs = await SharedPreferences.getInstance();
       final accessToken = prefs.getString('access_token');
       if (accessToken == null) {
         throw Exception('Access token not stored after login');
       }
+
       await _updateFCMToken();
+
+      // 커플 상태 확인
+      if (!context.mounted) return user;
+
+      final coupleInfo =
+          await ref.read(couplesViewModelProvider.notifier).getCoupleInfo();
+
+      if (coupleInfo != null) {
+        final String? endedAtStr = coupleInfo.endedAt;
+        final now = DateTime.now();
+
+        if (coupleInfo.coupleStatus == 'DISCONNECTED' && endedAtStr != null) {
+          final endedAt = DateTime.tryParse(endedAtStr);
+          if (endedAt != null) {
+            final daysSinceDisconnected = now.difference(endedAt).inDays;
+            if (daysSinceDisconnected < 15) {
+              if (!context.mounted) return user;
+              context.go('/disconnectedScreen'); // 복구 가능
+            } else {
+              if (!context.mounted) return user;
+              context.go('/codeConnect'); // 복구 불가능
+            }
+          } else {
+            if (!context.mounted) return user;
+            context.go('/codeConnect'); // endedAt 파싱 실패 → 복구 불가 처리
+          }
+        } else {
+          if (!context.mounted) return user;
+          context.go('/main'); // 커플 연결 유지 중
+        }
+      } else {
+        // coupleInfo 자체가 null인 경우 → 복구 불가로 처리
+        if (!context.mounted) return user;
+        context.go('/codeConnect');
+      }
+
       state = AsyncValue.data(user);
       return user;
     } catch (e) {
@@ -152,7 +197,13 @@ class AuthViewModel extends _$AuthViewModel {
             .updateProviderId(providerId);
       } on DioException catch (e) {
         if (e.response?.statusCode == 409) {
-          await login(email: email, provider: provider, providerId: providerId);
+          // 중복이면 로그인 시도
+          await login(
+            email: email,
+            provider: provider,
+            providerId: providerId,
+            context: context,
+          );
           final prefs = await SharedPreferences.getInstance();
           final accessToken = prefs.getString('access_token');
           print(

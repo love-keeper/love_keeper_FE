@@ -12,6 +12,9 @@ class CoupleInfo with _$CoupleInfo {
     @Default(null) String? partnerProfileImageUrl,
     required String startedAt,
     required int days,
+
+    String? endedAt,
+    String? coupleStatus,
   }) = _CoupleInfo;
 
   factory CoupleInfo.fromJson(Map<String, dynamic> json) =>

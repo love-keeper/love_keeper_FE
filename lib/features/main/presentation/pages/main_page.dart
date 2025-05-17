@@ -48,6 +48,7 @@ class MainPage extends StatelessWidget {
                     child: CustomInfoCard(
                       title: '비밀 쪽지',
                       imagePath: 'assets/images/main_page/secret_note.png',
+                      isLocked: true,
                     ),
                   ),
                 ],

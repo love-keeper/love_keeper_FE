@@ -9,7 +9,7 @@ part 'dio_module.g.dart';
 Dio dio(DioRef ref) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://lovekeeper.site',
+      baseUrl: 'https://dev.lovekeeper.site',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
       headers: {'Accept': 'application/json'},

@@ -17,7 +17,6 @@ class LettersViewModel extends _$LettersViewModel {
   @override
   AsyncValue<LetterList?> build() {
     _repository = ref.watch(lettersRepositoryProvider);
-    fetchInitialLetters(); // 첫 페이지 로드
     return const AsyncValue.loading();
   }
 

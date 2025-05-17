@@ -116,4 +116,16 @@ class MembersViewModel extends _$MembersViewModel {
       rethrow;
     }
   }
+
+  Future<String> deleteMember() async {
+    state = const AsyncValue.loading();
+    try {
+      final result = await _repository.deleteMember();
+      state = const AsyncValue.data(null); // 상태 초기화
+      return result;
+    } catch (e, stackTrace) {
+      state = AsyncValue.error(e, stackTrace);
+      rethrow;
+    }
+  }
 }
