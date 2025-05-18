@@ -7,6 +7,9 @@ class RouteNames {
   static const String emailPasswordInputPage = '/emailPasswordInput';
   static const String profileRegistrationPage = '/profileRegistration';
   static const String codeConnectPage = '/codeConnect';
+  static const String termsOfServicePage = '/termsOfService'; // 이용약관 페이지 경로 추가
+  static const String privacyPolicyPage =
+      '/privacyPolicyPage'; // 개인정보처리방침 페이지 경로 추가
 
   // Onboarding Routes
   static const String splashScreen = '/splashScreen';

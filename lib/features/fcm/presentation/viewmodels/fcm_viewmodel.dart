@@ -114,10 +114,6 @@ class FCMViewModel extends _$FCMViewModel {
       _setupFCMListeners();
       await testFCM();
 
-      // 테스트 로컬 알림 표시 (3초 후)
-      await Future.delayed(Duration(seconds: 3));
-      await testLocalNotification();
-
       // 초기화 완료 표시
       _isInitialized = true;
     } catch (e) {
@@ -125,31 +121,7 @@ class FCMViewModel extends _$FCMViewModel {
     }
   }
 
-  // 테스트용 로컬 알림 표시 함수
-  Future<void> testLocalNotification() async {
-    print('📱 테스트 로컬 알림 표시 시도');
-
-    const iOSDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-    const platformDetails = NotificationDetails(iOS: iOSDetails);
-
-    try {
-      await _flutterLocalNotificationsPlugin.show(
-        100, // 테스트용 ID
-        '테스트 알림',
-        '이것은 로컬 테스트 알림입니다.',
-        platformDetails,
-      );
-      print('✅ 테스트 로컬 알림 표시 성공');
-    } catch (e) {
-      print('❌ 테스트 로컬 알림 표시 실패: $e');
-    }
-  }
-
-  // FCM 테스트 함수
+  // FCM 시도 합수
   Future<void> testFCM() async {
     try {
       final token = await _firebaseMessaging.getToken();

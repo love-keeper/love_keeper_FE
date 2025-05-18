@@ -10,24 +10,26 @@ import '../../../features/auth/presentation/pages/password_edit_page.dart';
 import '../../../features/auth/presentation/pages/signup_page.dart';
 import '../../../features/auth/presentation/pages/email_password_input_page.dart';
 import '../../../features/auth/presentation/pages/profile_registration_page.dart';
+import '../../../features/auth/presentation/pages/terms_of_service_page.dart'; // 이용약관 페이지 import 추가
+import '../../../features/auth/presentation/pages/privacy_policy_page.dart';
 import '../../../features/couples/presentation/pages/code_connect_page.dart';
+import '../../../features/couples/presentation/pages/dday_page.dart';
+import '../../../features/couples/presentation/pages/storage_page.dart';
+import '../../../features/couples/presentation/pages/disconnect_page.dart';
+import '../../../features/couples/presentation/pages/disconnected_screen.dart';
+import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/main/presentation/pages/main_page.dart';
 import '../../../features/main/presentation/pages/notification_page.dart';
-import '../../../features/calendar/presentation/pages/calendar_page.dart';
-import '../../../features/couples/presentation/pages/storage_page.dart';
-import '../../../features/calendar/presentation/pages/detail_page.dart';
-import '../../../features/couples/presentation/pages/dday_page.dart';
 import '../../../features/main/presentation/widgets/tab_bar.dart';
+import '../../../features/calendar/presentation/pages/calendar_page.dart';
+import '../../../features/calendar/presentation/pages/detail_page.dart';
 import '../../../features/letters/presentation/pages/send_letter_screen.dart';
 import '../../../features/letters/presentation/pages/send_letter_page.dart';
 import '../../../features/letters/presentation/pages/reply_letter_page.dart';
-import 'package:love_keeper/features/letters/presentation/pages/received_letter_page.dart';
+import '../../../features/letters/presentation/pages/received_letter_page.dart';
 import '../../../features/members/presentation/pages/my_page.dart';
 import '../../../features/members/presentation/pages/settings_page.dart';
-import '../../../features/couples/presentation/pages/disconnect_page.dart';
-import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
-import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
 import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
@@ -127,6 +129,7 @@ GoRouter appRouter(AppRouterRef ref) {
           );
         },
       ),
+
       GoRoute(
         path: RouteNames.codeConnectPage,
         name: RouteNames.codeConnectPage,
@@ -134,6 +137,26 @@ GoRouter appRouter(AppRouterRef ref) {
             (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const CodeConnectPage(),
+            ),
+      ),
+
+      GoRoute(
+        path: RouteNames.termsOfServicePage,
+        name: 'termsOfService',
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const TermsOfServicePage(),
+            ),
+      ),
+
+      GoRoute(
+        path: RouteNames.privacyPolicyPage,
+        name: 'privacyPolicy',
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const PrivacyPolicyPage(),
             ),
       ),
 

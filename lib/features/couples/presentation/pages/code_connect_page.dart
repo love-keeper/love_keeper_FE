@@ -149,7 +149,7 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
     final double scaleFactor = deviceWidth / baseWidth;
 
     final bool hasText = _inviteCodeController.text.isNotEmpty;
-    // 가이드 메시지는 이제 연결 실패(_connectionFailed)가 true일 때만 표시됩니다.
+    // 가이드 메시지는 연결 실패(_connectionFailed)가 true일 때만 표시.
     final String guideMessage =
         _connectionFailed ? '입력한 초대 코드가 유효하지 않습니다. 다시 입력해 주세요.' : '';
 
@@ -173,14 +173,6 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
               letterSpacing: -0.025 * (18 * scaleFactor),
               color: const Color(0xFF27282C),
             ),
-          ),
-          leading: IconButton(
-            icon: Image.asset(
-              'assets/images/letter_page/Ic_Back.png',
-              width: 24 * scaleFactor,
-              height: 24 * scaleFactor,
-            ),
-            onPressed: () => context.pop(),
           ),
         ),
         body: Column(

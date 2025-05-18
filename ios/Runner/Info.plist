@@ -95,6 +95,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+  <key>LSApplicationQueriesSchemes</key>
+  <array>
+    <string>https</string>
+    <string>http</string>
+  </array>
 	<key>naverConsumerKey</key>
 	<string>FFquqzHeG8Tb2cfhf5QW</string>
 	<key>naverConsumerSecret</key>
@@ -103,5 +108,7 @@
 	<string>Love Keeper</string>
 	<key>naverServiceAppUrlScheme</key>
 	<string>loveKeeper</string>
+
+
 </dict>
 </plist>

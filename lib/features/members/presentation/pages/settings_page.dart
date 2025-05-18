@@ -21,8 +21,13 @@ class SettingsPage extends ConsumerWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+
+        scrolledUnderElevation: 0, // 스크롤 시 그림자 효과 제거
         elevation: 0,
         centerTitle: true,
+        surfaceTintColor:
+            Colors.transparent, // 스크롤 시 surface tint 색상 제거 (Material 3)
+        foregroundColor: const Color(0xFF27282C), // 앱바 콘텐츠 색상 설정
         title: Text(
           '설정',
           style: TextStyle(
@@ -47,95 +52,106 @@ class SettingsPage extends ConsumerWidget {
           ),
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 16 * scaleFactor),
-          _buildCategoryTitle('알림', scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-          _buildNotificationOption('푸시 알림', scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-          _buildNotificationOption('이메일 알림', scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-          _buildNotificationOption('마케팅 정보 알림', scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-          _buildDivider(deviceWidth, scaleFactor),
-          _buildCategoryTitle('개인', scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-          _buildNavigationOption(
-            '로그아웃',
-            scaleFactor,
-            onTap: () {
-              _showLogoutDialog(context, ref, scaleFactor);
-            },
-          ),
-          SizedBox(height: 16 * scaleFactor),
-          _buildNavigationOption(
-            '연결 끊기',
-            scaleFactor,
-            onTap: () {
-              context.pushNamed(
-                '/disconnect',
-                extra: {
-                  'appBarTitle': '연결끊기',
-                  'richTextPrefix': '상대방',
-                  'richTextSuffix': ' 님과\n연결을 끊으시겠어요?',
-                  'imagePath': 'assets/images/my_page/Img_Disconnect.png',
-                  'imageWidth': 223.0,
-                  'imageHeight': 176.0,
-                  'bottomText': '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
-                  'actionButtonText': '연결 끊기',
-                  'gapBetweenImageAndText1': 78.0,
-                  'gapBetweenImageAndText2': 69.0,
-                  'dialogTitle': '정말 연결을 끊으시겠어요?',
-                  'dialogContent': '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
-                  'dialogExitText': '연결 끊기',
-                  'dialogSaveText': '돌아가기',
-                  'onDialogExit': () => context.go('/disconnected_SC'),
-                  'onDialogSave': () => context.pop(),
-                },
-              );
-            },
-          ),
-          SizedBox(height: 16 * scaleFactor),
-          _buildNavigationOption(
-            '회원 탈퇴',
-            scaleFactor,
-            onTap: () {
-              context.pushNamed(
-                'disconnectPage',
-                extra: {
-                  'appBarTitle': '회원탈퇴',
-                  'richTextPrefix': '러브키퍼',
-                  'richTextSuffix': '를\n정말 떠나시겠어요?',
-                  'imagePath': 'assets/images/my_page/Img_Withdraw.png',
-                  'imageWidth': 138.0,
-                  'imageHeight': 138.0,
-                  'bottomText':
-                      '탈퇴 시, 상대방과의 연결이 끊어져요.\n기록된 데이터는 모두 삭제되며 복구할 수 없어요.',
-                  'actionButtonText': '탈퇴하기',
-                  'gapBetweenImageAndText1': 97.0,
-                  'gapBetweenImageAndText2': 88.0,
-                  'dialogTitle': '정말 탈퇴하시겠어요?',
-                  'dialogContent':
-                      '탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.',
-                  'dialogExitText': '탈퇴하기',
-                  'dialogSaveText': '돌아가기',
-                  'onDialogExit': () => context.go('/onboarding'),
-                  'onDialogSave': () => context.pop(),
-                },
-              );
-            },
-          ),
-          SizedBox(height: 16 * scaleFactor),
-          _buildDivider(deviceWidth, scaleFactor),
-          _buildCategoryTitle('기타', scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-          _buildVersionInfo(scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-          _buildNavigationOption('약관 및 정책', scaleFactor),
-          SizedBox(height: 16 * scaleFactor),
-        ],
+      // 스크롤 가능하게 SingleChildScrollView로 감싸기
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 16 * scaleFactor),
+            _buildCategoryTitle('알림', scaleFactor),
+            SizedBox(height: 16 * scaleFactor),
+            _buildNotificationOption('푸시 알림', scaleFactor),
+            SizedBox(height: 16 * scaleFactor),
+            _buildNotificationOption('이메일 알림', scaleFactor),
+            SizedBox(height: 16 * scaleFactor),
+            _buildNotificationOption('마케팅 정보 알림', scaleFactor),
+            SizedBox(height: 16 * scaleFactor),
+            _buildDivider(deviceWidth, scaleFactor),
+            _buildCategoryTitle('개인', scaleFactor),
+            SizedBox(height: 16 * scaleFactor),
+            _buildNavigationOption(
+              '로그아웃',
+              scaleFactor,
+              onTap: () {
+                _showLogoutDialog(context, ref, scaleFactor);
+              },
+            ),
+            SizedBox(height: 16 * scaleFactor),
+            _buildNavigationOption(
+              '연결 끊기',
+              scaleFactor,
+              onTap: () {
+                context.pushNamed(
+                  '/disconnect',
+                  extra: {
+                    'appBarTitle': '연결끊기',
+                    'richTextPrefix': '상대방',
+                    'richTextSuffix': ' 님과\n연결을 끊으시겠어요?',
+                    'imagePath': 'assets/images/my_page/Img_Disconnect.png',
+                    'imageWidth': 223.0,
+                    'imageHeight': 176.0,
+                    'bottomText': '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+                    'actionButtonText': '연결 끊기',
+                    'gapBetweenImageAndText1': 78.0,
+                    'gapBetweenImageAndText2': 69.0,
+                    'dialogTitle': '정말 연결을 끊으시겠어요?',
+                    'dialogContent':
+                        '연결 끊기 선택 시, 기록된 데이터는\n모두 삭제되며 복구할 수 없습니다.',
+                    'dialogExitText': '연결 끊기',
+                    'dialogSaveText': '돌아가기',
+                    'onDialogExit': () => context.go('/disconnected_SC'),
+                    'onDialogSave': () => context.pop(),
+                  },
+                );
+              },
+            ),
+            SizedBox(height: 16 * scaleFactor),
+            _buildNavigationOption(
+              '회원 탈퇴',
+              scaleFactor,
+              onTap: () {
+                context.pushNamed(
+                  '/disconnectPage',
+                  extra: {
+                    'appBarTitle': '회원탈퇴',
+                    'richTextPrefix': '러브키퍼',
+                    'richTextSuffix': '를\n정말 떠나시겠어요?',
+                    'imagePath': 'assets/images/my_page/Img_Withdraw.png',
+                    'imageWidth': 138.0,
+                    'imageHeight': 138.0,
+                    'bottomText':
+                        '탈퇴 시, 상대방과의 연결이 끊어져요.\n기록된 데이터는 모두 삭제되며 복구할 수 없어요.',
+                    'actionButtonText': '탈퇴하기',
+                    'gapBetweenImageAndText1': 97.0,
+                    'gapBetweenImageAndText2': 88.0,
+                    'dialogTitle': '정말 탈퇴하시겠어요?',
+                    'dialogContent':
+                        '탈퇴하기 선택 시, 상대방과의 연결이 끊어지며\n기록된 데이터는 모두 삭제됩니다.',
+                    'dialogExitText': '탈퇴하기',
+                    'dialogSaveText': '돌아가기',
+                    'onDialogExit': () => context.go('/onboarding'),
+                    'onDialogSave': () => context.pop(),
+                  },
+                );
+              },
+            ),
+            SizedBox(height: 16 * scaleFactor),
+            _buildDivider(deviceWidth, scaleFactor),
+            _buildCategoryTitle('기타', scaleFactor),
+            SizedBox(height: 16 * scaleFactor),
+            _buildVersionInfo(scaleFactor),
+            SizedBox(height: 16 * scaleFactor),
+            _buildNavigationOption(
+              '약관 및 정책',
+              scaleFactor,
+              onTap: () {
+                // 이용약관 페이지로 이동
+                context.pushNamed('termsOfService');
+              },
+            ),
+            SizedBox(height: 100 * scaleFactor), // 하단 여유 공간 추가
+          ],
+        ),
       ),
     );
   }
@@ -207,7 +223,6 @@ class SettingsPage extends ConsumerWidget {
   }
 
   // 네비게이션 옵션 (로그아웃, 연결 끊기, 회원 탈퇴, 약관 및 정책)
-  // onTap을 선택적으로 전달받아 터치 시 실행할 수 있게 함.
   Widget _buildNavigationOption(
     String title,
     double scaleFactor, {
@@ -217,9 +232,14 @@ class SettingsPage extends ConsumerWidget {
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-        child: SizedBox(
+        child: Container(
+          // Container로 변경하여 전체 영역이 탭 가능하도록 함
           width: 335 * scaleFactor,
           height: 38 * scaleFactor,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(4 * scaleFactor),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -248,13 +268,18 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  // 버전 정보
+  // 버전 정보 - 클릭 범위 확장
   Widget _buildVersionInfo(double scaleFactor) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20 * scaleFactor),
-      child: SizedBox(
+      child: Container(
+        // Container로 변경
         width: 335 * scaleFactor,
         height: 38 * scaleFactor,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4 * scaleFactor),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

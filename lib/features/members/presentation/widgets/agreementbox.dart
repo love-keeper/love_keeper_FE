@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// 약관 동의 행 위젯 생성 함수.
 /// [required]는 체크 필수 여부 (기본값: true),
@@ -43,6 +44,13 @@ class _AgreementRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 텍스트에 따라 밑줄 적용 및 탭 동작 추가
+    final bool showUnderline =
+        text.contains('전체 동의') ||
+        text.contains('이용약관') ||
+        text.contains('개인정보');
+
+    // 텍스트 부분을 GestureDetector로 감싸 탭 동작 추가
     return Container(
       width: 335 * scaleFactor,
       height: 24 * scaleFactor,
@@ -50,15 +58,32 @@ class _AgreementRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16 * scaleFactor,
-                fontWeight: FontWeight.w400,
-                color: const Color(0xFF27282C),
-                height: 24 / (16 * scaleFactor),
-                letterSpacing: -0.025 * (16 * scaleFactor),
+            child: GestureDetector(
+              onTap: () {
+                if (text.contains('이용약관')) {
+                  // 이용약관 페이지로 이동
+                  context.push('/termsOfService');
+                } else if (text.contains('개인정보')) {
+                  // 개인정보 처리방침 페이지로 이동
+                  context.push('/privacyPolicyPage');
+                }
+                // 전체 동의나 마케팅 정보 수신은 페이지 이동 없음
+              },
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16 * scaleFactor,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF27282C),
+                  height: 24 / (16 * scaleFactor),
+                  letterSpacing: -0.025 * (16 * scaleFactor),
+                  decoration:
+                      showUnderline
+                          ? TextDecoration.underline
+                          : TextDecoration.none,
+                  decorationColor: const Color(0xFF27282C),
+                  decorationThickness: 1.0,
+                ),
               ),
             ),
           ),
@@ -74,12 +99,13 @@ class _AgreementRow extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(3),
                 ),
-                side: isChecked
-                    ? null
-                    : BorderSide(
-                        color: const Color(0xFFC3C6CF),
-                        width: 2 * scaleFactor,
-                      ),
+                side:
+                    isChecked
+                        ? null
+                        : BorderSide(
+                          color: const Color(0xFFC3C6CF),
+                          width: 2 * scaleFactor,
+                        ),
                 onChanged: (bool? newValue) {
                   // 체크박스의 상태 변경 시, 부모에게 새 값(newValue)을 전달합니다.
                   onChanged(newValue ?? false);
