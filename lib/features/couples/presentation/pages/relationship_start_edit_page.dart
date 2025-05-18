@@ -50,20 +50,29 @@ class _RelationshipStartEditPageState
 
     try {
       final formattedDate = inputDate.replaceAll('.', '-');
-      final result = await ref
+
+      // ✅ 1. 연애 시작일 백엔드에 업데이트
+      await ref
           .read(couplesViewModelProvider.notifier)
           .updateStartDate(formattedDate);
+
+      // ✅ 2. 변경된 정보 다시 가져오기
+      await ref
+          .read(couplesViewModelProvider.notifier)
+          .getCoupleInfo(forceRefresh: true);
+
       setState(() {
         _isLoading = false;
       });
-      if (result == '날짜 업데이트 성공') {
-        context.pop();
-      }
+
+      // ✅ 3. 마이페이지로 이동
+      context.pushReplacement('/my');
     } catch (e) {
       debugPrint('Update start date error: $e');
       setState(() {
         _isLoading = false;
       });
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('날짜 업데이트 실패: $e')));

@@ -85,9 +85,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
       _letterPage = 0;
       _letterHasNext = true;
       _isFetchingLetters = false;
-      ref
-          .read(lettersViewModelProvider.notifier)
-          .getLetterList(_letterPage, _letterSize);
+      ref.read(lettersViewModelProvider.notifier).fetchInitialLetters();
     }
   }
 
@@ -122,6 +120,8 @@ class _StoragePageState extends ConsumerState<StoragePage> {
         child: TextField(
           controller: _promiseController,
           autofocus: true,
+          maxLength: 35, // ✅ 40자 입력 제한
+
           textInputAction: TextInputAction.done,
           style: const TextStyle(
             fontSize: 16,
@@ -132,6 +132,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
           ),
           decoration: const InputDecoration(
             border: InputBorder.none,
+            counterText: '', // ✅ 길이 카운터 안 보이게
             hintText: '내용을 입력해 주세요',
             hintStyle: TextStyle(
               fontSize: 16,
@@ -417,30 +418,43 @@ class _StoragePageState extends ConsumerState<StoragePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final double topPadding = mediaQuery.padding.top;
+    final double deviceHeight = mediaQuery.size.height;
+    final double deviceWidth = mediaQuery.size.width;
+
+    final double toolbarHeight = topPadding + 44; // 기본 높이 + SafeArea
+    final double safeGap = topPadding + 70;
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: false,
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(''),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: IconButton(
-              icon: Image.asset(
-                'assets/images/storage_page/Ic_Calender.png',
-                width: 24,
-                height: 24,
+      // AppBar
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(toolbarHeight),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          automaticallyImplyLeading: false,
+          toolbarHeight: toolbarHeight,
+          title: const Text(''),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 10),
+              child: IconButton(
+                icon: Image.asset(
+                  'assets/images/storage_page/Ic_Calender.png',
+                  width: 24,
+                  height: 24,
+                ),
+                onPressed: _navigateToCalendar,
               ),
-              onPressed: _navigateToCalendar,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+
       body: GestureDetector(
         onTap: () {
           if (_isEditingPromise) {
@@ -468,7 +482,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               ),
               child: Column(
                 children: [
-                  const SizedBox(height: 130),
+                  SizedBox(height: safeGap),
                   _buildCustomTabBar(),
                   const SizedBox(height: 30),
                   Expanded(

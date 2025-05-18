@@ -104,14 +104,19 @@ class CouplesViewModel extends _$CouplesViewModel {
 
   Future<String> updateStartDate(String newStartDate) async {
     try {
+      // ✅ 1. 백엔드에 연애 시작일 업데이트 요청
       final result = await _repository.updateStartDate(newStartDate);
+
+      // ✅ 2. 업데이트된 커플 정보 다시 불러오기
       final updatedCoupleInfo = await _repository.getCoupleInfo();
+
+      // ✅ 3. 상태 갱신 (Consumer 위젯이 리빌드됨)
       state = AsyncValue.data(updatedCoupleInfo);
-      print('Start date updated: ${updatedCoupleInfo.startedAt}');
+
       return result;
-    } catch (e, stackTrace) {
-      print('Update failed: $e');
-      state = AsyncValue.error(e, stackTrace);
+    } catch (error, stackTrace) {
+      // ✅ 에러 시 상태 및 로그 처리
+      state = AsyncValue.error(error, stackTrace);
       rethrow;
     }
   }

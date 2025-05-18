@@ -186,7 +186,7 @@ abstract class ApiClient {
 
   @GET('/api/letters/by-date')
   Future<ApiResponse<LetterListResponse>> getLettersByDate(
-    @Query('date') String date,
+    @Query('date') String formattedDate,
     @Query('page') int page,
     @Query('size') int size,
   );

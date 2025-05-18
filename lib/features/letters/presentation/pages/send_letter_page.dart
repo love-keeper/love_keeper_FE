@@ -505,10 +505,7 @@ class _SendLetterPageState extends ConsumerState<SendLetterPage> {
                               width: 335.0 * scaleFactor,
                               height: 52.0 * scaleFactor,
                               child: ElevatedButton(
-                                onPressed:
-                                    state.isLoading || !_isButtonActive
-                                        ? null
-                                        : _nextStep,
+                                onPressed: !_isButtonActive ? null : _nextStep,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor:
                                       _isButtonActive

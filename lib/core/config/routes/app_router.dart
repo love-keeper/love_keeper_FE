@@ -182,9 +182,10 @@ GoRouter appRouter(AppRouterRef ref) {
             pageBuilder:
                 (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: StoragePage.fromState(state),
+                  child: StoragePage.fromState(state), // ✅ query 파라미터 반영
                 ),
           ),
+
           GoRoute(
             path: RouteNames.myPage,
             name: RouteNames.myPage,
@@ -300,7 +301,7 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.disconnectPage,
-        name: 'disconnectPage',
+        name: RouteNames.disconnectPage,
         pageBuilder: (context, state) {
           final extra = state.extra as Map<String, dynamic>? ?? {};
           return NoTransitionPage(
@@ -315,9 +316,7 @@ GoRouter appRouter(AppRouterRef ref) {
                   'assets/images/my_page/Img_Disconnect.png',
               imageWidth: extra['imageWidth'] as double? ?? 223.0,
               imageHeight: extra['imageHeight'] as double? ?? 176.0,
-              bottomText:
-                  extra['bottomText'] as String? ??
-                  '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+              bottomText: extra['bottomText'] as String? ?? '기록된 데이터는 모두 삭제돼요.',
               actionButtonText: extra['actionButtonText'] as String? ?? '연결 끊기',
               gapBetweenImageAndText1:
                   extra['gapBetweenImageAndText1'] as double? ?? 78,
@@ -337,7 +336,7 @@ GoRouter appRouter(AppRouterRef ref) {
       ),
       GoRoute(
         path: RouteNames.disconnectedScreen,
-        name: 'disconnectedScreen',
+        name: RouteNames.disconnectedScreen,
         pageBuilder:
             (context, state) => NoTransitionPage(
               key: state.pageKey,

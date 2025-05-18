@@ -145,15 +145,14 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
               color: const Color(0xFF27282C),
             ),
           ),
-          leading: IconButton(
-            icon: Image.asset(
-              'assets/images/letter_page/Ic_Back.png',
-              width: 24 * scaleFactor,
-              height: 24 * scaleFactor,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh, color: Color(0xFF27282C)),
+              onPressed: _generateInviteCode, // 새로고침 눌렀을 때 실행할 함수
             ),
-            onPressed: () => context.pop(),
-          ),
+          ],
         ),
+
         body: Column(
           children: [
             Expanded(

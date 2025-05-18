@@ -24,9 +24,10 @@ class _MyPageState extends ConsumerState<MyPage> {
   @override
   void initState() {
     super.initState();
-    // incoming 코드처럼 initState에서 fetchMemberInfo() 호출
     Future(() {
-      ref.read(membersViewModelProvider.notifier).fetchMemberInfo();
+      ref
+          .read(membersViewModelProvider.notifier)
+          .fetchMemberInfo(); // 항상 새로 불러오기
     });
   }
 

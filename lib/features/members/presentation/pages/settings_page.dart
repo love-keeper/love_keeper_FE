@@ -7,17 +7,28 @@ import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel
 import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
 import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
   final String appVersion = '0.1.1';
 
+  Future<void> openNotificationSettings() async {
+    final status = await Permission.notification.status;
+    if (status.isDenied || status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
+
+    final partnerNickname =
+        ref.watch(couplesViewModelProvider).value?.partnerNickname ?? '상대방';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -77,15 +88,15 @@ class SettingsPage extends ConsumerWidget {
             scaleFactor,
             onTap: () {
               context.pushNamed(
-                '/disconnect',
+                '/disconnectPage',
                 extra: {
                   'appBarTitle': '연결끊기',
-                  'richTextPrefix': '상대방',
+                  'richTextPrefix': partnerNickname,
                   'richTextSuffix': ' 님과\n연결을 끊으시겠어요?',
                   'imagePath': 'assets/images/my_page/Img_Disconnect.png',
                   'imageWidth': 223.0,
                   'imageHeight': 176.0,
-                  'bottomText': '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+                  'bottomText': '기록된 데이터는 모두 삭제돼요.',
                   'actionButtonText': '연결 끊기',
                   'gapBetweenImageAndText1': 78.0,
                   'gapBetweenImageAndText2': 69.0,
@@ -95,18 +106,15 @@ class SettingsPage extends ConsumerWidget {
                   'dialogSaveText': '돌아가기',
                   'onDialogExit': () async {
                     try {
-                      // CouplesViewModel의 deleteCouple 호출
                       await ref
                           .read(couplesViewModelProvider.notifier)
                           .deleteCouple();
-                      // 인증 상태 초기화 (선택적)
                       ref.read(authStateNotifierProvider.notifier).clear();
-                      // 성공 시 화면 이동
                       context.go(RouteNames.disconnectedScreen);
                     } catch (e) {
                       ScaffoldMessenger.of(
                         context,
-                      ).showSnackBar(SnackBar(content: Text('연결 끊기 실패: $e')));
+                      ).showSnackBar(SnackBar(content: Text('연결 끊기 실패: \$e')));
                     }
                   },
                   'onDialogSave': () => context.pop(),
@@ -142,16 +150,15 @@ class SettingsPage extends ConsumerWidget {
                     try {
                       await ref
                           .read(membersViewModelProvider.notifier)
-                          .deleteMember(); // ← 실제 탈퇴
+                          .deleteMember();
                       ref.read(authStateNotifierProvider.notifier).clear();
                       context.go('/onboarding');
                     } catch (e) {
                       ScaffoldMessenger.of(
                         context,
-                      ).showSnackBar(SnackBar(content: Text('회원 탈퇴 실패: $e')));
+                      ).showSnackBar(SnackBar(content: Text('회원 탈퇴 실패: \$e')));
                     }
                   },
-
                   'onDialogSave': () => context.pop(),
                 },
               );
@@ -407,10 +414,11 @@ class _PushNotificationToggleState extends State<PushNotificationToggle> {
     final double circleSize = 16 * widget.scaleFactor;
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         setState(() {
           isEnabled = !isEnabled;
         });
+        await openAppSettings(); // 또는 openNotificationSettings() 함수 추출해도 됨
       },
       child: Stack(
         children: [

@@ -15,7 +15,7 @@ class NotificationPage extends ConsumerStatefulWidget {
 class _NotificationPageState extends ConsumerState<NotificationPage> {
   final ScrollController _scrollController = ScrollController();
   int _currentIndex = 0;
-  bool _showNotifications = true;
+  final bool _showNotifications = true;
 
   @override
   void initState() {
@@ -262,10 +262,10 @@ class _NotificationPageState extends ConsumerState<NotificationPage> {
                   },
                 ),
       ),
-      bottomNavigationBar: TabBarWidget(
-        currentIndex: _currentIndex,
-        onTabSelected: _onTabSelected,
-      ),
+      // bottomNavigationBar: TabBarWidget(
+      //   currentIndex: _currentIndex,
+      //   onTabSelected: _onTabSelected,
+      // ),
     );
   }
 }

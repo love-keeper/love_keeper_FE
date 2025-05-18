@@ -1273,13 +1273,13 @@ class _ApiClient implements ApiClient {
 
   @override
   Future<ApiResponse<LetterListResponse>> getLettersByDate(
-    String date,
+    String formattedDate,
     int page,
     int size,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'date': date,
+      r'date': formattedDate,
       r'page': page,
       r'size': size,
     };

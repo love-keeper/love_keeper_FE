@@ -77,200 +77,217 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Center(
-          child: Container(
-            height: 580,
-            width: 350,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 125,
-                  child: Stack(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 20, bottom: 40),
+                child: Container(
+                  height: 580, // ✅ 고정 높이 유지
+                  width: 350,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
                     children: [
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                      SizedBox(
+                        height: 125,
+                        child: Stack(
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 66,
-                                      height: 66,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xffFDBBC9),
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 66,
+                                            height: 66,
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xffFDBBC9),
+                                            ),
+                                            child: Center(
+                                              child: Image.asset(
+                                                'assets/images/storage_page/C_letter.png',
+                                                width: 43,
+                                                height: 46.46,
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 9),
+                                          Text(
+                                            '편지 ${calendar?.totalLetterCount ?? 0}건',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              letterSpacing: -0.3,
+                                              height: 20 / 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xFF747784),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          'assets/images/storage_page/C_letter.png',
-                                          width: 43,
-                                          height: 46.46,
-                                          fit: BoxFit.contain,
-                                        ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                            width: 66,
+                                            height: 66,
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Color(0xffFDBBC9),
+                                            ),
+                                            child: Center(
+                                              child: Image.asset(
+                                                'assets/images/storage_page/C_promise.png',
+                                                width: 54,
+                                                height: 54,
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 9),
+                                          Text(
+                                            '약속 ${calendar?.totalPromiseCount ?? 0}건',
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              letterSpacing: -0.3,
+                                              height: 20 / 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xFF747784),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    const SizedBox(height: 9),
-                                    Text(
-                                      '편지 ${calendar?.totalLetterCount ?? 0}건',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        letterSpacing: -0.3,
-                                        height: 20 / 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF747784),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 66,
-                                      height: 66,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Color(0xffFDBBC9),
-                                      ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          'assets/images/storage_page/C_promise.png',
-                                          width: 54,
-                                          height: 54,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 9),
-                                    Text(
-                                      '약속 ${calendar?.totalPromiseCount ?? 0}건',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        letterSpacing: -0.3,
-                                        height: 20 / 12,
-                                        fontWeight: FontWeight.w500,
-                                        color: Color(0xFF747784),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Divider(
+                                thickness: 1,
+                                color: Color.fromRGBO(195, 198, 207, 1),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      const Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Divider(
-                          thickness: 1,
-                          color: Color.fromRGBO(195, 198, 207, 1),
+                      const SizedBox(height: 10),
+                      _buildCustomCalendarHeader(),
+                      Expanded(
+                        child: calendarState.when(
+                          data:
+                              (calendar) => TableCalendar(
+                                locale: 'ko_KR',
+                                firstDay: DateTime(2020, 1, 1),
+                                lastDay: DateTime(2030, 12, 31),
+                                focusedDay: _focusedDay,
+                                headerVisible: false,
+                                eventLoader:
+                                    (day) =>
+                                        calendar != null
+                                            ? [
+                                                  ...calendar.letters,
+                                                  ...calendar.promises,
+                                                ]
+                                                .where(
+                                                  (item) =>
+                                                      isSameDay(
+                                                        DateTime.parse(
+                                                          item.date,
+                                                        ),
+                                                        day,
+                                                      ) &&
+                                                      item.count >= 1,
+                                                )
+                                                .toList()
+                                            : [],
+                                daysOfWeekStyle: const DaysOfWeekStyle(
+                                  weekdayStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                  weekendStyle: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                calendarBuilders: CalendarBuilders(
+                                  todayBuilder: (context, day, focusedDay) {
+                                    final hasEvent =
+                                        calendar != null &&
+                                        [
+                                          ...calendar.letters,
+                                          ...calendar.promises,
+                                        ].any(
+                                          (item) =>
+                                              isSameDay(
+                                                DateTime.parse(item.date),
+                                                day,
+                                              ) &&
+                                              item.count >= 1,
+                                        );
+                                    return _buildDay(
+                                      context,
+                                      day,
+                                      hasEvent,
+                                      isToday: true,
+                                    );
+                                  },
+                                  defaultBuilder: (context, day, focusedDay) {
+                                    final hasEvent =
+                                        calendar != null &&
+                                        [
+                                          ...calendar.letters,
+                                          ...calendar.promises,
+                                        ].any(
+                                          (item) =>
+                                              isSameDay(
+                                                DateTime.parse(item.date),
+                                                day,
+                                              ) &&
+                                              item.count >= 1,
+                                        );
+                                    return _buildDay(context, day, hasEvent);
+                                  },
+                                  markerBuilder:
+                                      (context, day, events) =>
+                                          const SizedBox.shrink(),
+                                ),
+                                rowHeight: 54,
+                              ),
+                          loading:
+                              () => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                          error:
+                              (error, stack) =>
+                                  Center(child: Text('오류: $error')),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                _buildCustomCalendarHeader(),
-                Expanded(
-                  child: calendarState.when(
-                    data:
-                        (calendar) => TableCalendar(
-                          locale: 'ko_KR',
-                          firstDay: DateTime(2020, 1, 1),
-                          lastDay: DateTime(2030, 12, 31),
-                          focusedDay: _focusedDay,
-                          headerVisible: false,
-                          eventLoader:
-                              (day) =>
-                                  calendar != null
-                                      ? [
-                                            ...calendar.letters,
-                                            ...calendar.promises,
-                                          ]
-                                          .where(
-                                            (item) =>
-                                                isSameDay(
-                                                  DateTime.parse(item.date),
-                                                  day,
-                                                ) &&
-                                                item.count >= 1,
-                                          )
-                                          .toList()
-                                      : [],
-                          daysOfWeekStyle: const DaysOfWeekStyle(
-                            weekdayStyle: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                            weekendStyle: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          calendarBuilders: CalendarBuilders(
-                            todayBuilder: (context, day, focusedDay) {
-                              final hasEvent =
-                                  calendar != null &&
-                                  [
-                                    ...calendar.letters,
-                                    ...calendar.promises,
-                                  ].any(
-                                    (item) =>
-                                        isSameDay(
-                                          DateTime.parse(item.date),
-                                          day,
-                                        ) &&
-                                        item.count >= 1,
-                                  );
-                              return _buildDay(
-                                context,
-                                day,
-                                hasEvent,
-                                isToday: true,
-                              );
-                            },
-                            defaultBuilder: (context, day, focusedDay) {
-                              final hasEvent =
-                                  calendar != null &&
-                                  [
-                                    ...calendar.letters,
-                                    ...calendar.promises,
-                                  ].any(
-                                    (item) =>
-                                        isSameDay(
-                                          DateTime.parse(item.date),
-                                          day,
-                                        ) &&
-                                        item.count >= 1,
-                                  );
-                              return _buildDay(context, day, hasEvent);
-                            },
-                            markerBuilder:
-                                (context, day, events) =>
-                                    const SizedBox.shrink(),
-                          ),
-                          rowHeight: 54,
-                        ),
-                    loading:
-                        () => const Center(child: CircularProgressIndicator()),
-                    error: (error, stack) => Center(child: Text('오류: $error')),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),

@@ -141,6 +141,8 @@ class DisconnectedScreen extends ConsumerWidget {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
+    final partnerNickname =
+        ref.watch(couplesViewModelProvider).value?.partnerNickname ?? '상대방';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -178,12 +180,12 @@ class DisconnectedScreen extends ConsumerWidget {
                     height: 35 / 24,
                     letterSpacing: -0.065 * (24 * scaleFactor),
                   ),
-                  children: const <TextSpan>[
+                  children: [
                     TextSpan(
-                      text: "백채은",
-                      style: TextStyle(color: Color(0xffFB5681)),
+                      text: partnerNickname,
+                      style: const TextStyle(color: Color(0xffFB5681)),
                     ),
-                    TextSpan(
+                    const TextSpan(
                       text: " 님과의 연결이 끊어졌어요",
                       style: TextStyle(color: Color(0xff27282C)),
                     ),
@@ -221,6 +223,7 @@ class DisconnectedScreen extends ConsumerWidget {
             ),
           ),
           SizedBox(height: 64 * scaleFactor),
+          /*
           Center(
             child: GestureDetector(
               onTap: () => _showBottomSheet(context, ref),
@@ -247,6 +250,7 @@ class DisconnectedScreen extends ConsumerWidget {
               ),
             ),
           ),
+          */
         ],
       ),
     );

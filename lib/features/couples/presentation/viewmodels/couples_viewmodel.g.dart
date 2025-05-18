@@ -6,7 +6,7 @@ part of 'couples_viewmodel.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$couplesViewModelHash() => r'902b9811a1a391038e57f0425fe5edcb1f4bb7a4';
+String _$couplesViewModelHash() => r'e06a682156e3b1dc0e41ce57ceb28763eac69b8f';
 
 /// See also [CouplesViewModel].
 @ProviderFor(CouplesViewModel)
