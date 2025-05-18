@@ -14,22 +14,18 @@ class TabBarWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     // 디바이스 크기에 따른 반응형 변수
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
-
-    // 기본 높이 + 디바이스별 하단 패딩(안전 영역)을 고려한 높이
-    final double tabBarHeight = 65.0 + bottomPadding;
 
     // 화면 크기에 따른 스케일 팩터
     final double scaleFactor = screenWidth / 375.0;
 
+    // 기본 높이 + 디바이스별 하단 패딩(안전 영역)을 고려한 높이
+    // 오버플로우 방지를 위해 충분한 높이 확보
+    final double tabBarHeight = 55.0 + bottomPadding;
+
     return Container(
-      padding: EdgeInsets.only(
-        left: 20.0 * scaleFactor,
-        right: 20.0 * scaleFactor,
-        bottom: bottomPadding, // SafeArea 대신 하단 패딩 직접 적용
-      ),
-      height: tabBarHeight,
+      padding: EdgeInsets.only(bottom: bottomPadding), // 하단 패딩만 적용
+      height: tabBarHeight, // 충분한 높이 확보
       decoration: BoxDecoration(
         border: Border.all(
           color: const Color.fromRGBO(235, 236, 239, 1),
@@ -49,13 +45,26 @@ class TabBarWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildTabItem(context, 'assets/images/tab_bar/home.png', '홈', 0),
-          _buildTabItem(context, 'assets/images/tab_bar/archive.png', '보관함', 1),
-          _buildTabItem(context, 'assets/images/tab_bar/my.png', '마이', 2),
-        ],
+      // 스크롤이 필요하지 않도록 SingleChildScrollView로 감싸기
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(), // 스크롤 비활성화
+        child: SizedBox(
+          height: 60.0, // 내부 컨텐츠 높이 제한
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center, // 중앙 정렬
+            children: [
+              _buildTabItem(context, 'assets/images/tab_bar/home.png', '홈', 0),
+              _buildTabItem(
+                context,
+                'assets/images/tab_bar/archive.png',
+                '보관함',
+                1,
+              ),
+              _buildTabItem(context, 'assets/images/tab_bar/my.png', '마이', 2),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -72,48 +81,43 @@ class TabBarWidget extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double scaleFactor = screenWidth / 375.0;
 
-    // 아이템의 너비 계산(화면 너비의 1/3 - 좌우 패딩)
-    final double itemWidth = (screenWidth - (40.0 * scaleFactor)) / 3;
-
-    return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            onTabSelected(index);
-          },
-          child: Container(
-            width: itemWidth,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start, // 위에서부터 정렬 시작
-              children: [
-                const SizedBox(height: 10), // 상단 여백 줄임
-                Image.asset(
-                  imagePath,
-                  width: 24 * scaleFactor,
-                  height: 24 * scaleFactor,
-                  color:
-                      isSelected
-                          ? const Color.fromRGBO(255, 133, 155, 1)
-                          : const Color.fromRGBO(175, 178, 191, 1),
-                ),
-                SizedBox(height: 2 * scaleFactor),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color:
-                        isSelected
-                            ? const Color.fromRGBO(255, 133, 155, 1)
-                            : const Color.fromRGBO(116, 119, 132, 1),
-                    fontSize: 12 * scaleFactor,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                // 하단 여백 제거 (위쪽으로 올림)
-              ],
+    return GestureDetector(
+      onTap: () {
+        onTabSelected(index);
+      },
+      behavior: HitTestBehavior.opaque, // 투명 영역까지 탭 가능하게
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: 4 * scaleFactor, // 수직 패딩 감소
+          horizontal: 8 * scaleFactor,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min, // 최소 크기만 차지
+          mainAxisAlignment: MainAxisAlignment.center, // 중앙 정렬로 변경
+          children: [
+            // 상단 여백 제거
+            Image.asset(
+              imagePath,
+              width: 24 * scaleFactor,
+              height: 24 * scaleFactor,
+              color:
+                  isSelected
+                      ? const Color.fromRGBO(255, 133, 155, 1)
+                      : const Color.fromRGBO(175, 178, 191, 1),
             ),
-          ),
+            SizedBox(height: 2 * scaleFactor), // 간격 줄임
+            Text(
+              label,
+              style: TextStyle(
+                color:
+                    isSelected
+                        ? const Color.fromRGBO(255, 133, 155, 1)
+                        : const Color.fromRGBO(116, 119, 132, 1),
+                fontSize: 12 * scaleFactor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
