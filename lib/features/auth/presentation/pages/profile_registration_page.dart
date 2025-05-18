@@ -254,7 +254,11 @@ class _ProfileRegistrationPageState
                       ),
                     ),
                   ),
-                  SizedBox(height: 16 * scaleFactor),
+                  SizedBox(
+                    height:
+                        MediaQuery.of(context).viewPadding.bottom +
+                        16 * scaleFactor,
+                  ),
                 ],
               ),
             );

@@ -44,33 +44,29 @@ class _AgreementRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 텍스트에 따라 밑줄 적용 및 탭 동작 추가
+    // 밑줄 적용 여부
     final bool showUnderline =
         text.contains('전체 동의') ||
         text.contains('이용약관') ||
         text.contains('개인정보');
 
-    // 텍스트 부분을 GestureDetector로 감싸 탭 동작 추가
-    return Container(
-      width: 335 * scaleFactor,
-      height: 24 * scaleFactor,
-      margin: EdgeInsets.symmetric(vertical: 4 * scaleFactor),
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4 * scaleFactor),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
             child: GestureDetector(
               onTap: () {
                 if (text.contains('이용약관')) {
-                  // 이용약관 페이지로 이동
                   context.push('/termsOfService');
                 } else if (text.contains('개인정보')) {
-                  // 개인정보 처리방침 페이지로 이동
                   context.push('/privacyPolicyPage');
                 }
-                // 전체 동의나 마케팅 정보 수신은 페이지 이동 없음
               },
               child: Text(
                 text,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16 * scaleFactor,
                   fontWeight: FontWeight.w400,
@@ -87,31 +83,27 @@ class _AgreementRow extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.all(2 * scaleFactor),
-            child: SizedBox(
-              width: 20 * scaleFactor,
-              height: 20 * scaleFactor,
-              child: Checkbox(
-                value: isChecked,
-                activeColor: const Color(0xFFFF859B),
-                checkColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(3),
-                ),
-                side:
-                    isChecked
-                        ? null
-                        : BorderSide(
-                          color: const Color(0xFFC3C6CF),
-                          width: 2 * scaleFactor,
-                        ),
-                onChanged: (bool? newValue) {
-                  // 체크박스의 상태 변경 시, 부모에게 새 값(newValue)을 전달합니다.
-                  onChanged(newValue ?? false);
-                },
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          SizedBox(
+            width: 20 * scaleFactor,
+            height: 20 * scaleFactor,
+            child: Checkbox(
+              value: isChecked,
+              activeColor: const Color(0xFFFF859B),
+              checkColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(3),
               ),
+              side:
+                  isChecked
+                      ? null
+                      : BorderSide(
+                        color: const Color(0xFFC3C6CF),
+                        width: 2 * scaleFactor,
+                      ),
+              onChanged: (bool? newValue) {
+                onChanged(newValue ?? false);
+              },
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
           ),
         ],
