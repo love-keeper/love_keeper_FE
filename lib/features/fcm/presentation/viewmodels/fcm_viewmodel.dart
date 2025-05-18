@@ -112,7 +112,7 @@ class FCMViewModel extends _$FCMViewModel {
 
       await _initLocalNotifications();
       _setupFCMListeners();
-      await testFCM();
+      await setupFCMToken();
 
       // 초기화 완료 표시
       _isInitialized = true;
@@ -121,8 +121,8 @@ class FCMViewModel extends _$FCMViewModel {
     }
   }
 
-  // FCM 시도 합수
-  Future<void> testFCM() async {
+  // FCM 토큰 설정 함수 (testFCM에서 이름 변경됨)
+  Future<void> setupFCMToken() async {
     try {
       final token = await _firebaseMessaging.getToken();
       print('==========================================');
@@ -133,7 +133,7 @@ class FCMViewModel extends _$FCMViewModel {
         await Clipboard.setData(ClipboardData(text: token));
         print('FCM 토큰이 클립보드에 복사되었습니다.');
 
-        // 토큰 등록 시도 (선택적)
+        // 토큰 등록 시도
         try {
           await registerToken(token);
         } catch (e) {
@@ -378,65 +378,15 @@ class FCMViewModel extends _$FCMViewModel {
 
     if (notification != null) {
       print('🔔 알림 수신 - 제목: ${notification.title}, 내용: ${notification.body}');
-      _showNotification(notification);
     } else {
       print('⚠️ 알림 데이터는 있지만 notification 객체가 null입니다');
 
-      // 데이터 메시지인 경우 수동으로 알림 생성
+      // 데이터 메시지 정보 로깅
       if (message.data.isNotEmpty) {
         final title = message.data['title'] ?? '새 알림';
         final body = message.data['body'] ?? '새로운 메시지가 도착했습니다';
-
-        print('📱 데이터 메시지로부터 알림 생성: 제목=$title, 내용=$body');
-
-        _showCustomNotification(title, body);
+        print('📱 데이터 메시지 정보: 제목=$title, 내용=$body');
       }
-    }
-  }
-
-  Future<void> _showNotification(RemoteNotification notification) async {
-    print('📱 알림 표시 시도 - 제목: ${notification.title}');
-
-    const iOSDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-    const platformDetails = NotificationDetails(iOS: iOSDetails);
-
-    try {
-      await _flutterLocalNotificationsPlugin.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        platformDetails,
-      );
-      print('✅ 알림 표시 성공');
-    } catch (e) {
-      print('❌ 알림 표시 실패: $e');
-    }
-  }
-
-  Future<void> _showCustomNotification(String title, String body) async {
-    print('📱 커스텀 알림 표시 시도 - 제목: $title');
-
-    const iOSDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
-    const platformDetails = NotificationDetails(iOS: iOSDetails);
-
-    try {
-      await _flutterLocalNotificationsPlugin.show(
-        title.hashCode,
-        title,
-        body,
-        platformDetails,
-      );
-      print('✅ 커스텀 알림 표시 성공');
-    } catch (e) {
-      print('❌ 커스텀 알림 표시 실패: $e');
     }
   }
 }
