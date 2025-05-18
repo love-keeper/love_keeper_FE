@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/features/letters/domain/entities/letter.dart';
 import 'package:love_keeper/features/letters/presentation/viewmodels/letters_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/letter_box_widget.dart';
@@ -241,6 +242,7 @@ class _StoragePageState extends ConsumerState<StoragePage> {
     );
   }
 
+  // StoragePage.dart의 _buildLetterStorage 메서드 수정
   Widget _buildLetterStorage() {
     final screenWidth = MediaQuery.of(context).size.width;
     final double boxWidth = (screenWidth - 55) / 2;
@@ -260,8 +262,9 @@ class _StoragePageState extends ConsumerState<StoragePage> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: GridView.builder(
+            controller: _letterScrollController,
             padding: const EdgeInsets.only(top: 0),
-            itemCount: sortedLetters.length,
+            itemCount: sortedLetters.length + (_letterHasNext ? 1 : 0),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               crossAxisSpacing: 15,
@@ -269,6 +272,13 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               childAspectRatio: boxWidth / boxHeight,
             ),
             itemBuilder: (context, index) {
+              if (index >= sortedLetters.length) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
               final letter = sortedLetters[index];
               final myNickname = memberInfo?.nickname ?? '나';
               final partnerNickname = memberInfo?.coupleNickname ?? '상대방';
@@ -279,10 +289,28 @@ class _StoragePageState extends ConsumerState<StoragePage> {
               final formattedDate = DateFormat(
                 'yyyy. MM. dd.',
               ).format(DateTime.parse(letter.sentDate));
-              return LetterBoxWidget(
-                title: title,
-                content: letter.content,
-                date: formattedDate,
+
+              return GestureDetector(
+                onTap: () {
+                  // 스웨거 API에 letterId가 필요하다면, 이를 추가 데이터에서 얻거나
+                  // 아니면 우회하는 방법을 생각해야 합니다.
+                  context.go(
+                    RouteNames.receivedLetterPage,
+                    extra: {
+                      'sender': letter.senderNickname,
+                      'receiver': letter.receiverNickname,
+                      'content': letter.content,
+                      'date': letter.sentDate,
+                      // letterId를 가지고 있지 않으므로 인덱스를 임시로 사용
+                      'index': index.toString(),
+                    },
+                  );
+                },
+                child: LetterBoxWidget(
+                  title: title,
+                  content: letter.content,
+                  date: formattedDate,
+                ),
               );
             },
           ),

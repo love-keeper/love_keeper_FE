@@ -297,17 +297,25 @@ GoRouter appRouter(AppRouterRef ref) {
           );
         },
       ),
+
+      // app_router.dart에서 receivedLetterPage 라우트 수정
       GoRoute(
-        name: RouteNames.receivedLetterPage,
         path: RouteNames.receivedLetterPage,
-        builder: (context, state) {
+        name: RouteNames.receivedLetterPage,
+        pageBuilder: (context, state) {
           final Map<String, dynamic>? letterData =
               state.extra as Map<String, dynamic>?;
           if (letterData == null) {
             // 오류 처리: 편지 데이터가 없는 경우
-            return Scaffold(body: Center(child: Text('편지 데이터를 찾을 수 없습니다.')));
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: Scaffold(body: Center(child: Text('편지 데이터를 찾을 수 없습니다.'))),
+            );
           }
-          return ReceivedLetterPage(letterData: letterData);
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: ReceivedLetterPage(letterData: letterData),
+          );
         },
       ),
 

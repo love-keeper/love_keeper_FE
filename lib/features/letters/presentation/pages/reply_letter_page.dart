@@ -93,7 +93,7 @@ class _ReplyLetterPageState extends ConsumerState<ReplyLetterPage> {
   }
 
   void _exitToHome() {
-    context.go('/main');
+    context.go('/storage'); // 저장소 페이지로 직접 이동
   }
 
   Future<void> _sendLetter() async {
@@ -141,12 +141,13 @@ class _ReplyLetterPageState extends ConsumerState<ReplyLetterPage> {
     setState(() {
       stepTexts[currentStep] = _textController.text;
     });
+
     // 0단계부터 4단계까지 모두 임시저장 (빈 문자열도 포함)
     for (int step = 0; step < 4; step++) {
       final int draftOrder = step + 1;
       try {
         final String content = stepTexts[step];
-        final result = await ref
+        await ref
             .read(draftsViewModelProvider.notifier)
             .createDraft(
               draftOrder,
@@ -157,11 +158,9 @@ class _ReplyLetterPageState extends ConsumerState<ReplyLetterPage> {
           'Saved order $draftOrder with content: $content, type: ANSWER',
         );
       } catch (e) {
-        // 오류 처리 코드...
+        debugPrint('드래프트 저장 실패 - order: $draftOrder, Error: $e');
       }
     }
-    Navigator.pop(context);
-    context.go('/main');
   }
 
   String getButtonText() {
@@ -237,10 +236,14 @@ class _ReplyLetterPageState extends ConsumerState<ReplyLetterPage> {
                 }
               }
 
-              Navigator.pop(context);
-              context.go('/main');
+              Navigator.pop(context); // 바텀시트 닫기
+              context.go('/storage'); // 저장소 페이지로 직접 이동
             },
-            onSave: _saveTemporaryLetter,
+            onSave: () async {
+              await _saveTemporaryLetter();
+              Navigator.pop(context); // 다이얼로그 닫기
+              context.go('/storage'); // 저장소 페이지로 직접 이동
+            },
             onDismiss: () => Navigator.pop(context),
           );
         },
@@ -251,7 +254,7 @@ class _ReplyLetterPageState extends ConsumerState<ReplyLetterPage> {
   void handleBackButton() {
     if (currentStep == 0) {
       if (_textController.text.isEmpty) {
-        _exitToHome();
+        context.go('/storage'); // 저장소 페이지로 직접 이동
       } else {
         displayExitDialog();
       }
@@ -318,7 +321,7 @@ class _ReplyLetterPageState extends ConsumerState<ReplyLetterPage> {
             padding: EdgeInsets.only(right: 20.0 * scaleFactor),
             child: TextButton(
               onPressed: () {
-                // 모든 단계의 텍스트와 현재 입력값이 모두 비어있으면 바로 메인 페이지로 이동
+                // 모든 단계의 텍스트와 현재 입력값이 모두 비어있으면 바로 저장소 페이지로 이동
                 if (stepTexts.every((text) => text.isEmpty) &&
                     _textController.text.isEmpty) {
                   _exitToHome();
