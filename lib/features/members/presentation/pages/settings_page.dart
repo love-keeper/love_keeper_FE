@@ -111,7 +111,8 @@ class SettingsPage extends ConsumerWidget {
               scaleFactor,
               onTap: () {
                 context.pushNamed(
-                  '/disconnectPage',
+                  RouteNames.disconnectPage,
+
                   extra: {
                     'appBarTitle': '회원탈퇴',
                     'richTextPrefix': '러브키퍼',

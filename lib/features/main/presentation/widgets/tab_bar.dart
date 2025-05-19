@@ -95,6 +95,7 @@ class TabBarWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min, // 최소 크기만 차지
           mainAxisAlignment: MainAxisAlignment.center, // 중앙 정렬로 변경
           children: [
+            SizedBox(height: 5 * scaleFactor),
             // 상단 여백 제거
             Image.asset(
               imagePath,

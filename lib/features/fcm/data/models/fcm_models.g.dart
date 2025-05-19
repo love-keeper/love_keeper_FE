@@ -6,14 +6,14 @@ part of 'fcm_models.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$FCMTokenRequestImpl _$$FCMTokenRequestImplFromJson(
+_$$FCMTokenRequestImplImpl _$$$FCMTokenRequestImplImplFromJson(
         Map<String, dynamic> json) =>
-    _$FCMTokenRequestImpl(
+    _$$FCMTokenRequestImplImpl(
       token: json['token'] as String,
     );
 
-Map<String, dynamic> _$$FCMTokenRequestImplToJson(
-        _$FCMTokenRequestImpl instance) =>
+Map<String, dynamic> _$$$FCMTokenRequestImplImplToJson(
+        _$$FCMTokenRequestImplImpl instance) =>
     <String, dynamic>{
       'token': instance.token,
     };
