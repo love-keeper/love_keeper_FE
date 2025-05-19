@@ -9,11 +9,35 @@ import 'package:love_keeper/core/config/routes/app_router.dart';
 import 'package:love_keeper/features/fcm/presentation/viewmodels/fcm_viewmodel.dart';
 import 'package:love_keeper/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uni_links/uni_links.dart';
+
 
 // 백그라운드 메시지 핸들러
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print("백그라운드 메시지 수신: ${message.messageId}");
+}
+void initUniLinks() async {
+
+  final initialLink = await getInitialLink();
+  if (initialLink != null) {
+    handleDeepLink(Uri.parse(initialLink));
+  }
+
+
+  linkStream.listen((String? link) {
+    if (link != null) {
+      handleDeepLink(Uri.parse(link));
+    }
+  });
+}
+
+void handleDeepLink(Uri uri) {
+  if (uri.path == '/password-change') {
+    final email = uri.queryParameters['email'];
+    final code = uri.queryParameters['code'];
+    
+  }
 }
 
 void main() async {
