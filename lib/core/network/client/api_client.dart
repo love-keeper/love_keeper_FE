@@ -149,6 +149,9 @@ abstract class ApiClient {
     @Body() VerifyEmailCodeRequest request,
   );
 
+  @DELETE('/api/members')
+  Future<ApiResponse<String>> deleteMember();
+
   // DRAFTS -> 수정
 
   @POST('/api/drafts')
@@ -183,7 +186,7 @@ abstract class ApiClient {
 
   @GET('/api/letters/by-date')
   Future<ApiResponse<LetterListResponse>> getLettersByDate(
-    @Query('date') String date,
+    @Query('date') String formattedDate,
     @Query('page') int page,
     @Query('size') int size,
   );

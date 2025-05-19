@@ -14,55 +14,62 @@ class LetterBoxWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20), // 박스 안의 패딩 20
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20), // 모서리 둥글게 20
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, // 위, 아래 요소를 양 끝에 배치
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 상단 부분: 제목과 내용 (Column으로 묶어도 됨)
-          Column(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double boxHeight = constraints.maxHeight;
+
+        return Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  letterSpacing: -0.45,
-                  height: 26 / 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(39, 40, 44, 1),
-                ),
+              // 제목 + 내용
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      height: 1.4,
+                      letterSpacing: -0.45,
+                      color: Color(0xFF27282C),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    content,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      height: 1.6,
+                      letterSpacing: -0.3,
+                      color: Color(0xFF747784),
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
+              // 날짜
               Text(
-                content,
+                date,
                 style: const TextStyle(
-                  fontSize: 12,
-                  letterSpacing: -0.3,
-                  height: 20 / 12,
-                  color: Color.fromRGBO(116, 119, 132, 1),
+                  fontSize: 11,
+                  height: 1.4,
+                  color: Color(0xFF747784),
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-          // 하단 부분: 날짜
-          Text(
-            date,
-            style: const TextStyle(
-              fontSize: 12,
-              height: 20 / 12,
-              color: Color.fromRGBO(116, 119, 132, 1),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

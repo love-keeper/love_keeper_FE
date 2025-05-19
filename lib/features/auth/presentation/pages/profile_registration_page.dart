@@ -300,6 +300,7 @@ class _ProfileRegistrationPageState
         providerId: _providerId,
         profileImage: _profileImage,
         password: authState.password,
+        context: context,
       );
       debugPrint('Signup successful: ${user.email}');
 
@@ -308,6 +309,7 @@ class _ProfileRegistrationPageState
         provider: _provider ?? 'LOCAL',
         providerId: _providerId,
         password: authState.password, // 비밀번호 추가
+        context: context,
       );
       debugPrint('Login successful: ${loginUser.email}');
 

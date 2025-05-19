@@ -4,18 +4,31 @@ import 'package:go_router/go_router.dart';
 import 'package:love_keeper/core/config/routes/route_names.dart';
 import 'package:love_keeper/core/providers/auth_state_provider.dart';
 import 'package:love_keeper/features/auth/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:love_keeper/features/couples/presentation/viewmodels/couples_viewmodel.dart';
 import 'package:love_keeper/features/letters/presentation/widgets/custom_bottom_sheet_dialog.dart';
+import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
   final String appVersion = '0.1.1';
 
+  Future<void> openNotificationSettings() async {
+    final status = await Permission.notification.status;
+    if (status.isDenied || status.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double baseWidth = 375.0;
     final double scaleFactor = deviceWidth / baseWidth;
+
+    final partnerNickname =
+        ref.watch(couplesViewModelProvider).value?.partnerNickname ?? '상대방';
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -52,6 +65,7 @@ class SettingsPage extends ConsumerWidget {
           ),
         ),
       ),
+
       // 스크롤 가능하게 SingleChildScrollView로 감싸기
       body: SingleChildScrollView(
         child: Column(
@@ -403,10 +417,11 @@ class _PushNotificationToggleState extends State<PushNotificationToggle> {
     final double circleSize = 16 * widget.scaleFactor;
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         setState(() {
           isEnabled = !isEnabled;
         });
+        await openAppSettings(); // 또는 openNotificationSettings() 함수 추출해도 됨
       },
       child: Stack(
         children: [

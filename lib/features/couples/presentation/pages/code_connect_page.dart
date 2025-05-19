@@ -174,7 +174,15 @@ class _CodeConnectPageState extends ConsumerState<CodeConnectPage> {
               color: const Color(0xFF27282C),
             ),
           ),
+
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh, color: Color(0xFF27282C)),
+              onPressed: _generateInviteCode, // 새로고침 눌렀을 때 실행할 함수
+            ),
+          ],
         ),
+
         body: Column(
           children: [
             Expanded(

@@ -2,6 +2,7 @@ import 'package:love_keeper/features/letters/data/repositories/letters_repositor
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../domain/entities/letter_list.dart';
 import '../../domain/repositories/letters_repository.dart';
+import 'package:intl/intl.dart';
 
 part 'letters_viewmodel.g.dart';
 
@@ -17,13 +18,13 @@ class LettersViewModel extends _$LettersViewModel {
   @override
   AsyncValue<LetterList?> build() {
     _repository = ref.watch(lettersRepositoryProvider);
-    fetchInitialLetters(); // 첫 페이지 로드
     return const AsyncValue.loading();
   }
 
   Future<void> fetchInitialLetters() async {
     _page = 0;
     _hasNext = true;
+    state = const AsyncLoading(); // optional but recommended
     await fetchMoreLetters();
   }
 
@@ -34,7 +35,14 @@ class LettersViewModel extends _$LettersViewModel {
   }
 
   Future<void> fetchMoreLetters() async {
-    if (_isFetching || !_hasNext) return;
+    if (_isFetching || !_hasNext) {
+      // 🔥 여기가 무한로딩 방지 핵심!
+      if (state is! AsyncData) {
+        state = const AsyncValue.data(null);
+      }
+      return;
+    }
+
     _isFetching = true;
     try {
       final newLetters = await _repository.getLetterList(_page, _size);
@@ -93,10 +101,20 @@ class LettersViewModel extends _$LettersViewModel {
     }
   }
 
-  Future<LetterList> getLettersByDate(String date, int page, int size) async {
-    state = const AsyncValue.loading();
+  Future<LetterList> getLettersByDate(
+    DateTime selectedDate,
+    int page,
+    int size,
+  ) async {
+    final formattedDate = DateFormat("yyyy-MM-dd").format(selectedDate);
+    print('📤 최종 요청 formattedDate: $formattedDate');
+
     try {
-      final letterList = await _repository.getLettersByDate(date, page, size);
+      final letterList = await _repository.getLettersByDate(
+        formattedDate, // ✅ 인코딩하지 말고 그대로 넘긴다
+        page,
+        size,
+      );
       state = AsyncValue.data(letterList);
       return letterList;
     } catch (e, stackTrace) {

@@ -1,8 +1,7 @@
 import 'dart:io';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
-// repository provider import 추가
-import 'package:love_keeper/features/members/data/repositories/members_repository_impl.dart';
+import 'package:love_keeper/features/members/data/repositories/members_repository_impl.dart'; // repository provider 포함된 파일
 
 part 'members_viewmodel.g.dart';
 
@@ -10,7 +9,7 @@ part 'members_viewmodel.g.dart';
 class MembersViewModel extends _$MembersViewModel {
   @override
   AsyncValue<MemberInfo?> build() {
-    // 초기 데이터 로드를 위해 지연 호출
+    // 앱 시작 시 초기 데이터 로드
     Future(() => fetchMemberInfo());
     return const AsyncValue.data(null);
   }
@@ -18,7 +17,6 @@ class MembersViewModel extends _$MembersViewModel {
   Future<void> fetchMemberInfo() async {
     state = const AsyncValue.loading();
     try {
-      // 정삭적으로 repository provider 를 참조
       final repo = ref.watch(membersRepositoryProvider);
       final memberInfo = await repo.getMemberInfo();
       state = AsyncValue.data(memberInfo);
@@ -66,7 +64,7 @@ class MembersViewModel extends _$MembersViewModel {
         newPassword,
         newPasswordConfirm,
       );
-      // 상태에는 기존 데이터를 유지
+      // 에러 없으면 이전 state 유지
       state = AsyncValue.data(state.value);
       return result;
     } catch (e, st) {
@@ -96,7 +94,6 @@ class MembersViewModel extends _$MembersViewModel {
     try {
       final repo = ref.watch(membersRepositoryProvider);
       final result = await repo.sendEmailCode(email);
-      // 상태 유지
       state = AsyncValue.data(state.value);
       return result;
     } catch (e, st) {
@@ -111,6 +108,20 @@ class MembersViewModel extends _$MembersViewModel {
       final repo = ref.watch(membersRepositoryProvider);
       final result = await repo.verifyEmailCode(email, code);
       await fetchMemberInfo();
+      return result;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
+
+  // 회원 탈퇴
+  Future<String> deleteMember() async {
+    state = const AsyncValue.loading();
+    try {
+      final repo = ref.watch(membersRepositoryProvider);
+      final result = await repo.deleteMember();
+      state = const AsyncValue.data(null);
       return result;
     } catch (e, st) {
       state = AsyncValue.error(e, st);

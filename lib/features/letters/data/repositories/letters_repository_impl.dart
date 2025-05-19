@@ -56,12 +56,15 @@ class LettersRepositoryImpl implements LettersRepository {
 
   @override
   Future<Domain.LetterList> getLettersByDate(
-    String date,
+    String formattedDate,
     int page,
     int size,
   ) async {
-    // Domain.LetterList 사용
-    final response = await apiClient.getLettersByDate(date, page, size);
+    final response = await apiClient.getLettersByDate(
+      formattedDate,
+      page,
+      size,
+    );
     _handleResponse(response);
     return Domain.LetterList(
       letters:

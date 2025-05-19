@@ -26,6 +26,8 @@ mixin _$CoupleInfo {
   String? get partnerProfileImageUrl => throw _privateConstructorUsedError;
   String get startedAt => throw _privateConstructorUsedError;
   int get days => throw _privateConstructorUsedError;
+  String? get endedAt => throw _privateConstructorUsedError;
+  String? get coupleStatus => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -45,7 +47,9 @@ abstract class $CoupleInfoCopyWith<$Res> {
       String? myProfileImageUrl,
       String? partnerProfileImageUrl,
       String startedAt,
-      int days});
+      int days,
+      String? endedAt,
+      String? coupleStatus});
 }
 
 /// @nodoc
@@ -67,6 +71,8 @@ class _$CoupleInfoCopyWithImpl<$Res, $Val extends CoupleInfo>
     Object? partnerProfileImageUrl = freezed,
     Object? startedAt = null,
     Object? days = null,
+    Object? endedAt = freezed,
+    Object? coupleStatus = freezed,
   }) {
     return _then(_value.copyWith(
       coupleId: null == coupleId
@@ -93,6 +99,14 @@ class _$CoupleInfoCopyWithImpl<$Res, $Val extends CoupleInfo>
           ? _value.days
           : days // ignore: cast_nullable_to_non_nullable
               as int,
+      endedAt: freezed == endedAt
+          ? _value.endedAt
+          : endedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      coupleStatus: freezed == coupleStatus
+          ? _value.coupleStatus
+          : coupleStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -111,7 +125,9 @@ abstract class _$$CoupleInfoImplCopyWith<$Res>
       String? myProfileImageUrl,
       String? partnerProfileImageUrl,
       String startedAt,
-      int days});
+      int days,
+      String? endedAt,
+      String? coupleStatus});
 }
 
 /// @nodoc
@@ -131,6 +147,8 @@ class __$$CoupleInfoImplCopyWithImpl<$Res>
     Object? partnerProfileImageUrl = freezed,
     Object? startedAt = null,
     Object? days = null,
+    Object? endedAt = freezed,
+    Object? coupleStatus = freezed,
   }) {
     return _then(_$CoupleInfoImpl(
       coupleId: null == coupleId
@@ -157,6 +175,14 @@ class __$$CoupleInfoImplCopyWithImpl<$Res>
           ? _value.days
           : days // ignore: cast_nullable_to_non_nullable
               as int,
+      endedAt: freezed == endedAt
+          ? _value.endedAt
+          : endedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      coupleStatus: freezed == coupleStatus
+          ? _value.coupleStatus
+          : coupleStatus // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -170,7 +196,9 @@ class _$CoupleInfoImpl implements _CoupleInfo {
       this.myProfileImageUrl = null,
       this.partnerProfileImageUrl = null,
       required this.startedAt,
-      required this.days});
+      required this.days,
+      this.endedAt,
+      this.coupleStatus});
 
   factory _$CoupleInfoImpl.fromJson(Map<String, dynamic> json) =>
       _$$CoupleInfoImplFromJson(json);
@@ -189,10 +217,14 @@ class _$CoupleInfoImpl implements _CoupleInfo {
   final String startedAt;
   @override
   final int days;
+  @override
+  final String? endedAt;
+  @override
+  final String? coupleStatus;
 
   @override
   String toString() {
-    return 'CoupleInfo(coupleId: $coupleId, partnerNickname: $partnerNickname, myProfileImageUrl: $myProfileImageUrl, partnerProfileImageUrl: $partnerProfileImageUrl, startedAt: $startedAt, days: $days)';
+    return 'CoupleInfo(coupleId: $coupleId, partnerNickname: $partnerNickname, myProfileImageUrl: $myProfileImageUrl, partnerProfileImageUrl: $partnerProfileImageUrl, startedAt: $startedAt, days: $days, endedAt: $endedAt, coupleStatus: $coupleStatus)';
   }
 
   @override
@@ -210,13 +242,24 @@ class _$CoupleInfoImpl implements _CoupleInfo {
                 other.partnerProfileImageUrl == partnerProfileImageUrl) &&
             (identical(other.startedAt, startedAt) ||
                 other.startedAt == startedAt) &&
-            (identical(other.days, days) || other.days == days));
+            (identical(other.days, days) || other.days == days) &&
+            (identical(other.endedAt, endedAt) || other.endedAt == endedAt) &&
+            (identical(other.coupleStatus, coupleStatus) ||
+                other.coupleStatus == coupleStatus));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, coupleId, partnerNickname,
-      myProfileImageUrl, partnerProfileImageUrl, startedAt, days);
+  int get hashCode => Object.hash(
+      runtimeType,
+      coupleId,
+      partnerNickname,
+      myProfileImageUrl,
+      partnerProfileImageUrl,
+      startedAt,
+      days,
+      endedAt,
+      coupleStatus);
 
   @JsonKey(ignore: true)
   @override
@@ -239,7 +282,9 @@ abstract class _CoupleInfo implements CoupleInfo {
       final String? myProfileImageUrl,
       final String? partnerProfileImageUrl,
       required final String startedAt,
-      required final int days}) = _$CoupleInfoImpl;
+      required final int days,
+      final String? endedAt,
+      final String? coupleStatus}) = _$CoupleInfoImpl;
 
   factory _CoupleInfo.fromJson(Map<String, dynamic> json) =
       _$CoupleInfoImpl.fromJson;
@@ -256,6 +301,10 @@ abstract class _CoupleInfo implements CoupleInfo {
   String get startedAt;
   @override
   int get days;
+  @override
+  String? get endedAt;
+  @override
+  String? get coupleStatus;
   @override
   @JsonKey(ignore: true)
   _$$CoupleInfoImplCopyWith<_$CoupleInfoImpl> get copyWith =>

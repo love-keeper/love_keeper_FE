@@ -33,7 +33,9 @@ class _MyPageState extends ConsumerState<MyPage> {
   void initState() {
     super.initState();
     Future(() {
-      ref.read(membersViewModelProvider.notifier).fetchMemberInfo();
+      ref
+          .read(membersViewModelProvider.notifier)
+          .fetchMemberInfo(); // 항상 새로 불러오기
     });
   }
 

@@ -38,13 +38,28 @@ class DraftsViewModel extends _$DraftsViewModel {
 
   Future<Draft> getDraft(int order, {required DraftType draftType}) async {
     state = const AsyncValue.loading();
+
     try {
       final draft = await _repository.getDraft(order, draftType: draftType);
       state = AsyncValue.data(draft);
       return draft;
     } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
-      rethrow;
+      print("getDraft 오류: $e");
+
+      // 404 에러인 경우 → 빈 드래프트로 처리
+      if (e.toString().contains('404')) {
+        final emptyDraft = Draft(
+          order: order,
+          content: '',
+          draftType: draftType,
+        );
+        state = AsyncValue.data(emptyDraft);
+        return emptyDraft;
+      }
+
+      // 그 외 에러도 무한 로딩 방지를 위해 fallback 상태로 처리
+      state = AsyncValue.data(null); // 또는 에러화면 띄우고 싶다면 AsyncError로 남겨도 됨
+      return Draft(order: order, content: '', draftType: draftType);
     }
   }
 

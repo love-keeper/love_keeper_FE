@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:love_keeper/features/main/presentation/widgets/dday_box.dart';
@@ -48,6 +50,7 @@ class MainPage extends StatelessWidget {
                     child: CustomInfoCard(
                       title: '비밀 쪽지',
                       imagePath: 'assets/images/main_page/secret_note.png',
+                      isLocked: true,
                     ),
                   ),
                 ],
@@ -55,7 +58,7 @@ class MainPage extends StatelessWidget {
               const SizedBox(height: 12),
               const StorageSection(),
               const SizedBox(height: 12),
-              const AdSection(),
+              // const AdSection(),
             ],
           ),
         ),
@@ -69,34 +72,43 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       extendBody: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        scrolledUnderElevation: 0,
-        elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 20),
-          child: Image.asset(
-            'assets/images/main_page/img_logo.png',
-            width: 40,
-            height: 35,
-            fit: BoxFit.contain,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: ClipRRect(
+          // 블러 처리를 위한 ClipRRect
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0), // 블러 강도 조절
+            child: AppBar(
+              backgroundColor: Colors.white.withOpacity(0.0), // 반투명 흰색
+              scrolledUnderElevation: 0,
+              elevation: 0,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Image.asset(
+                  'assets/images/main_page/img_logo.png',
+                  width: 40,
+                  height: 35,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              actions: [
+                IconButton(
+                  icon: Image.asset(
+                    'assets/images/main_page/Ic_alarm_normal.png',
+                    width: 24,
+                    height: 24,
+                  ),
+                  onPressed: () {
+                    context.push('/notification');
+                  },
+                ),
+                const SizedBox(width: 10),
+              ],
+            ),
           ),
         ),
-        actions: [
-          IconButton(
-            icon: Image.asset(
-              'assets/images/main_page/Ic_alarm_normal.png',
-              width: 24,
-              height: 24,
-            ),
-            onPressed: () {
-              // NotificationPage로 이동
-              context.push('/notification');
-            },
-          ),
-          const SizedBox(width: 10),
-        ],
       ),
+
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

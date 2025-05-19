@@ -161,6 +161,7 @@ class SocialLoginButtons extends ConsumerWidget {
             email: email,
             provider: provider,
             providerId: providerId,
+            context: context,
           );
           print('Existing user logged in: ${user.email}');
 

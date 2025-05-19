@@ -38,6 +38,12 @@ class MembersRepositoryImpl implements MembersRepository {
   }
 
   @override
+  Future<String> deleteMember() async {
+    final response = await apiClient.deleteMember();
+    return response.result ?? '탈퇴 성공'; // 기본 메시지 제공 or throw
+  }
+
+  @override
   Future<String> updateNickname(String nickname) async {
     final request = UpdateNicknameRequest(nickname: nickname);
     final response = await apiClient.updateNickname(request);
