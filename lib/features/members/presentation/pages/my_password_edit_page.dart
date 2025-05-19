@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,9 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
   late FocusNode _currentPwFocusNode;
   bool _isLoading = false;
 
+  // ① 서버 에러 MEMBER042 처리용 가이드 메시지
+  String _currentPwGuideMessage = '';
+
   final RegExp newPasswordRegex = RegExp(
     r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};:"\\|,.<>\/?]).{8,}$',
   );
@@ -27,9 +31,17 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
   void initState() {
     super.initState();
     _currentPwFocusNode = FocusNode();
-    _currentPwController.addListener(() => setState(() {}));
+
+    // ② 입력할 때마다 가이드 메시지 초기화
+    _currentPwController.addListener(() {
+      if (_currentPwGuideMessage.isNotEmpty) {
+        setState(() => _currentPwGuideMessage = '');
+      }
+      setState(() {}); // 버튼 활성화 체크용
+    });
     _newPwController.addListener(() => setState(() {}));
     _confirmNewPwController.addListener(() => setState(() {}));
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _currentPwFocusNode.requestFocus();
     });
@@ -49,67 +61,84 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
     final newPw = _newPwController.text;
     final confirmPw = _confirmNewPwController.text;
 
-    setState(() {
-      _isLoading = true;
-    });
+    // 클라이언트 검증
+    if (newPw != confirmPw) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('새 비밀번호가 일치하지 않습니다.')));
+      return;
+    }
+    if (!newPasswordRegex.hasMatch(newPw)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('비밀번호는 8자 이상, 영문/숫자/특수문자를 포함해야 합니다.')),
+      );
+      return;
+    }
 
+    setState(() => _isLoading = true);
     try {
       final result = await ref
           .read(membersViewModelProvider.notifier)
           .updatePassword(currentPw, newPw, confirmPw);
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
+
       if (result == '비밀번호 변경 성공') {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('비밀번호가 성공적으로 변경되었습니다.')));
         context.pop();
       }
     } catch (e) {
-      debugPrint('Update password error: $e');
-      setState(() {
-        _isLoading = false;
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('비밀번호 변경 실패: $e')));
+      setState(() => _isLoading = false);
+
+      // ③ 서버 에러 MEMBER042일 때만 필드 밑 가이드 메시지로 표시
+      if (e is DioException &&
+          e.response?.data is Map<String, dynamic> &&
+          e.response!.data['code'] == 'MEMBER042') {
+        setState(() {
+          _currentPwGuideMessage = '현재 비밀번호가 일치하지 않습니다.';
+        });
+        ref.invalidate(membersViewModelProvider);
+      } else {
+        // 그 외 에러는 SnackBar
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('비밀번호 변경 실패: ${e.toString()}')));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    const double baseWidth = 375.0;
-    final double scaleFactor = deviceWidth / baseWidth;
+    final deviceWidth = MediaQuery.of(context).size.width;
+    const baseWidth = 375.0;
+    final scaleFactor = deviceWidth / baseWidth;
 
-    final String currentPw = _currentPwController.text;
-    final String newPw = _newPwController.text;
-    final String confirmPw = _confirmNewPwController.text;
+    final currentPw = _currentPwController.text;
+    final newPw = _newPwController.text;
+    final confirmPw = _confirmNewPwController.text;
 
-    String currentPwGuideMessage = '';
-    if (currentPw.isNotEmpty) {
-      // 클라이언트 측 검증 제거, 서버에서 처리
-    }
+    final currentPwGuideMsg = _currentPwGuideMessage;
+    final newPwGuideMsg =
+        (newPw.isNotEmpty && !newPasswordRegex.hasMatch(newPw))
+            ? '비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요.'
+            : '';
+    final confirmPwGuideMsg =
+        (confirmPw.isNotEmpty && confirmPw != newPw)
+            ? '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.'
+            : '';
 
-    String newPwGuideMessage = '';
-    if (newPw.isNotEmpty && !newPasswordRegex.hasMatch(newPw)) {
-      newPwGuideMessage = '비밀번호가 조건을 충족하지 않습니다. 다시 입력해 주세요.';
-    }
-
-    String confirmPwGuideMessage = '';
-    if (confirmPw.isNotEmpty && confirmPw != newPw) {
-      confirmPwGuideMessage = '비밀번호가 일치하지 않습니다. 다시 입력해 주세요.';
-    }
-
-    final bool isSaveEnabled =
+    final isSaveEnabled =
         currentPw.isNotEmpty &&
         newPw.isNotEmpty &&
         confirmPw.isNotEmpty &&
-        currentPwGuideMessage.isEmpty &&
-        newPwGuideMessage.isEmpty &&
-        confirmPwGuideMessage.isEmpty &&
+        currentPwGuideMsg.isEmpty &&
+        newPwGuideMsg.isEmpty &&
+        confirmPwGuideMsg.isEmpty &&
         !_isLoading;
 
     return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(), // 화면 탭 시 키보드 내림
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
@@ -153,7 +182,7 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                           controller: _currentPwController,
                           scaleFactor: scaleFactor,
                           autofocus: true,
-                          guideMessage: currentPwGuideMessage,
+                          guideMessage: currentPwGuideMsg,
                           obscureText: true,
                           focusNode: _currentPwFocusNode,
                         ),
@@ -164,7 +193,7 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                           controller: _newPwController,
                           scaleFactor: scaleFactor,
                           autofocus: false,
-                          guideMessage: newPwGuideMessage,
+                          guideMessage: newPwGuideMsg,
                           obscureText: true,
                         ),
                         SizedBox(height: 36 * scaleFactor),
@@ -174,7 +203,7 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                           controller: _confirmNewPwController,
                           scaleFactor: scaleFactor,
                           autofocus: false,
-                          guideMessage: confirmPwGuideMessage,
+                          guideMessage: confirmPwGuideMsg,
                           obscureText: true,
                         ),
                       ],
@@ -200,9 +229,7 @@ class _MyPasswordEditPageState extends ConsumerState<MyPasswordEditPage> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        onPressed: () {
-                          context.push('/pwFinding');
-                        },
+                        onPressed: () => context.push('/pwFinding'),
                         child: Text(
                           '비밀번호를 잊으셨나요?',
                           textAlign: TextAlign.center,

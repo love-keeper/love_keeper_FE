@@ -1,41 +1,39 @@
 import 'dart:io';
-import 'package:love_keeper/features/members/data/repositories/members_repository_impl.dart';
-import 'package:love_keeper/features/members/domain/entities/member_info.dart'; // 일반 class 임포트
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import '../../domain/repositories/members_repository.dart';
+import 'package:love_keeper/features/members/domain/entities/member_info.dart';
+import 'package:love_keeper/features/members/data/repositories/members_repository_impl.dart'; // repository provider 포함된 파일
 
 part 'members_viewmodel.g.dart';
 
 @riverpod
 class MembersViewModel extends _$MembersViewModel {
-  late final MembersRepository _repository;
-
   @override
   AsyncValue<MemberInfo?> build() {
-    _repository = ref.watch(membersRepositoryProvider);
-    Future(() => fetchMemberInfo()); // 지연 호출로 초기 데이터 로드
+    // 앱 시작 시 초기 데이터 로드
+    Future(() => fetchMemberInfo());
     return const AsyncValue.data(null);
   }
 
   Future<void> fetchMemberInfo() async {
     state = const AsyncValue.loading();
     try {
-      final memberInfo = await _repository.getMemberInfo();
+      final repo = ref.watch(membersRepositoryProvider);
+      final memberInfo = await repo.getMemberInfo();
       state = AsyncValue.data(memberInfo);
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
     }
   }
 
   Future<String> updateNickname(String nickname) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.updateNickname(nickname);
-      await fetchMemberInfo(); // 정보 갱신
+      final repo = ref.watch(membersRepositoryProvider);
+      final result = await repo.updateNickname(nickname);
+      await fetchMemberInfo();
       return result;
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -43,11 +41,12 @@ class MembersViewModel extends _$MembersViewModel {
   Future<String> updateBirthday(String birthday) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.updateBirthday(birthday);
+      final repo = ref.watch(membersRepositoryProvider);
+      final result = await repo.updateBirthday(birthday);
       await fetchMemberInfo();
       return result;
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -59,15 +58,17 @@ class MembersViewModel extends _$MembersViewModel {
   ) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.updatePassword(
+      final repo = ref.watch(membersRepositoryProvider);
+      final result = await repo.updatePassword(
         currentPassword,
         newPassword,
         newPasswordConfirm,
       );
+      // 에러 없으면 이전 state 유지
       state = AsyncValue.data(state.value);
       return result;
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -75,20 +76,15 @@ class MembersViewModel extends _$MembersViewModel {
   Future<String> updateProfileImage(File? profileImage) async {
     state = const AsyncValue.loading();
     try {
-      if (profileImage == null) {
-        print('Profile image is null, setting to default');
-        final result = await _repository.updateProfileImage(null); // null 허용 시
-        await fetchMemberInfo();
-        return result;
-      } else {
-        print('Uploading profile image: ${profileImage.path}');
-        final result = await _repository.updateProfileImage(profileImage);
-        await fetchMemberInfo();
-        return result;
-      }
-    } catch (e, stackTrace) {
-      print('Error in updateProfileImage: $e');
-      state = AsyncValue.error(e, stackTrace);
+      final repo = ref.watch(membersRepositoryProvider);
+      final result =
+          profileImage == null
+              ? await repo.updateProfileImage(null)
+              : await repo.updateProfileImage(profileImage);
+      await fetchMemberInfo();
+      return result;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -96,11 +92,12 @@ class MembersViewModel extends _$MembersViewModel {
   Future<String> sendEmailCode(String email) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.sendEmailCode(email);
+      final repo = ref.watch(membersRepositoryProvider);
+      final result = await repo.sendEmailCode(email);
       state = AsyncValue.data(state.value);
       return result;
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -108,11 +105,26 @@ class MembersViewModel extends _$MembersViewModel {
   Future<String> verifyEmailCode(String email, String code) async {
     state = const AsyncValue.loading();
     try {
-      final result = await _repository.verifyEmailCode(email, code);
+      final repo = ref.watch(membersRepositoryProvider);
+      final result = await repo.verifyEmailCode(email, code);
       await fetchMemberInfo();
       return result;
-    } catch (e, stackTrace) {
-      state = AsyncValue.error(e, stackTrace);
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
+      rethrow;
+    }
+  }
+
+  // 회원 탈퇴
+  Future<String> deleteMember() async {
+    state = const AsyncValue.loading();
+    try {
+      final repo = ref.watch(membersRepositoryProvider);
+      final result = await repo.deleteMember();
+      state = const AsyncValue.data(null);
+      return result;
+    } catch (e, st) {
+      state = AsyncValue.error(e, st);
       rethrow;
     }
   }

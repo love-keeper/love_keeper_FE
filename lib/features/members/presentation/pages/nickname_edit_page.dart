@@ -51,9 +51,8 @@ class _NicknameEditPageState extends ConsumerState<NicknameEditPage> {
       setState(() {
         _isLoading = false;
       });
-      if (result == '닉네임 변경 성공') {
-        context.pop();
-      }
+
+      context.pop();
     } catch (e) {
       debugPrint('Update nickname error: $e');
       setState(() {

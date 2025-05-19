@@ -10,24 +10,26 @@ import '../../../features/auth/presentation/pages/password_edit_page.dart';
 import '../../../features/auth/presentation/pages/signup_page.dart';
 import '../../../features/auth/presentation/pages/email_password_input_page.dart';
 import '../../../features/auth/presentation/pages/profile_registration_page.dart';
+import '../../../features/auth/presentation/pages/terms_of_service_page.dart'; // 이용약관 페이지 import 추가
+import '../../../features/auth/presentation/pages/privacy_policy_page.dart';
 import '../../../features/couples/presentation/pages/code_connect_page.dart';
+import '../../../features/couples/presentation/pages/dday_page.dart';
+import '../../../features/couples/presentation/pages/storage_page.dart';
+import '../../../features/couples/presentation/pages/disconnect_page.dart';
+import '../../../features/couples/presentation/pages/disconnected_screen.dart';
+import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/main/presentation/pages/main_page.dart';
 import '../../../features/main/presentation/pages/notification_page.dart';
-import '../../../features/calendar/presentation/pages/calendar_page.dart';
-import '../../../features/couples/presentation/pages/storage_page.dart';
-import '../../../features/calendar/presentation/pages/detail_page.dart';
-import '../../../features/couples/presentation/pages/dday_page.dart';
 import '../../../features/main/presentation/widgets/tab_bar.dart';
+import '../../../features/calendar/presentation/pages/calendar_page.dart';
+import '../../../features/calendar/presentation/pages/detail_page.dart';
 import '../../../features/letters/presentation/pages/send_letter_screen.dart';
 import '../../../features/letters/presentation/pages/send_letter_page.dart';
 import '../../../features/letters/presentation/pages/reply_letter_page.dart';
-import 'package:love_keeper/features/letters/presentation/pages/received_letter_page.dart';
+import '../../../features/letters/presentation/pages/received_letter_page.dart';
 import '../../../features/members/presentation/pages/my_page.dart';
 import '../../../features/members/presentation/pages/settings_page.dart';
-import '../../../features/couples/presentation/pages/disconnect_page.dart';
-import '../../../features/couples/presentation/pages/disconnected_screen.dart';
 import '../../../features/members/presentation/pages/nickname_edit_page.dart';
-import '../../../features/couples/presentation/pages/relationship_start_edit_page.dart';
 import '../../../features/members/presentation/pages/new_email_input_page.dart';
 import '../../../features/members/presentation/pages/new_email_certification.dart';
 import '../../../features/members/presentation/pages/my_password_edit_page.dart';
@@ -127,6 +129,7 @@ GoRouter appRouter(AppRouterRef ref) {
           );
         },
       ),
+
       GoRoute(
         path: RouteNames.codeConnectPage,
         name: RouteNames.codeConnectPage,
@@ -134,6 +137,26 @@ GoRouter appRouter(AppRouterRef ref) {
             (context, state) => NoTransitionPage(
               key: state.pageKey,
               child: const CodeConnectPage(),
+            ),
+      ),
+
+      GoRoute(
+        path: RouteNames.termsOfServicePage,
+        name: 'termsOfService',
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const TermsOfServicePage(),
+            ),
+      ),
+
+      GoRoute(
+        path: RouteNames.privacyPolicyPage,
+        name: 'privacyPolicy',
+        pageBuilder:
+            (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const PrivacyPolicyPage(),
             ),
       ),
 
@@ -182,9 +205,10 @@ GoRouter appRouter(AppRouterRef ref) {
             pageBuilder:
                 (context, state) => NoTransitionPage(
                   key: state.pageKey,
-                  child: const StoragePage(),
+                  child: StoragePage.fromState(state), // ✅ query 파라미터 반영
                 ),
           ),
+
           GoRoute(
             path: RouteNames.myPage,
             name: RouteNames.myPage,
@@ -274,17 +298,25 @@ GoRouter appRouter(AppRouterRef ref) {
           );
         },
       ),
+
+      // app_router.dart에서 receivedLetterPage 라우트 수정
       GoRoute(
-        name: RouteNames.receivedLetterPage,
         path: RouteNames.receivedLetterPage,
-        builder: (context, state) {
+        name: RouteNames.receivedLetterPage,
+        pageBuilder: (context, state) {
           final Map<String, dynamic>? letterData =
               state.extra as Map<String, dynamic>?;
           if (letterData == null) {
             // 오류 처리: 편지 데이터가 없는 경우
-            return Scaffold(body: Center(child: Text('편지 데이터를 찾을 수 없습니다.')));
+            return NoTransitionPage(
+              key: state.pageKey,
+              child: Scaffold(body: Center(child: Text('편지 데이터를 찾을 수 없습니다.'))),
+            );
           }
-          return ReceivedLetterPage(letterData: letterData);
+          return NoTransitionPage(
+            key: state.pageKey,
+            child: ReceivedLetterPage(letterData: letterData),
+          );
         },
       ),
 
@@ -315,9 +347,7 @@ GoRouter appRouter(AppRouterRef ref) {
                   'assets/images/my_page/Img_Disconnect.png',
               imageWidth: extra['imageWidth'] as double? ?? 223.0,
               imageHeight: extra['imageHeight'] as double? ?? 176.0,
-              bottomText:
-                  extra['bottomText'] as String? ??
-                  '기록된 데이터는 모두 삭제돼요.\n데이터는 30일 이내에 복구할 수 있어요.',
+              bottomText: extra['bottomText'] as String? ?? '기록된 데이터는 모두 삭제돼요.',
               actionButtonText: extra['actionButtonText'] as String? ?? '연결 끊기',
               gapBetweenImageAndText1:
                   extra['gapBetweenImageAndText1'] as double? ?? 78,

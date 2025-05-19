@@ -91,7 +91,6 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                         const SnackBar(content: Text('날짜가 성공적으로 업데이트되었습니다')),
                       );
                     } catch (e) {
-                      debugPrint('시작 날짜 업데이트 실패: $e');
                       ScaffoldMessenger.of(
                         context,
                       ).showSnackBar(SnackBar(content: Text('날짜 업데이트 실패: $e')));
@@ -120,17 +119,18 @@ class _DdayPageState extends ConsumerState<DdayPage> {
   Widget build(BuildContext context) {
     final memberState = ref.watch(membersViewModelProvider);
     final coupleState = ref.watch(couplesViewModelProvider);
-    final dday =
-        ref.watch(couplesViewModelProvider.notifier).getDday(); // 디데이 일수 가져오기
+    final dday = ref.watch(couplesViewModelProvider.notifier).getDday();
+    final mediaQuery = MediaQuery.of(context);
+    final scaleFactor = mediaQuery.size.width / 375;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
-      extendBody: true,
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
+        toolbarHeight: (56 * scaleFactor).clamp(44.0, 56.0),
         title: const Text(
           '기념일',
           style: TextStyle(
@@ -144,9 +144,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
             Icons.arrow_back_ios_new_rounded,
             color: Color(0xFF27282C),
           ),
-          onPressed: () {
-            context.pop();
-          },
+          onPressed: () => context.pop(),
         ),
       ),
       body: Container(
@@ -162,8 +160,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
             end: FractionalOffset(0.88, 1.0),
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: SafeArea(
           child: memberState.when(
             data:
                 (memberInfo) => coupleState.when(
@@ -171,13 +168,21 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                     if (coupleInfo != null && coupleInfo.startedAt.isNotEmpty) {
                       _selectedDate = DateTime.parse(coupleInfo.startedAt);
                     }
-                    return Column(
-                      children: [
-                        const SizedBox(height: 154),
-                        _buildAnniversaryCard(memberInfo, coupleInfo, dday),
-                        const SizedBox(height: 29),
-                        _buildDdayList(),
-                      ],
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 20,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const SizedBox(height: 20),
+                          _buildAnniversaryCard(memberInfo, coupleInfo, dday),
+                          const SizedBox(height: 29),
+                          _buildDdayList(),
+                          const SizedBox(height: 20),
+                        ],
+                      ),
                     );
                   },
                   loading:
@@ -197,9 +202,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
     CoupleInfo? coupleInfo,
     String dday,
   ) {
-    final double deviceWidth = MediaQuery.of(context).size.width;
-    const double baseWidth = 375.0;
-    final double scaleFactor = deviceWidth / baseWidth;
+    final double scaleFactor = MediaQuery.of(context).size.width / 375;
 
     return Container(
       height: 128,
@@ -208,12 +211,7 @@ class _DdayPageState extends ConsumerState<DdayPage> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.05),
-            blurRadius: 5,
-            spreadRadius: 0,
-            offset: Offset(0, 0),
-          ),
+          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 5),
         ],
       ),
       child: Stack(
@@ -243,9 +241,8 @@ class _DdayPageState extends ConsumerState<DdayPage> {
             right: 20,
             top: 20,
             child:
-                coupleInfo != null &&
-                        coupleInfo.partnerProfileImageUrl != null &&
-                        coupleInfo.partnerProfileImageUrl!.isNotEmpty
+                coupleInfo?.partnerProfileImageUrl != null &&
+                        coupleInfo!.partnerProfileImageUrl!.isNotEmpty
                     ? ClipOval(
                       child: CachedNetworkImage(
                         imageUrl: coupleInfo.partnerProfileImageUrl!,
@@ -271,16 +268,13 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    letterSpacing: -0.4,
                     color: Color(0xFF27282C),
                   ),
                 ),
-                const SizedBox(height: 0),
                 Text(
-                  '$dday 일째', // ViewModel에서 계산된 dday 사용
+                  '$dday 일째',
                   style: const TextStyle(
                     fontSize: 24,
-                    letterSpacing: -0.6,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF27282C),
                   ),
@@ -291,7 +285,6 @@ class _DdayPageState extends ConsumerState<DdayPage> {
                     DateFormat('yyyy. MM. dd.').format(_selectedDate),
                     style: const TextStyle(
                       fontSize: 12,
-                      letterSpacing: -0.3,
                       color: Color(0xFFFC6383),
                       fontWeight: FontWeight.w600,
                       decoration: TextDecoration.underline,
@@ -309,16 +302,10 @@ class _DdayPageState extends ConsumerState<DdayPage> {
 
   Widget _buildDdayList() {
     final Set<int> ddaySet = {};
-
-    for (int i = 100; i <= 36500; i += 100) {
-      ddaySet.add(i);
-    }
-    for (int i = 365; i <= 36500; i += 365) {
-      ddaySet.add(i);
-    }
+    for (int i = 100; i <= 36500; i += 100) ddaySet.add(i);
+    for (int i = 365; i <= 36500; i += 365) ddaySet.add(i);
 
     List<int> ddayIntervals = ddaySet.toList()..sort();
-
     List<int> futureIntervals =
         ddayIntervals
             .where(
@@ -330,82 +317,67 @@ class _DdayPageState extends ConsumerState<DdayPage> {
             .toList();
 
     return Container(
-      height: 385,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.05),
-            blurRadius: 5,
-            spreadRadius: 0,
-            offset: Offset(0, 0),
-          ),
+          BoxShadow(color: Color.fromRGBO(0, 0, 0, 0.05), blurRadius: 5),
         ],
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          children:
-              futureIntervals.map((days) {
-                final DateTime anniversaryDate = _selectedDate.add(
-                  Duration(days: days),
-                );
-                final int remainingDays =
-                    anniversaryDate.difference(DateTime.now()).inDays;
-                final bool isAnniversary = days % 365 == 0;
+      child: Column(
+        children:
+            futureIntervals.map((days) {
+              final anniversaryDate = _selectedDate.add(Duration(days: days));
+              final remainingDays =
+                  anniversaryDate.difference(DateTime.now()).inDays;
+              final isAnniversary = days % 365 == 0;
 
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 9.5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isAnniversary ? '${days ~/ 365}주년' : '$days일',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color:
-                              isAnniversary
-                                  ? const Color(0xFFFC6383)
-                                  : const Color(0xFF27282C),
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 9.5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      isAnniversary ? '${days ~/ 365}주년' : '$days일',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color:
+                            isAnniversary
+                                ? const Color(0xFFFC6383)
+                                : const Color(0xFF27282C),
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          remainingDays == 0 ? '오늘' : 'D-$remainingDays',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: -0.4,
+                            color:
+                                isAnniversary
+                                    ? const Color(0xFFFC6383)
+                                    : const Color(0xFF27282C),
+                          ),
                         ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            remainingDays == 0 ? '오늘' : 'D-$remainingDays',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.4,
-                              height: 1.143,
-                              color:
-                                  isAnniversary
-                                      ? const Color(0xFFFC6383)
-                                      : const Color(0xFF27282C),
-                            ),
+                        Text(
+                          DateFormat('yyyy. MM. dd.').format(anniversaryDate),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF27282C),
                           ),
-                          const SizedBox(height: 0),
-                          Text(
-                            DateFormat('yyyy. MM. dd.').format(anniversaryDate),
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              height: 1.167,
-                              letterSpacing: -0.3,
-                              color: Color(0xFF27282C),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-        ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
       ),
     );
   }

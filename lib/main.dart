@@ -8,6 +8,7 @@ import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:love_keeper/core/config/routes/app_router.dart';
 import 'package:love_keeper/features/fcm/presentation/viewmodels/fcm_viewmodel.dart';
 import 'package:love_keeper/firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // 백그라운드 메시지 핸들러
 @pragma('vm:entry-point')
@@ -18,6 +19,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 void main() async {
   // Flutter 바인딩 초기화
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ SharedPreferences 초기화 (한 번만 실행하고, 나중엔 주석 처리)
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.clear();
 
   // KakaoSDK 초기화
   KakaoSdk.init(nativeAppKey: '4082411ebc9c7d9b7612cc9c7bee8da8');

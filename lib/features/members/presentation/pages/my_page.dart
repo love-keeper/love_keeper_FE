@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart'; // image_picker 패키지 추가
 import 'package:love_keeper/features/members/domain/entities/member_info.dart';
 import 'package:love_keeper/features/members/presentation/viewmodels/members_viewmodel.dart';
+import 'package:url_launcher/url_launcher.dart'; // url_launcher 패키지 추가
 
 class MyPage extends ConsumerStatefulWidget {
   const MyPage({super.key});
@@ -21,13 +22,36 @@ class _MyPageState extends ConsumerState<MyPage> {
   final String _enterIconPath = 'assets/images/my_page/Ic_Enter.png';
   final String _settingsIconPath = 'assets/images/my_page/Ic_Settings.png';
 
+  // 외부 링크 URL 정의
+  final String _noticeUrl =
+      'https://www.notion.so/1ad62ef3fe5180cc8d4afa4fe916aaf6?v=1ad62ef3fe518053974e000c55785d6a';
+  final String _faqUrl =
+      'https://www.notion.so/FAQ-1ad62ef3fe5180a29395dbc2115eee58';
+  final String _kakaoUrl = 'http://pf.kakao.com/_zAEPn';
+
   @override
   void initState() {
     super.initState();
-    // incoming 코드처럼 initState에서 fetchMemberInfo() 호출
     Future(() {
-      ref.read(membersViewModelProvider.notifier).fetchMemberInfo();
+      ref
+          .read(membersViewModelProvider.notifier)
+          .fetchMemberInfo(); // 항상 새로 불러오기
     });
+  }
+
+  // URL 열기 함수 (최신 API 사용)
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    try {
+      if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+        throw Exception('Could not launch $url');
+      }
+    } catch (e) {
+      debugPrint('URL 열기 실패: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('URL을 열 수 없습니다: $e')));
+    }
   }
 
   void _showBottomSheet(BuildContext context) {
@@ -249,84 +273,6 @@ class _MyPageState extends ConsumerState<MyPage> {
     }
   }
 
-  Widget _buildInfoSection(double scaleFactor, MemberInfo? memberInfo) {
-    return Column(
-      children: [
-        _buildBoxedRow(
-          '닉네임',
-          memberInfo?.nickname ?? '',
-          scaleFactor,
-          onTap: () => context.push('/nicknameEdit'),
-        ),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '생년월일',
-          memberInfo?.birthday ?? '',
-          scaleFactor,
-          onTap: () => context.push('/birthdateEdit'),
-        ),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '연애 시작일',
-          memberInfo?.relationshipStartDate ?? '',
-          scaleFactor,
-          onTap: () => context.push('/relationshipStartEdit'),
-        ),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '이메일',
-          memberInfo?.email ?? '',
-          scaleFactor,
-          //onTap: () => context.push('/emailEdit'),
-        ),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '비밀번호 변경',
-          '',
-          scaleFactor,
-          hasArrow: true,
-          onTap: () => context.push('/myPasswordEdit'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMenuSection(double scaleFactor) {
-    return Column(
-      children: [
-        _buildBoxedRow(
-          '공지',
-          '',
-          scaleFactor,
-          hasArrow: true,
-          onTap: () {
-            debugPrint('공지 클릭');
-          },
-        ),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '자주 묻는 질문',
-          '',
-          scaleFactor,
-          hasArrow: true,
-          onTap: () {
-            debugPrint('자주 묻는 질문 클릭');
-          },
-        ),
-        SizedBox(height: 18 * scaleFactor),
-        _buildBoxedRow(
-          '1:1 카카오톡 문의',
-          '',
-          scaleFactor,
-          hasArrow: true,
-          onTap: () {
-            debugPrint('1:1 카카오톡 문의 클릭');
-          },
-        ),
-      ],
-    );
-  }
-
   Widget _buildBoxedRow(
     String title,
     String value,
@@ -343,6 +289,7 @@ class _MyPageState extends ConsumerState<MyPage> {
       showArrow = value.isEmpty;
     }
 
+    // 전체 컨테이너를 GestureDetector로 감싸서 탭 가능 영역 확장
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -350,6 +297,11 @@ class _MyPageState extends ConsumerState<MyPage> {
         height: 38 * scaleFactor,
         padding: EdgeInsets.symmetric(vertical: 7 * scaleFactor),
         alignment: Alignment.topLeft,
+        // 터치 피드백을 제공하기 위한 배경색 추가 (선택 사항)
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(4 * scaleFactor),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -359,12 +311,13 @@ class _MyPageState extends ConsumerState<MyPage> {
                 fontSize: 16 * scaleFactor,
                 fontWeight: FontWeight.w500,
                 letterSpacing: -0.4 * scaleFactor,
-                height: 24 / (16 * scaleFactor),
+                height: 24 / 16,
                 color: Colors.black,
               ),
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
+
               children: [
                 if (value.isNotEmpty)
                   Text(
@@ -391,6 +344,88 @@ class _MyPageState extends ConsumerState<MyPage> {
     );
   }
 
+  Widget _buildInfoSection(double scaleFactor, MemberInfo? memberInfo) {
+    return Column(
+      children: [
+        // 각 항목 사이에 구분선 추가 (선택 사항)
+        _buildBoxedRow(
+          '닉네임',
+          memberInfo?.nickname ?? '',
+          scaleFactor,
+          onTap: () => context.push('/nicknameEdit'),
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
+          '생년월일',
+          memberInfo?.birthday ?? '',
+          scaleFactor,
+          onTap: () => context.push('/birthdateEdit'),
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
+          '연애 시작일',
+          memberInfo?.relationshipStartDate ?? '',
+          scaleFactor,
+          onTap: () => context.push('/relationshipStartEdit'),
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
+          '이메일',
+          memberInfo?.email ?? '',
+          scaleFactor,
+          onTap:
+              memberInfo?.email != null && memberInfo!.email!.isNotEmpty
+                  ? null // 이메일이 있으면 수정 불가능
+                  : () => context.push('/emailEdit'),
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
+          '비밀번호 변경',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () => context.push('/myPasswordEdit'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMenuSection(double scaleFactor) {
+    return Column(
+      children: [
+        _buildBoxedRow(
+          '공지',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () {
+            _launchURL(_noticeUrl); // 공지 링크 열기
+          },
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
+          '자주 묻는 질문',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () {
+            _launchURL(_faqUrl); // FAQ 링크 열기
+          },
+        ),
+        SizedBox(height: 18 * scaleFactor),
+        _buildBoxedRow(
+          '1:1 카카오톡 문의',
+          '',
+          scaleFactor,
+          hasArrow: true,
+          onTap: () {
+            _launchURL(_kakaoUrl); // 카카오톡 링크 열기
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
@@ -404,8 +439,12 @@ class _MyPageState extends ConsumerState<MyPage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        scrolledUnderElevation: 0, // 스크롤 시 그림자 효과 제거
         elevation: 0,
         centerTitle: true,
+        surfaceTintColor:
+            Colors.transparent, // 스크롤 시 surface tint 색상 제거 (Material 3)
+        foregroundColor: const Color(0xFF27282C), // 앱바 콘텐츠 색상 설정
         title: Text(
           'MY',
           style: TextStyle(
@@ -432,104 +471,135 @@ class _MyPageState extends ConsumerState<MyPage> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(top: 16 * scaleFactor),
-              child: memberState.when(
-                data:
-                    (memberInfo) => Column(
-                      children: [
-                        // 프로필 사진
-                        Align(
-                          alignment: Alignment.center,
-                          child: ClipOval(
-                            child:
-                                _profileImage != null
-                                    ? Image.file(
-                                      _profileImage!,
-                                      width: 84 * scaleFactor,
-                                      height: 84 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                    )
-                                    : memberInfo?.profileImageUrl != null &&
-                                        memberInfo!.profileImageUrl!.isNotEmpty
-                                    ? CachedNetworkImage(
-                                      imageUrl: memberInfo.profileImageUrl!,
-                                      width: 84 * scaleFactor,
-                                      height: 84 * scaleFactor,
-                                      fit: BoxFit.cover,
-                                      placeholder:
-                                          (context, url) =>
-                                              const CircularProgressIndicator(),
-                                      errorWidget:
-                                          (context, url, error) => Image.asset(
-                                            _defaultImagePath,
-                                            width: 84 * scaleFactor,
-                                            height: 84 * scaleFactor,
-                                            fit: BoxFit.cover,
-                                          ),
-                                    )
-                                    : Image.asset(
-                                      _defaultImagePath,
-                                      width: 84 * scaleFactor,
-                                      height: 84 * scaleFactor,
-                                      fit: BoxFit.cover,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: memberState.when(
+          data:
+              (memberInfo) => Stack(
+                children: [
+                  // 메인 스크롤 영역
+                  CustomScrollView(
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            SizedBox(height: 16 * scaleFactor),
+                            // 프로필 사진 - 전체를 GestureDetector로 감싸서 탭 가능하게 함
+                            GestureDetector(
+                              onTap: () => _showBottomSheet(context),
+                              child: SizedBox(
+                                height: 84 * scaleFactor,
+                                width: 84 * scaleFactor,
+                                child: Stack(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: ClipOval(
+                                        child:
+                                            _profileImage != null
+                                                ? Image.file(
+                                                  _profileImage!,
+                                                  width: 84 * scaleFactor,
+                                                  height: 84 * scaleFactor,
+                                                  fit: BoxFit.cover,
+                                                )
+                                                : memberInfo?.profileImageUrl !=
+                                                        null &&
+                                                    memberInfo!
+                                                        .profileImageUrl!
+                                                        .isNotEmpty
+                                                ? CachedNetworkImage(
+                                                  imageUrl:
+                                                      memberInfo
+                                                          .profileImageUrl!,
+                                                  width: 84 * scaleFactor,
+                                                  height: 84 * scaleFactor,
+                                                  fit: BoxFit.cover,
+                                                  placeholder:
+                                                      (context, url) =>
+                                                          const CircularProgressIndicator(),
+                                                  errorWidget:
+                                                      (
+                                                        context,
+                                                        url,
+                                                        error,
+                                                      ) => Image.asset(
+                                                        _defaultImagePath,
+                                                        width: 84 * scaleFactor,
+                                                        height:
+                                                            84 * scaleFactor,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                )
+                                                : Image.asset(
+                                                  _defaultImagePath,
+                                                  width: 84 * scaleFactor,
+                                                  height: 84 * scaleFactor,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                      ),
                                     ),
-                          ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Image.asset(
+                                        _galleryIconPath,
+                                        width: 30 * scaleFactor,
+                                        height: 30 * scaleFactor,
+                                        errorBuilder: (
+                                          context,
+                                          error,
+                                          stackTrace,
+                                        ) {
+                                          return Container(
+                                            width: 30 * scaleFactor,
+                                            height: 30 * scaleFactor,
+                                            color: Colors.red,
+                                            child: const Icon(
+                                              Icons.error,
+                                              color: Colors.white,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 30 * scaleFactor),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20 * scaleFactor,
+                              ),
+                              child: _buildInfoSection(scaleFactor, memberInfo),
+                            ),
+                            SizedBox(height: 16 * scaleFactor),
+                            Container(
+                              width: deviceWidth,
+                              height: 16 * scaleFactor,
+                              color: const Color(0xFFF7F8FB),
+                            ),
+                            SizedBox(height: 16 * scaleFactor),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20 * scaleFactor,
+                              ),
+                              child: _buildMenuSection(scaleFactor),
+                            ),
+                            SizedBox(
+                              height: 100 * scaleFactor,
+                            ), // 하단 탭바를 위한 여유 공간
+                          ],
                         ),
-
-                        SizedBox(height: 30 * scaleFactor),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20 * scaleFactor,
-                          ),
-                          child: _buildInfoSection(scaleFactor, memberInfo),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                        Container(
-                          width: deviceWidth,
-                          height: 16 * scaleFactor,
-                          color: const Color(0xFFF7F8FB),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20 * scaleFactor,
-                          ),
-                          child: _buildMenuSection(scaleFactor),
-                        ),
-                        SizedBox(height: 16 * scaleFactor),
-                      ],
-                    ),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (error, stack) => Center(child: Text('Error: $error')),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-          ),
-          Positioned(
-            top: 68 * scaleFactor,
-            left: 202 * scaleFactor,
-            child: GestureDetector(
-              onTap: () => _showBottomSheet(context),
-              child: Image.asset(
-                _galleryIconPath,
-                width: 30 * scaleFactor,
-                height: 30 * scaleFactor,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 30 * scaleFactor,
-                    height: 30 * scaleFactor,
-                    color: Colors.red,
-                    child: const Icon(Icons.error, color: Colors.white),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => Center(child: Text('Error: $error')),
+        ),
       ),
     );
   }

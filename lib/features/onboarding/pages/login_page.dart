@@ -31,8 +31,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenHeight = mediaQuery.size.height;
+    final screenWidth = mediaQuery.size.width;
+    final imageHeight = screenHeight * 0.3;
+
     return Scaffold(
-      extendBodyBehindAppBar: true, // 앱바 뒤쪽까지 배경 적용
+      extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -49,9 +54,58 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   onPageChanged: _onPageChanged,
                   itemCount: OnboardingPageModel.pages.length,
                   itemBuilder: (context, index) {
-                    return OnboardingPage(
-                      page: OnboardingPageModel.pages[index],
-                      isLastPage: index == OnboardingPageModel.pages.length,
+                    final page = OnboardingPageModel.pages[index];
+                    return LayoutBuilder(
+                      builder: (context, constraints) {
+                        final maxHeight = constraints.maxHeight;
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: imageHeight,
+                              child: Image.asset(
+                                page.iconAsset,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24.0,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    page.title,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: screenHeight < 700 ? 18 : 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  if (page.subtitle != null &&
+                                      page.subtitle!.trim().isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 12.0),
+                                      child: Text(
+                                        page.subtitle!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize:
+                                              screenHeight < 700 ? 13 : 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     );
                   },
                 ),
@@ -65,24 +119,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       currentIndex: _currentPage,
                     ),
                     const SizedBox(height: 32),
-                    FilledButton(
-                      onPressed: () => context.push('/emailLogin'),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFFFF5B82),
-                        minimumSize: const Size(double.infinity, 52),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: const Text(
-                        '시작하기',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.4, // 16px의 -2.5%
-                        ),
-                      ),
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final buttonHeight = screenHeight < 700 ? 48.0 : 52.0;
+                        return SizedBox(
+                          width: double.infinity,
+                          height: buttonHeight,
+                          child: FilledButton(
+                            onPressed: () => context.push('/emailLogin'),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: const Color(0xFFFF5B82),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                            ),
+                            child: Text(
+                              '시작하기',
+                              style: TextStyle(
+                                fontSize: screenHeight < 700 ? 15 : 16,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: -0.4,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 12),
                     const Text(

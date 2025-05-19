@@ -7,6 +7,9 @@ class RouteNames {
   static const String emailPasswordInputPage = '/emailPasswordInput';
   static const String profileRegistrationPage = '/profileRegistration';
   static const String codeConnectPage = '/codeConnect';
+  static const String termsOfServicePage = '/termsOfService'; // 이용약관 페이지 경로 추가
+  static const String privacyPolicyPage =
+      '/privacyPolicyPage'; // 개인정보처리방침 페이지 경로 추가
 
   // Onboarding Routes
   static const String splashScreen = '/splashScreen';
@@ -27,8 +30,8 @@ class RouteNames {
   static const String myPage = '/my';
   static const String editFieldPage = '/editField';
   static const String settingsPage = '/settings';
-  static const String disconnectPage = '/disconnect';
-  static const String disconnectedScreen = '/disconnected';
+  static const String disconnectPage = '/disconnectPage';
+  static const String disconnectedScreen = '/disconnectedScreen';
   static const String nicknameEditPage = '/nicknameEdit';
   static const String birthdateEditPage = '/birthdateEdit';
   static const String relationshipStartEditPage = '/relationshipStartEdit';

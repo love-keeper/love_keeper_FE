@@ -14,6 +14,8 @@ _$CoupleInfoImpl _$$CoupleInfoImplFromJson(Map<String, dynamic> json) =>
       partnerProfileImageUrl: json['partnerProfileImageUrl'] as String? ?? null,
       startedAt: json['startedAt'] as String,
       days: (json['days'] as num).toInt(),
+      endedAt: json['endedAt'] as String?,
+      coupleStatus: json['coupleStatus'] as String?,
     );
 
 Map<String, dynamic> _$$CoupleInfoImplToJson(_$CoupleInfoImpl instance) =>
@@ -24,4 +26,6 @@ Map<String, dynamic> _$$CoupleInfoImplToJson(_$CoupleInfoImpl instance) =>
       'partnerProfileImageUrl': instance.partnerProfileImageUrl,
       'startedAt': instance.startedAt,
       'days': instance.days,
+      'endedAt': instance.endedAt,
+      'coupleStatus': instance.coupleStatus,
     };

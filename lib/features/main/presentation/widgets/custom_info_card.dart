@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 class CustomInfoCard extends StatelessWidget {
   final String title;
   final String imagePath;
+  final bool isLocked; // 🔒 잠금 여부
 
   const CustomInfoCard({
     super.key,
     required this.title,
     required this.imagePath,
+    this.isLocked = false, // 기본값 false
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 128, // 카드 높이
+      height: 128,
       decoration: BoxDecoration(
-        color: Colors.white, // 배경 흰색
-        borderRadius: BorderRadius.circular(20), // 모서리 둥글게
+        color: isLocked ? const Color(0xFFBDBDBD) : Colors.white, // 배경 회색
+        borderRadius: BorderRadius.circular(20),
         boxShadow: const [
           BoxShadow(
             color: Color.fromRGBO(0, 0, 0, 0.05),
@@ -29,7 +31,7 @@ class CustomInfoCard extends StatelessWidget {
       child: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 18, left: 18), // 제목 패딩
+            padding: const EdgeInsets.only(top: 18, left: 18),
             child: Text(
               title,
               style: const TextStyle(
@@ -40,15 +42,32 @@ class CustomInfoCard extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 9, // 아이콘 이미지 아래 패딩
-            right: 9, // 아이콘 이미지 오른쪽 패딩
+            bottom: 9,
+            right: 9,
             child: Image.asset(
               imagePath,
-              width: 64, // 아이콘 크기 조정
+              width: 64,
               height: 64,
               fit: BoxFit.contain,
             ),
           ),
+          if (isLocked) ...[
+            // 🔒 잠금 오버레이
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.25),
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            Center(
+              child: Image.asset(
+                'assets/images/main_page/mingcute_lock-fill.png',
+                width: 40,
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ],
         ],
       ),
     );

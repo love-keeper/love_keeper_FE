@@ -15,7 +15,7 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 FCMTokenRequest _$FCMTokenRequestFromJson(Map<String, dynamic> json) {
-  return _FCMTokenRequest.fromJson(json);
+  return _$FCMTokenRequestImpl.fromJson(json);
 }
 
 /// @nodoc
@@ -62,22 +62,22 @@ class _$FCMTokenRequestCopyWithImpl<$Res, $Val extends FCMTokenRequest>
 }
 
 /// @nodoc
-abstract class _$$FCMTokenRequestImplCopyWith<$Res>
+abstract class _$$$FCMTokenRequestImplImplCopyWith<$Res>
     implements $FCMTokenRequestCopyWith<$Res> {
-  factory _$$FCMTokenRequestImplCopyWith(_$FCMTokenRequestImpl value,
-          $Res Function(_$FCMTokenRequestImpl) then) =
-      __$$FCMTokenRequestImplCopyWithImpl<$Res>;
+  factory _$$$FCMTokenRequestImplImplCopyWith(_$$FCMTokenRequestImplImpl value,
+          $Res Function(_$$FCMTokenRequestImplImpl) then) =
+      __$$$FCMTokenRequestImplImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String token});
 }
 
 /// @nodoc
-class __$$FCMTokenRequestImplCopyWithImpl<$Res>
-    extends _$FCMTokenRequestCopyWithImpl<$Res, _$FCMTokenRequestImpl>
-    implements _$$FCMTokenRequestImplCopyWith<$Res> {
-  __$$FCMTokenRequestImplCopyWithImpl(
-      _$FCMTokenRequestImpl _value, $Res Function(_$FCMTokenRequestImpl) _then)
+class __$$$FCMTokenRequestImplImplCopyWithImpl<$Res>
+    extends _$FCMTokenRequestCopyWithImpl<$Res, _$$FCMTokenRequestImplImpl>
+    implements _$$$FCMTokenRequestImplImplCopyWith<$Res> {
+  __$$$FCMTokenRequestImplImplCopyWithImpl(_$$FCMTokenRequestImplImpl _value,
+      $Res Function(_$$FCMTokenRequestImplImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -85,7 +85,7 @@ class __$$FCMTokenRequestImplCopyWithImpl<$Res>
   $Res call({
     Object? token = null,
   }) {
-    return _then(_$FCMTokenRequestImpl(
+    return _then(_$$FCMTokenRequestImplImpl(
       token: null == token
           ? _value.token
           : token // ignore: cast_nullable_to_non_nullable
@@ -96,11 +96,11 @@ class __$$FCMTokenRequestImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$FCMTokenRequestImpl implements _FCMTokenRequest {
-  const _$FCMTokenRequestImpl({required this.token});
+class _$$FCMTokenRequestImplImpl implements _$FCMTokenRequestImpl {
+  const _$$FCMTokenRequestImplImpl({required this.token});
 
-  factory _$FCMTokenRequestImpl.fromJson(Map<String, dynamic> json) =>
-      _$$FCMTokenRequestImplFromJson(json);
+  factory _$$FCMTokenRequestImplImpl.fromJson(Map<String, dynamic> json) =>
+      _$$$FCMTokenRequestImplImplFromJson(json);
 
   @override
   final String token;
@@ -114,7 +114,7 @@ class _$FCMTokenRequestImpl implements _FCMTokenRequest {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$FCMTokenRequestImpl &&
+            other is _$$FCMTokenRequestImplImpl &&
             (identical(other.token, token) || other.token == token));
   }
 
@@ -125,31 +125,32 @@ class _$FCMTokenRequestImpl implements _FCMTokenRequest {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$FCMTokenRequestImplCopyWith<_$FCMTokenRequestImpl> get copyWith =>
-      __$$FCMTokenRequestImplCopyWithImpl<_$FCMTokenRequestImpl>(
-          this, _$identity);
+  _$$$FCMTokenRequestImplImplCopyWith<_$$FCMTokenRequestImplImpl>
+      get copyWith =>
+          __$$$FCMTokenRequestImplImplCopyWithImpl<_$$FCMTokenRequestImplImpl>(
+              this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$FCMTokenRequestImplToJson(
+    return _$$$FCMTokenRequestImplImplToJson(
       this,
     );
   }
 }
 
-abstract class _FCMTokenRequest implements FCMTokenRequest {
-  const factory _FCMTokenRequest({required final String token}) =
-      _$FCMTokenRequestImpl;
+abstract class _$FCMTokenRequestImpl implements FCMTokenRequest {
+  const factory _$FCMTokenRequestImpl({required final String token}) =
+      _$$FCMTokenRequestImplImpl;
 
-  factory _FCMTokenRequest.fromJson(Map<String, dynamic> json) =
-      _$FCMTokenRequestImpl.fromJson;
+  factory _$FCMTokenRequestImpl.fromJson(Map<String, dynamic> json) =
+      _$$FCMTokenRequestImplImpl.fromJson;
 
   @override
   String get token;
   @override
   @JsonKey(ignore: true)
-  _$$FCMTokenRequestImplCopyWith<_$FCMTokenRequestImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$$FCMTokenRequestImplImplCopyWith<_$$FCMTokenRequestImplImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 PushNotificationResponse _$PushNotificationResponseFromJson(

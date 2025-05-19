@@ -103,6 +103,7 @@ class _EmailLoginPageState extends ConsumerState<EmailLoginPage> {
           provider: 'LOCAL',
           password: _passwordController.text,
           providerId: null,
+          context: context,
         );
         if (!mounted) return;
         setState(() {

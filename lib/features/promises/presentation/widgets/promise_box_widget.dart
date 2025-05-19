@@ -28,12 +28,12 @@ class PromiseBoxWidget extends StatelessWidget {
         children: [
           // 본문 텍스트
           Text(
-            content,
+            content.length > 40 ? '${content.substring(0, 40)}...' : content,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              letterSpacing: -0.4, // 약 16의 -2.5%
-              height: 24 / 16, // 라인헤이트 24
+              letterSpacing: -0.4,
+              height: 24 / 16,
               color: Color(0xFF27282C),
             ),
           ),

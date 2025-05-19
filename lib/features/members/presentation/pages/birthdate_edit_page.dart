@@ -53,9 +53,8 @@ class _BirthdateEditPageState extends ConsumerState<BirthdateEditPage> {
       setState(() {
         _isLoading = false;
       });
-      if (result == '생일 업데이트 성공') {
-        context.pop();
-      }
+
+      context.go('/my');
     } catch (e) {
       debugPrint('Update birthday error: $e');
       setState(() {
