@@ -11,6 +11,7 @@ import 'package:love_keeper/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uni_links/uni_links.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 // 백그라운드 메시지 핸들러
 @pragma('vm:entry-point')
@@ -37,6 +38,10 @@ void handleDeepLink(Uri uri) {
     final email = uri.queryParameters['email'];
     final code = uri.queryParameters['code'];
     
+      navigatorKey.currentState?.pushNamed(
+        '/passwordEdit',
+          arguments: {'email': email, 'code': code},
+      );
   }
 }
 
